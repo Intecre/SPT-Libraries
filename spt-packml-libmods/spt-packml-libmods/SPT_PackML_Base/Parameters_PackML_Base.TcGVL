@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <GVL Name="Parameters_PackML_Base" Id="{63cf0072-8d23-0692-2666-bd61a70d51a4}" ParameterList="True">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+VAR_GLOBAL CONSTANT
+    MAX_NO_OF_SUBMODULES           : UDINT                       := 20;
+    MAX_NO_OF_COMPONENTS           : UDINT                       := 32;
+    MAX_NO_OF_EXTERNAL_CONTROLLERS : UDINT                       := 10;
+    UNIT_MODE_DEFAULT              : E_PMLUnitMode := E_PMLUnitMode.ePMLUnitMode_Production;
+    UNIT_STATE_DEFAULT             : Tc3_PackML_V2.E_PMLCommand  := E_PMLCommand.ePMLCommand_Abort;
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

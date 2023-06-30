@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_PackMLBaseModule_Status" Id="{b4ed0317-4b97-452e-9409-78aa91f9db24}">
+    <Declaration><![CDATA[TYPE ST_PackMLBaseModule_Status :
+    STRUCT
+        Busy                : BOOL;
+        Error               : BOOL;
+        ErrorID             : UDINT;
+        Mode                : E_PMLUnitMode;
+        State               : Tc3_PackML_V2.E_PMLState;
+        HMIControlAvailable : BOOL;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

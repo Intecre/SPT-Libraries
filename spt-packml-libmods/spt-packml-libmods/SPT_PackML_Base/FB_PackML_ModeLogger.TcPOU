@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_PackML_ModeLogger" Id="{e4ac5d7d-d1a8-4096-b8f4-fd17d5a04563}" SpecialFunc="None">
+    <Declaration><![CDATA[//! @summary This FB raises events corresponding to <b>mode</b> changes within the parent PackML module
+FUNCTION_BLOCK FB_PackML_ModeLogger
+VAR_IN_OUT
+    Alarms : ARRAY[1..48] OF FB_TcAlarm; //! Array of alarms for Core PackML events that exist in any PackML enabled module
+END_VAR
+
+VAR_INPUT
+    ModulePrefix : STRING; //! Prefix String for any  <TODO> Remove this? </TODO>
+    Mode         : DINT;   //! Current mode of the module
+END_VAR
+
+VAR
+    LastMode : DINT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF Mode <> LastMode THEN
+    CASE Mode OF
+        E_PMLUnitMode.ePMLUnitMode_Invalid:
+            Alarms[E_PackMLBase_Alarms.ModeInvalidEnter].Raise(0);
+        E_PMLUnitMode.ePMLUnitMode_Production:
+            Alarms[E_PackMLBase_Alarms.ModeProductionEnter].Raise(0);
+        E_PMLUnitMode.ePMLUnitMode_Maintenance:
+            Alarms[E_PackMLBase_Alarms.ModeMaintenanceEnter].Raise(0);
+        E_PMLUnitMode.ePMLUnitMode_Manual:
+            Alarms[E_PackMLBase_Alarms.ModeManualEnter].Raise(0);
+    END_CASE
+
+    CASE LastMode OF
+        E_PMLUnitMode.ePMLUnitMode_Invalid:
+            Alarms[E_PackMLBase_Alarms.ModeInvalidEnter].Clear(0, 0);
+        E_PMLUnitMode.ePMLUnitMode_Production:
+            Alarms[E_PackMLBase_Alarms.ModeProductionEnter].Clear(0, 0);
+        E_PMLUnitMode.ePMLUnitMode_Maintenance:
+            Alarms[E_PackMLBase_Alarms.ModeMaintenanceEnter].Clear(0, 0);
+        E_PMLUnitMode.ePMLUnitMode_Manual:
+            Alarms[E_PackMLBase_Alarms.ModeManualEnter].Clear(0, 0);
+    END_CASE
+
+    LastMode := Mode;
+END_IF
+
+(*! <description> The current mode is compared against the mode during the last call.  The corresponding events are raised/cleared as the mode is changed.
+<b>This FB is called from FB_PMLModuleBase.ModeControl.  Further calls are not necessary.</b></description>*)]]></ST>
+    </Implementation>
+    <LineIds Name="FB_PackML_ModeLogger">
+      <LineId Id="887" Count="26" />
+      <LineId Id="596" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

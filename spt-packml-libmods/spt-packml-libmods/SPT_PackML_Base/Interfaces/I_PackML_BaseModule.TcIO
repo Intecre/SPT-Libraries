@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_PackML_BaseModule" Id="{eca4a56b-850e-483e-b687-2de3b3950c24}">
+    <Declaration><![CDATA[INTERFACE I_PackML_BaseModule EXTENDS I_CyclicFB, I_PackML_Control]]></Declaration>
+    <Property Name="CurrentAlarmSeverity" Id="{6330edd2-66f0-4e35-86ff-3d09385aa422}">
+      <Declaration><![CDATA[PROPERTY CurrentAlarmSeverity : TcEventSeverity]]></Declaration>
+      <Get Name="Get" Id="{2352a7a5-1a04-4154-bd74-fbb96f906eec}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="LogModeChanges" Id="{3ebf3a99-dead-418c-b471-054c7c8d6544}">
+      <Declaration><![CDATA[PROPERTY LogModeChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{e04dfd29-bd9f-4f54-828e-2fc4045c23bc}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{1785a2f9-a528-437d-84c4-405797055f1f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="LogStateChanges" Id="{1b008608-b316-4d3a-ba87-f437076859ca}">
+      <Declaration><![CDATA[PROPERTY LogStateChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{66bc6c53-f9e2-4511-89b6-29fb383f77e7}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{a9b78c0c-4b3e-4169-a6c7-77bf1bd91d29}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="Name" Id="{da8f2502-5e83-49c9-bcb7-07c02f3fcb7b}">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{c93e64d6-b7f5-4fa1-96b7-7e8cdadc8f67}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{0e6ed32b-5954-42fd-b96a-59359710d227}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{e3645d3e-2142-4d00-bb59-0dedc9223132}">
+      <Declaration><![CDATA[PROPERTY ParentResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse]]></Declaration>
+      <Get Name="Get" Id="{20c65c99-40c2-4b98-8141-816006beb6ed}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{ae399fa5-e93f-4526-82f5-2b92335ced38}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+  </Itf>
+</TcPlcObject>

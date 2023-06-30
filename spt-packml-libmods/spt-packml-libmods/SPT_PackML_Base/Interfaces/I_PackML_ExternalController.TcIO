@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_PackML_ExternalController" Id="{7432f408-274f-47ce-b8be-362011fb55e5}">
+    <Declaration><![CDATA[INTERFACE I_PackML_ExternalController]]></Declaration>
+    <Property Name="Control" Id="{771f3b04-91f5-43a8-8f54-e3fe4eda6c87}">
+      <Declaration><![CDATA[PROPERTY Control : I_PackML_Control]]></Declaration>
+      <Set Name="Set" Id="{45c6b3b0-6b70-49d7-859c-643dc741120d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Method Name="ModeChanged" Id="{3ac5a7bd-15d2-4d47-8be6-44d74412d718}">
+      <Declaration><![CDATA[METHOD ModeChanged
+VAR_INPUT
+    NewMode : E_PMLUnitMode;
+END_VAR]]></Declaration>
+    </Method>
+    <Method Name="StateChanged" Id="{c930b1eb-e910-48fb-9de7-42aa1a5f7aa8}">
+      <Declaration><![CDATA[METHOD StateChanged
+VAR_INPUT
+    NewState : E_PMLCommand;
+END_VAR]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

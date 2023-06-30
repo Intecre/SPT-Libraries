@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="E_PMLUnitMode" Id="{934d5df3-eef6-0864-05c1-feaa5b94c35b}">
+    <Declaration><![CDATA[//! @summary Defines the allowable PackML modes  
+TYPE E_PMLUnitMode : (
+        ePMLUnitMode_Invalid     := 0,
+        ePMLUnitMode_Production  := 1,
+        ePMLUnitMode_Maintenance := 2,
+        ePMLUnitMode_Manual      := 3,
+        ePMLUnitMode_UserMode1   := 4,
+        ePMLUnitMode_UserMode2   := 5,
+        ePMLUnitMode_UserMode3   := 6,
+        ePMLUnitMode_UserMode4   := 7,
+        ePMLUnitMode_UserMode5   := 8,
+        ePMLUnitMode_UserMode6   := 9,
+        ePMLUnitMode_UserMode7   := 10,
+        ePMLUnitMode_UserMode8   := 11,
+        ePMLUnitMode_UserMode9   := 12,
+        ePMLUnitMode_UserMode10  := 13,
+        ePMLUnitMode_UserMode11  := 14,
+        ePMLUnitMode_UserMode12  := 15,
+        ePMLUnitMode_UserMode13  := 16,
+        ePMLUnitMode_UserMode14  := 17,
+        ePMLUnitMode_UserMode15  := 18,
+        ePMLUnitMode_UserMode16  := 19,
+        ePMLUnitMode_UserMode17  := 20,
+        ePMLUnitMode_UserMode18  := 21,
+        ePMLUnitMode_UserMode19  := 22,
+        ePMLUnitMode_UserMode20  := 23,
+        ePMLUnitMode_UserMode21  := 24,
+        ePMLUnitMode_UserMode22  := 25,
+        ePMLUnitMode_UserMode23  := 26,
+        ePMLUnitMode_UserMode24  := 27,
+        ePMLUnitMode_UserMode25  := 28,
+        ePMLUnitMode_UserMode26  := 29,
+        ePMLUnitMode_UserMode27  := 30,
+        ePMLUnitMode_UserMode28  := 31
+    ) DINT;
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_PackMLBaseModule_Command" Id="{63058101-4b22-47e1-a2e7-597e97d337de}">
+    <Declaration><![CDATA[TYPE ST_PackMLBaseModule_Command :
+    STRUCT
+        Mode               : E_PMLUnitMode              := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
+        State              : Tc3_PackML_V2.E_PMLCommand := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
+        ActivateStateLog   : BOOL; //HMI requests to enable the module
+        DeactivateStateLog : BOOL; //HMI requests to disable the module
+        ActivateModeLog    : BOOL; //HMI requests to enable the module
+        DeactivatModeLog   : BOOL; //HMI requests to disable the module
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

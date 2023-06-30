@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_PackML_StateLogger" Id="{8b359582-8387-45ce-89d5-2a1b5888ef7a}" SpecialFunc="None">
+    <Declaration><![CDATA[//! @summary This FB raises events corresponding to <b>state</b> changes within the parent PackML module
+FUNCTION_BLOCK FB_PackML_StateLogger
+VAR_IN_OUT
+    Alarms : ARRAY[1..48] OF FB_TcAlarm; //! Array of alarms for Core PackML events that exist in any PackML enabled module
+END_VAR
+
+VAR_INPUT
+    ModulePrefix  : STRING;       //! Prefix String for all state change events (Typically the ID and Name of the module in some concatenated form) <TODO> Remove this? </TODO>
+    State         : E_PMLState;   //! Current PackML state of the module
+    LogAllChanges : BOOL := TRUE; //! If TRUE, all state change events will be logged, regardless of severity, otherwise info alarms are ignored
+END_VAR
+
+VAR
+    LastState  : E_PMLState := E_PMLState.ePMLState_Aborted; //Saves the previous state each time the block is run
+    pTempAlarm : REFERENCE TO FB_TcAlarm;                    //Temporary reference that makes severity checking simpler vs individually checking each change alarm within the case statement
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF State <> LastState THEN //If state has changed
+    CASE State OF          //Get the stored alarm that corresponds to the newly entered state and save its reference temporarily
+        E_PMLState.ePMLState_Starting:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateStartingEnter];
+        E_PMLState.ePMLState_Execute:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateExecuteEnter];
+        E_PMLState.ePMLState_Completing:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateCompletingEnter];
+        E_PMLState.ePMLState_Complete:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateCompleteEnter];
+        E_PMLState.ePMLState_Resetting:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateResettingEnter];
+        E_PMLState.ePMLState_Idle:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateIdleEnter];
+        E_PMLState.ePMLState_Holding:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateHoldingEnter];
+        E_PMLState.ePMLState_Held:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateHeldEnter];
+        E_PMLState.ePMLState_Unholding:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateUnholdingEnter];
+        E_PMLState.ePMLState_Suspending:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateSuspendingEnter];
+        E_PMLState.ePMLState_Suspended:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateSuspendedEnter];
+        E_PMLState.ePMLState_Unsuspending:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateUnsuspendingEnter];
+        E_PMLState.ePMLState_Stopping:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateStoppingEnter];
+        E_PMLState.ePMLState_Stopped:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateStoppedEnter];
+        E_PMLState.ePMLState_Aborting:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateAbortingEnter];
+        E_PMLState.ePMLState_Aborted:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateAbortedEnter];
+        E_PMLState.ePMLState_Clearing:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateClearingEnter];
+        E_PMLState.ePMLState_Undefined:
+            pTempAlarm REF= Alarms[E_PackMLBase_Alarms.StateUndefinedEnter];
+    END_CASE
+
+    //If the FB is set to log all changes, log the change, otherwise check the severity of the alarm and log it if it exceeds 'info' severity
+    IF LogAllChanges OR (pTempAlarm.eSeverity <> TcEventSeverity.Info AND pTempAlarm.eSeverity <> TcEventSeverity.Verbose) THEN
+        pTempAlarm.Raise(0);
+    END_IF
+
+    CASE LastState OF //Clear the previous state's event (Events will remain 'Raised' as long as the module remains in that state)
+        E_PMLState.ePMLState_Starting:
+            Alarms[E_PackMLBase_Alarms.StateStartingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Execute:
+            Alarms[E_PackMLBase_Alarms.StateExecuteEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Completing:
+            Alarms[E_PackMLBase_Alarms.StateCompletingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Complete:
+            Alarms[E_PackMLBase_Alarms.StateCompleteEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Resetting:
+            Alarms[E_PackMLBase_Alarms.StateResettingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Idle:
+            Alarms[E_PackMLBase_Alarms.StateIdleEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Holding:
+            Alarms[E_PackMLBase_Alarms.StateHoldingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Held:
+            Alarms[E_PackMLBase_Alarms.StateHeldEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Unholding:
+            Alarms[E_PackMLBase_Alarms.StateUnholdingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Suspending:
+            Alarms[E_PackMLBase_Alarms.StateSuspendingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Suspended:
+            Alarms[E_PackMLBase_Alarms.StateSuspendedEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Unsuspending:
+            Alarms[E_PackMLBase_Alarms.StateUnsuspendingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Stopping:
+            Alarms[E_PackMLBase_Alarms.StateStoppingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Stopped:
+            Alarms[E_PackMLBase_Alarms.StateStoppedEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Aborting:
+            Alarms[E_PackMLBase_Alarms.StateAbortingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Aborted:
+            Alarms[E_PackMLBase_Alarms.StateAbortedEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Clearing:
+            Alarms[E_PackMLBase_Alarms.StateClearingEnter].Clear(0, 0);
+        E_PMLState.ePMLState_Undefined:
+            Alarms[E_PackMLBase_Alarms.StateUndefinedEnter].Clear(0, 0);
+    END_CASE
+
+    LastState := State; //Store previous state
+END_IF
+
+(*! <description> The current state is compared against the mode during the last call.  The corresponding events are raised/cleared as the state is changed.
+<b>This FB is called from FB_PMLModuleBase.StateControl.  Further calls are not necessary.</b></description>*)]]></ST>
+    </Implementation>
+    <LineIds Name="FB_PackML_StateLogger">
+      <LineId Id="1747" Count="87" />
+      <LineId Id="832" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

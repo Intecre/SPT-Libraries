@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_PackML_SubUnitInfoExt" Id="{15fde4cd-6d81-0a72-28c4-7c0f52be336a}">
+    <Declaration><![CDATA[TYPE ST_PackML_SubUnitInfoExt EXTENDS ST_PMLSubUnitInfo : //Extended Struct of ST_PMLSubUnitInfo
+    STRUCT
+        ModuleID        : DINT;   //Machine ID for messaging and Identification
+        ModuleName      : STRING; //Human readable machine name for messaging
+        UnitModeCurrent : E_PMLProtectedUnitMode;
+        ActiveAlarm     : BOOL;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

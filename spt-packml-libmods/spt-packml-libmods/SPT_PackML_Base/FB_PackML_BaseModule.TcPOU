@@ -1,0 +1,2080 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_PackML_BaseModule" Id="{b51128fe-fac6-441f-bd13-bfcb90049779}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT FB_PackML_BaseModule EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_BaseModule, I_PackML_Control
+    //I_PMLControl
+VAR
+    _CurrentMode    : E_PMLUnitMode; //Current UnitMode of the module	
+    _CommandedMode  : E_PMLUnitMode; //Current Commanded UnitMode of the module
+    _CurrentState   : Tc3_PackML_V2.E_PMLState;
+    _CommandedState : Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+
+//I_PMLModuleBase
+VAR
+    _CurrentAlarmSeverity           : TcEventSeverity;
+    _LogModeChanges                 : BOOL := TRUE;  //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
+    _LogStateChanges                : BOOL := FALSE; //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
+    _Name                           : STRING;        //Human-readable module name for user-side messaging
+    _ParentFaultResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse
+        := [E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.Abort_ImmediateError, E_AlarmResponse.Abort_ImmediateError];
+END_VAR
+
+VAR
+    ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
+    StateMachine                      : PML_StateMachine;           //Manages PackML state transitions
+    CustomModes                       : PML_UnitModeConfig;         //Used to define custom machine modes if desired
+    PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
+    PMLModeLogger                     : FB_PackML_ModeLogger;       //Logs PackML Mode changes	
+    PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
+    PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine
+    LastModeCommand                   : E_PMLUnitMode;              //Previous received PackML mode command
+    LastMode                          : DINT;                       //Last PackML mode 	
+    LastState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
+    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
+    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
+    PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
+    BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
+    ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
+    PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
+    NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
+    ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
+    NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
+    ModeNames                         : ARRAY[0..31] OF STRING;
+    ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
+    ReachedInitialDefaultStateAndMode : BOOL;
+    ModeChangeRequested               : BOOL;
+    SequenceState                     : UDINT;
+    DescendantSequenceState           : UDINT;
+    HMICommand_RT                     : R_TRIG;
+    HMICommandActive_Base             : BOOL;
+    HMICommandActive_Descendant       : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//*********************************************************
+
+// !!!!! Code implementation only in CyclicLogic() method !!!!! 
+
+//*********************************************************    ]]></ST>
+    </Implementation>
+    <Folder Name="I_CyclicFB" Id="{afbbf5fe-304f-4564-9f5e-72034c6c2c67}" />
+    <Folder Name="I_PackML_BaseModule" Id="{7853c128-7150-499f-afd2-1cc47b02c7fb}">
+      <Folder Name="Properties" Id="{3f6fcce0-20d1-42fa-8d51-cf636ece4a9f}" />
+    </Folder>
+    <Folder Name="I_PackML_Control" Id="{11bc12ed-e33e-4773-8a20-73ea96e7c23a}">
+      <Folder Name="Methods" Id="{1412f451-fc56-4b88-a731-e769c6f6f0f5}" />
+      <Folder Name="Properties" Id="{4615a86e-0aaf-41af-89cd-ed6df7b94729}" />
+    </Folder>
+    <Folder Name="Methods" Id="{2374c43a-8b69-4250-ac37-650855e4142c}">
+      <Folder Name="AlarmHandling" Id="{ad4fcf9c-0649-4b81-962f-40ddfe173e03}" />
+      <Folder Name="Event Handling" Id="{5953a860-01a8-43f2-921b-115c5f0422d5}" />
+      <Folder Name="HMI" Id="{0a574e76-6dab-426e-9c46-435414520792}" />
+      <Folder Name="Monitoring" Id="{0990b033-a812-4275-8ada-e06b2ca591b8}" />
+      <Folder Name="Primary States" Id="{fdb26b20-d68a-43a5-9170-8c0cae9f966b}" />
+      <Folder Name="Private Methods" Id="{5df90494-5be7-44b8-96e2-6c52ebeb6f77}" />
+      <Folder Name="Transition States" Id="{2813ee04-f5e3-4130-bb47-4373fa697726}" />
+    </Folder>
+    <Method Name="Aborted" Id="{f4c80f4a-1f00-40f6-a791-318ec4b3278d}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Aborted</b> state
+METHOD PROTECTED Aborted
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Aborting </td>
+		<td> State Complete <i>(Aborting)</i></td> 
+		<td> Clear Command </td>
+		<td> Clearing </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AbortImmediate" Id="{3e55effc-a31f-4c38-a8a8-79f762ad7483}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Aborting</b> state
+METHOD PROTECTED AbortImmediate
+
+//! @description No error is thrown by this fault reaction.
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Abort);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AbortImmediateError" Id="{0f7de373-7b18-4301-aa32-84fc879a215e}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Aborting</b> state
+METHOD PROTECTED AbortImmediateError
+VAR_INPUT
+    Name     : STRING; //! The name of the faulting submodule or component
+    IsModule : BOOL;   //! If TRUE a SubModuleError is thrown.  If FALSE a ComponentError is thrown. 
+END_VAR
+
+//! @description This fault reaction throws an accompanying error
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF IsModule THEN
+    IF NOT BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
+        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.SubModuleError],
+                                         _Name,
+                                         '',
+                                         '');
+    END_IF
+ELSE
+    IF NOT BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
+        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.ComponentError],
+                                         _Name,
+                                         '',
+                                         '');
+    END_IF
+END_IF
+
+THIS^.ChangeState(E_PMLCommand.ePMLCommand_Abort);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Aborting" Id="{ff7d5dfb-dd97-4700-92b4-3318a8a33dc3}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Aborting</b> state
+METHOD PROTECTED Aborting
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description> <b>Note:</b> The <i>Abort</i> command should be associated with the fault handing routine of a module. It should not be directly commanded from any user inteface. 
+
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> <b>ANY</b> </td>
+		<td> Abort Command </td> 
+		<td> State Complete </td>
+		<td> Aborted </td> 
+	</tr>
+</table>
+
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send abort command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Abort;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Aborted);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AllowHMIControl" Id="{8101f876-b4c9-49ea-be68-caa3d7179c06}" FolderPath="Methods\HMI\">
+      <Declaration><![CDATA[//! @summary Sets permissive bit to allow HMI control of module and component functions
+METHOD PROTECTED FINAL AllowHMIControl
+VAR_INPUT
+    ThisModuleOnly : BOOL; //! If TRUE, only the PackML module itself is controllable. If FALSE, all components become controllable as well
+END_VAR
+
+VAR
+    i : UDINT;
+END_VAR
+
+//! @description This method is called as required by the <c>HMIPermissions()</c> method]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[PackMLBaseModule_HMI.Status.HMIControlAvailable := TRUE;
+IF ThisModuleOnly THEN
+    FOR i := 1 TO NumberOfComponents DO
+        ipComponents[i].BlockHMIControl();
+    END_FOR
+ELSE
+    FOR i := 1 TO NumberOfComponents DO
+        ipComponents[i].AllowHMIControl();
+    END_FOR
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="BlockHMIControl" Id="{6644c279-6fd0-47e2-a8e9-51778ec50ccd}" FolderPath="Methods\HMI\">
+      <Declaration><![CDATA[//! @summary Clears permissive bit to disallow HMI control of module and component functions
+METHOD PROTECTED FINAL BlockHMIControl
+VAR
+    i : UDINT;
+END_VAR
+
+//! @description This method is called as required by the <c>HMIPermissions()</c> method]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[PackMLBaseModule_HMI.Status.HMIControlAvailable := FALSE;
+FOR i := 1 TO NumberOfComponents DO
+    ipComponents[i].BlockHMIControl();
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ChangeMode" Id="{c864a7d9-0c25-46cb-bf4e-9fd3b8b39657}" FolderPath="I_PackML_Control\Methods\">
+      <Declaration><![CDATA[METHOD ChangeMode
+VAR_INPUT
+    Mode : E_PMLUnitMode;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Mode <> _CommandedMode THEN
+    ModeCommand := Mode;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ChangeState" Id="{57d1b99b-67e4-43ab-b19f-d0ba246e5623}" FolderPath="I_PackML_Control\Methods\">
+      <Declaration><![CDATA[METHOD ChangeState
+VAR_INPUT
+    State : E_PMLCommand;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF State <> _CommandedState THEN
+    StateCommand := State;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Clearing" Id="{6112c2e2-beb3-4b32-8c5f-7d289837fbce}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Clearing</b> state
+METHOD PROTECTED Clearing
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description> <b>Note:</b> The <i>Clear</i> command can also be thought of as a <i>fault reset</i> depite the ambiguity in the naming of the <i>Reset</i> state. 
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Aborted </td>
+		<td> Clear Command </td> 
+		<td> State Complete </td>
+		<td> Stopped </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send clear command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Clear;
+END_FOR
+
+IF BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
+    BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, 0);
+END_IF;
+
+IF BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
+    BaseAlarms[E_BaseAlarms.SubModuleError].Clear(0, 0);
+END_IF;
+
+FOR i := 1 TO NumberOfComponents DO
+    IF ipComponents[i].Error THEN
+        ipComponents[i].Reset();
+    END_IF
+END_FOR
+
+FOR i := 1 TO NumberOfComponents DO
+    SubModulesReady := SubModulesReady AND NOT ipComponents[i].Error;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Stopped);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Complete" Id="{be38325c-ec06-4d18-82f0-c5961644db83}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Complete</b> state
+METHOD PROTECTED Complete
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Completing </td>
+		<td> State Complete <i>(Completing)</i></td> 
+		<td> Reset Command </td>
+		<td> Resetting </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Completing" Id="{25f6dadc-f2af-4e8f-bc90-78652fde6245}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Completing</b> state
+METHOD PROTECTED Completing
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b></b><table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Execute </td>
+		<td> State Complete <i>(Execute)</i> </td> 
+		<td> State Complete </td>
+		<td> Completed </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send complete command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Complete;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Complete);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ComponentMonitor" Id="{8175b5fe-f316-43ef-bef8-f03aa4ce0b3d}" FolderPath="Methods\Monitoring\">
+      <Declaration><![CDATA[//! @summary This method monitors <b>components</b> within this PackML module and initiates fault responses as required
+METHOD PROTECTED ComponentMonitor : BOOL
+VAR
+    AlarmResponses : ARRAY[0..4] OF E_AlarmResponse; //Temporary response array
+    i              : UDINT;
+END_VAR
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO NumberOfComponents DO
+    IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
+       _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
+        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
+        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
+            E_AlarmResponse.Abort_ImmediateError:
+                AbortImmediateError(ipComponents[i].Name, FALSE);
+
+            E_AlarmResponse.Abort_Immediate:
+                AbortImmediate();
+
+            E_AlarmResponse.Stop_Immediate:
+                StopImmediate();
+
+            E_AlarmResponse.Stop_Controlled:
+                StopControlled();
+
+            E_AlarmResponse.Hold_Immediate:
+                HoldImmediate();
+
+            E_AlarmResponse.Suspend_Immediate:
+                SuspendImmediate();
+
+            E_AlarmResponse.Suspend_Controlled:
+                SuspendControlled();
+
+            E_AlarmResponse.NoResponse:
+                ;
+        END_CASE
+    ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState.ePMLState_Stopping THEN
+        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
+        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
+            E_AlarmResponse.Abort_ImmediateError:
+                AbortImmediateError(ipComponents[i].Name, FALSE);
+
+            E_AlarmResponse.Abort_Immediate:
+                AbortImmediate();
+
+            E_AlarmResponse.NoResponse:
+                ;
+        END_CASE
+    END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CreateEvents" Id="{6bbb8cab-407d-45ac-8da1-6eb5ce7199bf}" FolderPath="Methods\">
+      <Declaration><![CDATA[//! @summary Initializes event function blocks using this module's name
+{attribute 'call_after_online_change_slot' := '<slot>'}
+METHOD PROTECTED CreateEvents
+
+//! @description This method is called by <c>Initialize()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_CreateAllEventsInClass(Alarms     := PackMLAlarms,
+                         ClassSize  := SIZEOF(TC_EVENTS.PackMLBase_Alarms),
+                         pInitEvent := ADR(TC_EVENTS.PackMLBase_Alarms.InitReferenceEvent),
+                         Prefix     := _Name);
+
+F_CreateAllEventsInClass(Alarms     := BaseAlarms,
+                         ClassSize  := SIZEOF(TC_EVENTS.BaseAlarms),
+                         pInitEvent := ADR(TC_EVENTS.BaseAlarms.InitReferenceEvent),
+                         Prefix     := _Name);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="CurrentAlarmSeverity" Id="{60fa6b26-f46a-4896-b539-afba05ef03bc}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[//! @summary Returns the highest severity of any event(s) currently raised 
+PROPERTY CurrentAlarmSeverity : TcEventSeverity]]></Declaration>
+      <Get Name="Get" Id="{99112b04-4f01-4857-b0c7-d9fee82ac72b}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentAlarmSeverity := _CurrentAlarmSeverity;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentMode" Id="{bc2b045c-1313-4030-8d9b-1e43964fed78}" FolderPath="I_PackML_Control\Properties\">
+      <Declaration><![CDATA[//! @summary Returns the current PackML mode of this module
+PROPERTY CurrentMode : E_PMLUnitMode]]></Declaration>
+      <Get Name="Get" Id="{1dd33fe5-9737-46ae-8efa-b652739a2309}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentMode := _CurrentMode;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentState" Id="{d1cab4fd-2e03-4869-8dbf-e461f1addf3b}" FolderPath="I_PackML_Control\Properties\">
+      <Declaration><![CDATA[//! @summary Returns current PackML state of this module
+PROPERTY CurrentState : Tc3_PackML_V2.E_PMLState]]></Declaration>
+      <Get Name="Get" Id="{650910fa-121e-4a38-96f8-196357ee8ede}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentState := _CurrentState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{71af2bab-1028-44ec-8e3b-3536f0513c8e}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[//! @summary This method serves as the entry point for all underlying FB logic
+
+//! @description This method should be called cyclically by descendant function blocks by invoking <c>SUPER^.CyclicLogic()</c>.  Alternatively, the contents of this method could be reimplemented entirely in which case a call to this method would not be necessary.
+METHOD PUBLIC CyclicLogic
+VAR
+    i : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*********************************************************
+
+//If you are about to write actual machine implementation code, note that implementation code should exist within an implementation machine module block that extends this machine module base!
+
+//*********************************************************
+
+// Descendents of this FB which override this methods should
+
+// use SUPER^.Initialize()
+IF NOT _InitComplete THEN
+    _InitComplete := Initialize();
+    RETURN;
+END_IF
+
+// Inhibit mode & state errors until startup is complete
+IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLState_Aborted AND _CurrentMode = Parameters_PackML_Base.UNIT_MODE_DEFAULT THEN
+    ReachedInitialDefaultStateAndMode := TRUE;
+END_IF
+
+// Call this module's subunits, if any are defined
+FOR i := 1 TO NumberOfSubModules DO
+    IF ipSubModules[i] <> 0 THEN
+        ipSubModules[i].CyclicLogic();
+        PMLSubModuleInfo[i].eState := ipSubModules[i].CurrentState; //Reflect the state of the subunits to the state machine of the module		
+    END_IF
+END_FOR
+
+FOR i := 1 TO NumberOfComponents DO
+    IF ipComponents[i] <> 0 THEN
+        ipComponents[i].CyclicLogic();
+    END_IF
+END_FOR
+
+//Handle HMI communications--this must happen before state control!!
+HMICommunication();
+
+// Mode control loop of the module
+ModeControl();
+
+// State control loop of the module
+StateControl();
+
+//VISUCommunication();
+
+//ExternalControl();
+SubModuleMonitor();
+ComponentMonitor();
+HMIPermissions();
+_CurrentAlarmSeverity := TcEventSeverity.Verbose;
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := PackMLAlarms, CurrentSeverity := _CurrentAlarmSeverity);
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := BaseAlarms, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Execute" Id="{26a49972-0a12-441d-92db-f9f223493eea}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Execute</b> state
+METHOD PROTECTED Execute
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Starting<b>-or-</b>Unholding <b>-or-</b>Unsuspending</td>
+		<td> State Complete<i>(Starting<b>-or-</b>Unholding<b>-or-</b>Unsuspending)</i></td> 
+		<td> State Complete<b>-or-</b>Hold Command<b>-or-</b>Suspend Command</td>
+		<td> Completing<b>-or-</b>Holding<b>-or-</b>Suspending</td>
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Held" Id="{70dc6f04-1202-4345-ae9f-cc19428dcb1a}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Held</b> state
+METHOD PROTECTED Held
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Holding </td>
+		<td> State Complete <i>(Holding)</i></td> 
+		<td> Unhold Command </td>
+		<td> Unholding </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HMICommunication" Id="{0f3b5e33-30dd-42a6-9468-c84dc53cce4a}" FolderPath="Methods\HMI\">
+      <Declaration><![CDATA[//! @summary Provides interlocks for HMI control and updates HMI status information for this module
+METHOD PROTECTED HMICommunication
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Extend this method in extended FBs to communicate specific implementation data
+
+//Process HMI requests
+HMICommand_RT(CLK := (PackMLBaseModule_HMI.Status.HMIControlAvailable AND NOT HMICommandActive_Descendant) AND
+                     (PackMLBaseModule_HMI.Command.ActivateModeLog XOR PackMLBaseModule_HMI.Command.DeactivatModeLog XOR PackMLBaseModule_HMI.Command.ActivateStateLog XOR
+                     PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> _CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState));
+
+//Desendant components should observe this to interlock HMI commands
+HMICommandActive_Base := PackMLBaseModule_HMI.Status.HMIControlAvailable AND
+                         (PackMLBaseModule_HMI.Command.ActivateModeLog OR PackMLBaseModule_HMI.Command.DeactivatModeLog OR PackMLBaseModule_HMI.Command.ActivateStateLog OR
+                         PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> _CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState);
+
+IF HMICommand_RT.Q THEN
+    IF PackMLBaseModule_HMI.Command.ActivateModeLog THEN
+        _LogModeChanges := TRUE;
+    END_IF
+
+    IF PackMLBaseModule_HMI.Command.DeactivatModeLog THEN
+        _LogModeChanges := FALSE;
+    END_IF
+
+    IF PackMLBaseModule_HMI.Command.ActivateStateLog THEN
+        _LogStateChanges := TRUE;
+    END_IF
+
+    IF PackMLBaseModule_HMI.Command.DeactivateStateLog THEN
+        _LogStateChanges := FALSE;
+    END_IF
+
+    IF PackMLBaseModule_HMI.Command.Mode <> _CommandedMode THEN
+        ModeCommand := PackMLBaseModule_HMI.Command.Mode;
+    END_IF
+
+    IF PackMLBaseModule_HMI.Command.State <> _CommandedState THEN
+        StateCommand := PackMLBaseModule_HMI.Command.State;
+    END_IF
+END_IF
+
+PackMLBaseModule_HMI.Config.Name            := _Name;
+PackMLBaseModule_HMI.Config.LogModeChanges  := _LogModeChanges;
+PackMLBaseModule_HMI.Config.LogStateChanges := _LogStateChanges;
+PackMLBaseModule_HMI.Config.ModeNames       := ModeNames;
+PackMLBaseModule_HMI.Status.Mode            := _CurrentMode;
+PackMLBaseModule_HMI.Status.State           := _CurrentState;
+PackMLBaseModule_HMI.Status.Busy            := _Busy;
+PackMLBaseModule_HMI.Status.Error           := _Error;
+PackMLBaseModule_HMI.Status.ErrorID         := _ErrorID;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HMIPermissions" Id="{5b677aa7-4ac1-443a-a993-772808975d8a}" FolderPath="Methods\HMI\">
+      <Declaration><![CDATA[//! @summary Automatically enables and disables HMI control based on the PackML mode
+METHOD PROTECTED HMIPermissions
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//General Mode Based Monitoring and handling of HMI control
+CASE _CurrentMode OF
+    E_PMLUnitMode.ePMLUnitMode_Production:
+        CASE _CurrentState OF
+            E_PMLState.ePMLState_Stopped:
+                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+            E_PMLState.ePMLState_Idle:
+                BlockHMIControl();
+            E_PMLState.ePMLState_Suspended:
+                BlockHMIControl();
+            E_PMLState.ePMLState_Execute:
+                BlockHMIControl();
+            E_PMLState.ePMLState_Aborted:
+                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+            E_PMLState.ePMLState_Held:
+                AllowHMIControl(ThisModuleOnly := TRUE); //Allow control for recovery
+            E_PMLState.ePMLState_Complete:
+                BlockHMIControl();
+        END_CASE
+    E_PMLUnitMode.ePMLUnitMode_Manual:
+        AllowHMIControl(ThisModuleOnly := FALSE);
+    E_PMLUnitMode.ePMLUnitMode_Maintenance:
+        AllowHMIControl(ThisModuleOnly := FALSE);
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HoldControlled" Id="{34a57a82-a45f-4e9f-bfac-d3a59430bbc7}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Holding</b> state at the next available opportunity
+METHOD PROTECTED HoldControlled
+
+(*! <description> No error is thrown by this fault reaction.
+	<b> TODO: Needs implementation </b> </description>*)
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Hold);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HoldImmediate" Id="{4f135bf7-6681-48b2-8727-b043804f866e}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Holding</b> state immediately
+METHOD PROTECTED HoldImmediate
+
+(*! <description> No error is thrown by this fault reaction.
+	<b> TODO: Needs implementation </b> </description>*)
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Hold);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Holding" Id="{4c4a9600-833f-4e2c-8c49-79d528d4d25d}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Holding</b> state
+METHOD PROTECTED Holding
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b>Note:</b> The <i>Hold</i> command is intended to be given by an operator. It is meant to be distinct from a <i>Suspend</i> in that upstream/downstream jams, etc. should be handled automatically using <i>Suspend</i>.  Both <i>Hold</i>and<i>Suspend</i> result in a <i>paused</i> state which should allow resumption of the <b>Execute</b> state. 
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Execute </td>
+		<td> Hold Command </td> 
+		<td> State Complete </td>
+		<td> Held </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send hold command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Hold;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Held);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Idle" Id="{b9ab53ad-9d66-4112-a551-29e98d9dd437}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Idle</b> state
+METHOD PROTECTED Idle
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Resetting </td>
+		<td> State Complete <i>(Resetting)</i></td> 
+		<td> Start Command </td>
+		<td> Starting </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{ce22347d-434e-4e9b-a860-79a350477497}" FolderPath="Methods\">
+      <Declaration><![CDATA[//! @summary Basic module initialization logic
+METHOD PROTECTED Initialize : BOOL;
+VAR
+    i                        : UDINT;
+    varInfo                  : __SYSTEM.VAR_INFO;
+    AllSubUnitsInitialized   : BOOL := TRUE;
+    AllComponentsInitialized : BOOL := TRUE;
+END_VAR
+
+//! @description This method is called by <c>CyclicLogic()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//This method may get called several times while waiting for subunits/components to init
+
+//so it makes sense to break it up into a state machine
+CASE SequenceState OF
+    0:
+        CreateEvents();
+        SequenceState := SequenceState + 10;
+    10:
+        // Figure out how many Submodules were instantiated - they should be from 1 to X and not skip any indices.
+        NumberOfSubModules := 0;
+        FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+            IF ipSubModules[i] <> 0 THEN
+                NumberOfSubModules         := NumberOfSubModules + 1;
+                PMLSubModuleInfo[i].Active := TRUE; // Follows Main State Machine
+            END_IF
+        END_FOR
+
+        SequenceState := SequenceState + 10;
+    20:
+        NumberOfComponents := 0;
+        FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+            IF ipComponents[i] <> 0 THEN
+                NumberOfComponents   := NumberOfComponents + 1;
+                ipComponents[i].Name := CONCAT(CONCAT(_Name, ' '), ipComponents[i].Name); //Add the name of the module as a prefix to the name given in the declaration initialization
+            END_IF
+        END_FOR
+
+        SequenceState := SequenceState + 10;
+    30:
+        // Initialize subunit overview used by state machine
+        PMLSubModuleInfoRef.ArraySize    := SIZEOF(PMLSubModuleInfo);
+        PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
+        PMLSubModuleInfoRef.pArray       := ADR(PMLSubModuleInfo);
+        SequenceState                    := SequenceState + 10;
+    40:
+        // Initialization for this module is not complete until all subunits/components are finished
+
+        // with their own Initialize().  This is called from CyclicLogic() so call from here until they are initialized.
+        FOR i := 1 TO NumberOfSubModules DO
+            IF ipSubModules[i] <> 0 AND_THEN NOT ipSubModules[i].InitComplete THEN
+                AllSubUnitsInitialized := FALSE;
+                ipSubModules[i].CyclicLogic();
+            END_IF
+        END_FOR
+
+        FOR i := 1 TO NumberOfComponents DO
+            IF ipComponents[i] <> 0 AND_THEN NOT ipComponents[i].InitComplete THEN
+                AllComponentsInitialized := FALSE;
+                ipComponents[i].CyclicLogic();
+            END_IF
+        END_FOR
+
+        IF AllSubUnitsInitialized AND AllComponentsInitialized THEN
+            SequenceState := 0;
+            Initialize    := TRUE;
+        END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="LogModeChanges" Id="{021783ae-5efd-4506-a012-4d08fd7e83f7}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[//! @summary Enable/Disable logging of mode changes
+PROPERTY LogModeChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{5e483759-154e-4761-b62a-a7c816d2ebfc}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LogModeChanges := _LogModeChanges;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{f46d3f1b-f363-4efb-8060-ae4e55813e7e}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_LogModeChanges := LogModeChanges;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LogStateChanges" Id="{66903c14-00c7-433b-8055-be34247fabbb}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[//! @summary Enable/Disable logging of state changes
+PROPERTY LogStateChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{e672ec04-4b20-4c25-8d8d-9f55944d549a}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LogStateChanges := _LogStateChanges;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5c42da14-b508-4ff1-b2f1-616dcf8c8ef8}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_LogStateChanges := LogStateChanges;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ModeCommand" Id="{581c69c3-be81-4fff-9cf6-24ab11c559c3}" FolderPath="I_PackML_Control\Properties\">
+      <Declaration><![CDATA[//! @summary Sets the requested PackML Mode
+PROPERTY ModeCommand : DINT]]></Declaration>
+      <Get Name="Get" Id="{057a2dee-7a71-41e3-8f93-8981dc73f6dc}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ModeCommand := _CommandedMode;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{428042c2-2a29-4c07-9a8f-eebad7e0d1dc}">
+        <Declaration><![CDATA[VAR
+	i : UDINT;
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF ModeCommand <> _CommandedMode THEN
+    _CommandedMode                    := ModeCommand;
+    PackMLBaseModule_HMI.Command.Mode := ModeCommand;
+	
+    //Notify external controllers that state has changed	
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+        IF ipExternalControllers[i] <> 0 THEN
+            ipExternalControllers[i].ModeChanged(_CommandedMode);
+        END_IF
+    END_FOR
+
+    //ModeChangeRequested := TRUE;
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="ModeControl" Id="{8251b72f-7e35-4652-98c5-3fb000f5552b}" FolderPath="Methods\Private Methods\">
+      <Declaration><![CDATA[//! @summary Handles mode change requests for this module and all submodules
+METHOD PRIVATE FINAL ModeControl
+VAR
+    i : UDINT;
+END_VAR
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//On startup, Mode is invalid, set it to production
+IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+    ModeChangeRequested := TRUE;
+    _CommandedMode      := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
+
+    //Notify external controllers that state has changed	
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+        IF ipExternalControllers[i] <> 0 THEN
+            ipExternalControllers[i].ModeChanged(_CommandedMode);
+        END_IF
+    END_FOR
+
+    LastModeCommand := _CommandedMode;
+
+    //If mode is valid and the command has changed, attempt to change modes
+ELSIF _CommandedMode <> LastModeCommand THEN
+    ModeChangeRequested               := TRUE;
+    PackMLBaseModule_HMI.Command.Mode := _CommandedMode;
+
+    //Notify external controllers that state has changed	
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+        IF ipExternalControllers[i] <> 0 THEN
+            ipExternalControllers[i].ModeChanged(_CommandedMode);
+        END_IF
+    END_FOR
+
+    LastModeCommand := _CommandedMode;
+END_IF
+
+IF ModeChangeRequested THEN
+    //Handles mode changes based on ModeCommand and the state transition rules defined in the pre-defined protected modes or custom modes
+    ModeManager(bExecute     := TRUE,
+                eModeCommand := _CommandedMode,
+                eState       := _CurrentState,
+                eModeStatus  => _CurrentMode);
+
+    IF ModeManager.bDone THEN
+        IF PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].bRaised THEN
+            PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].Clear(0, 0);
+        END_IF
+
+        //If PackML mode has changed
+        IF ModeManager.eModeStatus <> LastMode THEN
+            LastMode                := ModeManager.eModeStatus;
+            SequenceState           := 0;
+            DescendantSequenceState := 0;
+
+            //If state change logging is not suppressed
+            IF _LogModeChanges THEN
+                PMLModeLogger(Alarms := PackMLAlarms, ModulePrefix := _Name, Mode := ModeManager.eModeStatus);
+            END_IF
+
+            // Change SubModules
+            FOR i := 1 TO NumberOfSubModules DO
+                ipSubModules[i].ModeCommand := ModeManager.eModeStatus; //Call the SetMode loop of the subunits 
+            END_FOR
+        END_IF
+
+        // Reset mode control command
+        ModeManager(bExecute := FALSE);
+        ModeChangeRequested := FALSE;
+    ELSIF ModeManager.bError THEN
+        IF ReachedInitialDefaultStateAndMode THEN
+            IF NOT PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].bRaised THEN
+                PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].Raise(0);
+            END_IF
+        END_IF
+
+        // Reset mode control command
+        ModeManager(bExecute := FALSE);
+        ModeChangeRequested := FALSE;
+    END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{eaa28a82-9f48-4672-adf0-02d762f98fa4}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[//! @summary Get/Set the name of this module
+PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{707fcee6-e5c4-4696-bdaf-64e6746ac511}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := _Name;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{29b514cf-0e85-455d-8f6d-dab417f76dd9}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Name := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{52bb93cb-0d1e-408e-9ae3-7e72a40e31ae}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[//! @summary TODO: does this do anything?
+PROPERTY ParentResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse]]></Declaration>
+      <Get Name="Get" Id="{af09bce5-c0c6-4b5d-8736-3bc955f63074}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ParentResponseDefinitions[TcEventSeverity.Verbose]  := _ParentFaultResponseDefinitions[TcEventSeverity.Verbose];
+ParentResponseDefinitions[TcEventSeverity.Info]     := _ParentFaultResponseDefinitions[TcEventSeverity.Info];
+ParentResponseDefinitions[TcEventSeverity.Warning]  := _ParentFaultResponseDefinitions[TcEventSeverity.Warning];
+ParentResponseDefinitions[TcEventSeverity.Error]    := _ParentFaultResponseDefinitions[TcEventSeverity.Error];
+ParentResponseDefinitions[TcEventSeverity.Critical] := _ParentFaultResponseDefinitions[TcEventSeverity.Critical];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{1563a3c2-6b30-418c-b3a8-c6d3cce9d9ec}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_ParentFaultResponseDefinitions[TcEventSeverity.Verbose]  := ParentResponseDefinitions[TcEventSeverity.Verbose];
+_ParentFaultResponseDefinitions[TcEventSeverity.Info]     := ParentResponseDefinitions[TcEventSeverity.Info];
+_ParentFaultResponseDefinitions[TcEventSeverity.Warning]  := ParentResponseDefinitions[TcEventSeverity.Warning];
+_ParentFaultResponseDefinitions[TcEventSeverity.Error]    := ParentResponseDefinitions[TcEventSeverity.Error];
+_ParentFaultResponseDefinitions[TcEventSeverity.Critical] := ParentResponseDefinitions[TcEventSeverity.Critical];]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="RaiseAlarmWithStrings" Id="{2848be4e-dd0c-009b-1d4a-6f04ab192439}" FolderPath="Methods\Event Handling\">
+      <Declaration><![CDATA[//! @summary Raises an alarm and passes string arguments as parameters for extra fault context/info
+METHOD PROTECTED RaiseAlarmWithStrings
+VAR_IN_OUT
+    Alarm : FB_TcAlarm; //! Alarm to be raised
+END_VAR
+
+VAR_INPUT
+    String_1 : STRING; //! First string parameter (The Name of this component will be applied first automatically)
+    String_2 : STRING; //! Second string parameter
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm    := Alarm,
+                                 String_1 := Name,
+                                 String_2 := String_1,
+                                 String_3 := String_2);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RegisterExternalController" Id="{bcf39f01-e1b6-47be-a5d8-eb8a79a2bf2f}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD FINAL RegisterExternalController : BOOL
+VAR_INPUT
+    Controller : I_PackML_ExternalController;
+END_VAR
+
+VAR
+    i : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+    IF ipExternalControllers[i] = 0 THEN
+        ipExternalControllers[i]   := Controller;
+        Controller.Control         := THIS^;
+        RegisterExternalController := TRUE;
+        RETURN;
+    END_IF
+END_FOR
+
+//If you get this far you have already registered the maximum number of controllers
+RegisterExternalController := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Resetting" Id="{3807e2e0-6258-4c91-9f18-5b08f4f71847}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Resetting</b> state
+METHOD PROTECTED Resetting
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description> <b>Note:</b> The <i>Reset</i> command can also be thought of as an <i>enable</i> depite the ambiguity in the naming of the <i>Clearing</i> state.
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Stopped<b>-or-</b>Completed </td>
+		<td> Reset Command </td> 
+		<td> State Complete </td>
+		<td> Idle </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send clear/reset command to all sub modules
+
+//As long as this module is in the "Resetting" state, it will attempt to get all modules to Idle by sending abort, clear, and reset commands as appropriate to its children until they do
+FOR i := 1 TO NumberOfSubModules DO
+    IF ipSubModules[i].CurrentState = ePMLState_Stopped OR ipSubModules[i].CurrentState = ePMLState_Complete THEN
+        ipSubModules[i].StateCommand := ePMLCommand_Reset;
+    ELSIF ipSubModules[i].CurrentState = ePMLState_Aborted THEN
+        ipSubModules[i].StateCommand := ePMLCommand_Clear;
+    ELSIF ipSubModules[i].CurrentState = ePMLState_Clearing OR ipSubModules[i].CurrentState = ePMLState_Stopping OR ipSubModules[i].CurrentState = ePMLState_Resetting OR
+          ipSubModules[i].CurrentState = ePMLState_Idle THEN
+        ;
+    ELSE
+        ipSubModules[i].StateCommand := ePMLCommand_Abort;
+    END_IF
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Idle);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Starting" Id="{ebd7ebd1-f8aa-4a46-a1fd-eef86be59683}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Starting</b> state
+METHOD PROTECTED Starting
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b></b><table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Idle </td>
+		<td> Start Command </td> 
+		<td> State Complete </td>
+		<td> Execute </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send start command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Start;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="StateCommand" Id="{8c083f47-18a1-4a12-9399-91d5f5b4de80}" FolderPath="I_PackML_Control\Properties\">
+      <Declaration><![CDATA[//! @summary Sets the requested PackML state
+PROPERTY StateCommand : Tc3_PackML_V2.E_PMLCommand]]></Declaration>
+      <Get Name="Get" Id="{6739539f-1489-4f1c-95a0-c9c2d564725c}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[StateCommand := _CommandedState;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{7f7322f3-af6d-41b7-85ea-2b838219d81f}">
+        <Declaration><![CDATA[VAR
+	i : UDINT;
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[IF _CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid AND _CurrentState <> E_PMLState.ePMLState_Undefined THEN
+
+    _CommandedState                    := StateCommand;
+    PackMLBaseModule_HMI.Command.State := StateCommand;	
+	
+	    //Notify external controllers that state has changed
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+        IF ipExternalControllers[i] <> 0 THEN
+            ipExternalControllers[i].StateChanged(_CommandedState);
+        END_IF
+    END_FOR
+END_IF]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="StateComplete" Id="{0144eb9f-b619-4f85-a817-32c0b59111cc}" FolderPath="Methods\">
+      <Declaration><![CDATA[//! @summary Signals to the state manager FB when a state has completed
+METHOD PROTECTED StateComplete
+
+//! @description This method is called by any of the transition state's logic methods (<c>...<b>ing()</b></c>) as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+StateMachine.M_StateComplete();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StateControl" Id="{adcfbb77-01ec-46bc-88f1-3c657cafd028}" FolderPath="Methods\Private Methods\">
+      <Declaration><![CDATA[//! @summary Calls PackML state manager and corresponding methods according to current module state
+METHOD PRIVATE FINAL StateControl
+//! @description This method is called cyclically by <c>CyclicLogic()</c>
+VAR
+    i : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//On startup, state is invalid, set it to default
+IF _CurrentState = E_PMLState.ePMLState_Undefined AND _CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+    _CommandedState := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
+END_IF
+
+//Call PackML state machine	
+StateMachine(eMode            := _CurrentMode,
+             eCommand         := _CommandedState,
+             stSubUnitInfoRef :=,
+             stOptions        :=,
+             eState           => _CurrentState,
+             sState           =>,
+             bError           =>,
+             nErrorID         =>);
+
+//If PackML state has changed
+IF _CurrentState <> LastState THEN
+    LastState                          := _CurrentState;
+    PackMLBaseModule_HMI.Command.State := _CommandedState;
+
+    //Notify external controllers that state has changed
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+        IF ipExternalControllers[i] <> 0 THEN
+            ipExternalControllers[i].StateChanged(_CommandedState);
+        END_IF
+    END_FOR
+
+    SequenceState           := 0;
+    DescendantSequenceState := 0;
+    NoStateTasksToComplete  := TRUE;
+END_IF
+
+IF ReachedInitialDefaultStateAndMode THEN
+    //Log appropriate state changes
+    PMLStateLogger(Alarms        := PackMLAlarms,
+                   ModulePrefix  := _Name,
+                   State         := _CurrentState,
+                   LogAllChanges := _LogStateChanges);
+END_IF
+
+// Call appropriate method depending on current PackML state
+CASE _CurrentState OF
+    E_PMLState.ePMLState_Undefined:
+        Undefined();
+    E_PMLState.ePMLState_Clearing:
+        Clearing();
+    E_PMLState.ePMLState_Stopped:
+        Stopped();
+    E_PMLState.ePMLState_Starting:
+        Starting();
+    E_PMLState.ePMLState_Idle:
+        Idle();
+    E_PMLState.ePMLState_Suspended:
+        Suspended();
+    E_PMLState.ePMLState_Execute:
+        Execute();
+    E_PMLState.ePMLState_Stopping:
+        Stopping();
+    E_PMLState.ePMLState_Aborting:
+        Aborting();
+    E_PMLState.ePMLState_Aborted:
+        Aborted();
+    E_PMLState.ePMLState_Holding:
+        Holding();
+    E_PMLState.ePMLState_Held:
+        Held();
+    E_PMLState.ePMLState_Unholding:
+        Unholding();
+    E_PMLState.ePMLState_Suspending:
+        Suspending();
+    E_PMLState.ePMLState_Unsuspending:
+        Unsuspending();
+    E_PMLState.ePMLState_Resetting:
+        Resetting();
+    E_PMLState.ePMLState_Completing:
+        Completing();
+    E_PMLState.ePMLState_Complete:
+        Complete();
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StopControlled" Id="{6102a8b6-63d1-4349-9c91-23d23a740d56}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Stopping</b> state at the next available opportunity
+METHOD PROTECTED StopControlled
+
+(*! <description> No error is thrown by this fault reaction.
+	<b> TODO: Needs implementation </b> </description>*)
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Stop);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StopImmediate" Id="{4be9d206-4609-4609-8610-fb627d300ed2}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Stopping</b> state immediately
+METHOD PROTECTED StopImmediate
+
+//! @description No error is thrown by this fault reaction.
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Stop);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stopped" Id="{6cf7e365-1763-4f32-a071-b4d38aa6475f}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Stopped</b> state
+METHOD PROTECTED Stopped
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Stopping<b>-or-</b>Clearing </td>
+		<td> State Complete <i>(Stopping<b>-or-</b>Clearing)</i></td> 
+		<td> Reset Command </td>
+		<td> Resetting </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stopping" Id="{68934782-9f57-4361-9c27-3ced6fc0b6f9}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Stopping</b> state
+METHOD PROTECTED Stopping
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b></b><table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> <b>ANY<i>except</i></b>Stopped<b>-or-</b>Clearing<b>-or-</b>Aborted<b>-or-</b>Aborting</td>
+		<td> Stop Command </td> 
+		<td> State Complete </td>
+		<td> Stopped </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send stop command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Stop;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Stopped OR ipSubModules[i].CurrentState = ePMLState_Aborted);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SubModuleMonitor" Id="{fe040716-db60-48a3-be9e-6ef7732045a6}" FolderPath="Methods\Monitoring\">
+      <Declaration><![CDATA[//! @summary This method monitors <b>submodules</b> within this PackML module and initiates fault responses as required
+METHOD PROTECTED SubModuleMonitor : BOOL
+VAR
+    AlarmResponses : ARRAY[0..4] OF E_AlarmResponse; //Temporary response array	
+    i              : UDINT;
+END_VAR
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[FOR i := 1 TO NumberOfSubModules DO
+    IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
+       _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
+        AlarmResponses := ipSubModules[i].ParentResponseDefinitions;
+        CASE AlarmResponses[ipSubModules[i].CurrentAlarmSeverity] OF
+            E_AlarmResponse.Abort_ImmediateError:
+                AbortImmediateError(ipSubModules[i].Name, TRUE);
+
+            E_AlarmResponse.Abort_Immediate:
+                AbortImmediate();
+
+            E_AlarmResponse.Stop_Immediate:
+                StopImmediate();
+
+            E_AlarmResponse.Stop_Controlled:
+                StopControlled();
+
+            E_AlarmResponse.Hold_Immediate:
+                HoldImmediate();
+
+            E_AlarmResponse.Suspend_Immediate:
+                SuspendImmediate();
+
+            E_AlarmResponse.Suspend_Controlled:
+                SuspendControlled();
+
+            E_AlarmResponse.NoResponse:
+                ;
+        END_CASE
+    ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState.ePMLState_Stopping THEN
+        AlarmResponses := ipSubModules[i].ParentResponseDefinitions;
+        CASE AlarmResponses[ipSubModules[i].CurrentAlarmSeverity] OF
+            E_AlarmResponse.Abort_ImmediateError:
+                AbortImmediateError(ipSubModules[i].Name, TRUE);
+
+            E_AlarmResponse.Abort_Immediate:
+                AbortImmediate();
+
+            E_AlarmResponse.NoResponse:
+                ;
+        END_CASE
+    END_IF
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SuspendControlled" Id="{bf848d00-2f91-43a0-ba84-c03257f1e693}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Suspending</b> state at the next available opportunity
+METHOD PROTECTED SuspendControlled
+
+(*! <description> No error is thrown by this fault reaction.
+	<b> TODO: Needs implementation </b> </description>*)
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Suspend);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Suspended" Id="{15a0521e-d09e-48c7-a5fb-e09a5fcfb990}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Suspended</b> state
+METHOD PROTECTED Suspended
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.</b>
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Suspending </td>
+		<td> State Complete <i>(Suspending)</i></td> 
+		<td> Unsuspend Command </td>
+		<td> Unsuspending </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SuspendImmediate" Id="{541bc486-86e8-4c04-9fa3-e6a7ca36c7a0}" FolderPath="Methods\AlarmHandling\">
+      <Declaration><![CDATA[//! @summary Provides fault reaction logic where the module state is driven to the <b>Suspending</b> state immediately
+METHOD PROTECTED SuspendImmediate
+
+(*! <description> No error is thrown by this fault reaction.
+	<b> TODO: Needs implementation </b> </description>*)
+
+//! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ChangeState(E_PMLCommand.ePMLCommand_Suspend);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Suspending" Id="{9bd4e4e9-27b1-45dc-a32e-d60e4d2d284c}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Suspending</b> state
+METHOD PROTECTED Suspending
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b>Note:</b> The <i>Suspend</i> command is intended to be initiated by automatic detection of upstream/downstream jams, etc. It is meant to be distinct from a <i>Hold</i> in that <i>Hold</i> should be commanded by an operator.  Both <i>Hold</i>and<i>Suspend</i> result in a <i>paused</i> state which should allow resumption of the <b>Execute</b> state. 
+<table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Execute </td>
+		<td> Suspend Command </td> 
+		<td> State Complete </td>
+		<td> Suspended </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send suspend command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Suspend;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Suspended);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Undefined" Id="{e1721cba-4da3-43ce-991b-54764c6d098b}" FolderPath="Methods\Primary States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in a state which is not defined by the PackML standard
+METHOD PROTECTED Undefined
+
+(*! <description> <b>The base implementation of this method is empty. User must override this method to provide functionality.
+<i>This state should not be reached under normal circumstances.</i></b>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Unholding" Id="{d2ff920f-b2b8-44a1-a393-a69ebe202c6f}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Unholding</b> state
+METHOD PROTECTED Unholding
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b></b><table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Held </td>
+		<td> Unhold Command </td> 
+		<td> State Complete </td>
+		<td> Execute </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send unhold command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Unhold;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Unsuspending" Id="{4c1e1471-15af-4f3d-8afa-3204208e7981}" FolderPath="Methods\Transition States\">
+      <Declaration><![CDATA[//! @summary This method contains code which will execute when this PackML module is in the <b>Unsuspending</b> state
+METHOD PROTECTED Unsuspending
+VAR
+    i               : UDINT;
+    SubModulesReady : BOOL := TRUE;
+END_VAR
+
+(*! <description><b></b><table> 
+	<tr>
+		<th> Previous State </th>
+		<th> Transition In </th>
+		<th> Transition Out </th>
+		<th> Next State  </th> 
+	</tr>
+	<tr>
+		<td> Suspended </td>
+		<td> Unsuspend Command </td> 
+		<td> State Complete </td>
+		<td> Execute </td> 
+	</tr>
+</table>
+This method is called as required by <c>StateControl()</c>
+</description> 
+
+*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//*************************************************************************************************************************************************************************
+
+//If you are about to write application specific code, note that any such code should exist within the "Application" directory using a Function Block that 'EXTENDS' this base Function Block!
+
+//This particular method's functionality can be overriden in the extended block by creating a method of the same name, with desired functionality therein
+
+//If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
+
+//*************************************************************************************************************************************************************************
+
+//Perform State tasks here
+
+// Send unsuspend command to all sub modules
+FOR i := 1 TO NumberOfSubModules DO
+    ipSubModules[i].StateCommand := ePMLCommand_Unsuspend;
+END_FOR
+
+FOR i := 1 TO NumberOfSubModules DO
+    SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
+END_FOR
+
+IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
+    NoStateTasksToComplete := TRUE;
+    StateTasksComplete     := FALSE;
+    StateComplete();
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_PackML_BaseModule">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Aborted">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.AbortImmediate">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.AbortImmediateError">
+      <LineId Id="3" Count="15" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Aborting">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.AllowHMIControl">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.BlockHMIControl">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ChangeMode">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ChangeState">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Clearing">
+      <LineId Id="3" Count="42" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Complete">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Completing">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ComponentMonitor">
+      <LineId Id="45" Count="41" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.CreateEvents">
+      <LineId Id="3" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.CurrentAlarmSeverity.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.CurrentMode.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.CurrentState.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.CyclicLogic">
+      <LineId Id="3" Count="49" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Execute">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Held">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.HMICommunication">
+      <LineId Id="3" Count="45" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.HMIPermissions">
+      <LineId Id="3" Count="22" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.HoldControlled">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.HoldImmediate">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Holding">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Idle">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Initialize">
+      <LineId Id="3" Count="55" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.LogModeChanges.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.LogModeChanges.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.LogStateChanges.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.LogStateChanges.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ModeCommand.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ModeCommand.Set">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ModeControl">
+      <LineId Id="3" Count="71" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ParentResponseDefinitions.Get">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.ParentResponseDefinitions.Set">
+      <LineId Id="3" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.RaiseAlarmWithStrings">
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.RegisterExternalController">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Resetting">
+      <LineId Id="3" Count="35" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Starting">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StateCommand.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StateCommand.Set">
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StateComplete">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StateControl">
+      <LineId Id="3" Count="77" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StopControlled">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StopImmediate">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Stopped">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Stopping">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.SubModuleMonitor">
+      <LineId Id="45" Count="41" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.SuspendControlled">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Suspended">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.SuspendImmediate">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Suspending">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Undefined">
+      <LineId Id="3" Count="8" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Unholding">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.Unsuspending">
+      <LineId Id="3" Count="24" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
