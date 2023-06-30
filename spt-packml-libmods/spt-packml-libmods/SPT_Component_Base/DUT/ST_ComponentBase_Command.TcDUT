@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_ComponentBase_Command" Id="{058fa5b6-2723-4540-a4d3-42492ef0e74b}">
+    <Declaration><![CDATA[TYPE ST_ComponentBase_Command :
+    STRUCT
+        SimulatedOperation : BOOL;
+        StandardOperation  : BOOL;
+        Reset              : BOOL;
+    END_STRUCT
+END_TYPE]]></Declaration>
+  </DUT>
+</TcPlcObject>

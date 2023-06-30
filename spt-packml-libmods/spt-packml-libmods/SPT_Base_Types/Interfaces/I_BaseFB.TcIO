@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_BaseFB" Id="{6fd981cf-884e-4b66-abf9-487f47b0c4a4}">
+    <Declaration><![CDATA[INTERFACE I_BaseFB EXTENDS __SYSTEM.IQueryInterface
+]]></Declaration>
+    <Property Name="Busy" Id="{76fc170c-6eb4-4c7e-815c-66e1c0a84bb7}">
+      <Declaration><![CDATA[PROPERTY Busy : BOOL]]></Declaration>
+      <Get Name="Get" Id="{21f9484d-f357-49d2-b322-8e618b6de7c7}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{6d5e5a53-4d74-4214-bde8-c2227be1d4e0}">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{28beb5b2-db14-4af2-a054-33a5fe0bc13a}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{58ef2394-add9-41c0-b67b-16d4cc8fb7b0}">
+      <Declaration><![CDATA[PROPERTY ErrorID : UDINT;]]></Declaration>
+      <Get Name="Get" Id="{6f5a0228-27d7-4baa-a925-3ff0ae6e3c19}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

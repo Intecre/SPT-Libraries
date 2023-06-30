@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="PRG_Tests" Id="{5e432f02-8359-43cd-91aa-bd5cdb5f4243}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Tests
+VAR
+  testRunner : T_TestRunner;
+  
+  //Modes
+  modeTestSuite : T_TestSuite;
+  ProductionToMaintenaceInAbort : T_ProductionToMaintenaceInAbort(modeTestSuite);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF testRunner.ReloadTests THEN
+    testRunner.AddTestSuite(modeTestSuite);
+    testRunner.ReloadTests := FALSE;
+END_IF
+
+testRunner();]]></ST>
+    </Implementation>
+    <LineIds Name="PRG_Tests">
+      <LineId Id="19" Count="0" />
+      <LineId Id="23" Count="3" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

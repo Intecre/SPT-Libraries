@@ -2,20 +2,20 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{102e9e24-3e47-4c80-ace7-0f8c1eae0001}</ProjectGuid>
-    <Name>SPT_PackML_Base</Name>
-    <Application>{9430d9ab-e94e-4394-b202-ac589525b4a8}</Application>
-    <TypeSystem>{ec9b1617-f96e-4081-b776-f672da7b2012}</TypeSystem>
-    <Implicit_Task_Info>{aca0ca5d-3595-4864-b69e-92e2ac80ed59}</Implicit_Task_Info>
-    <Implicit_KindOfTask>{aa7bc095-c4df-437d-9bda-735d65794290}</Implicit_KindOfTask>
-    <Implicit_Jitter_Distribution>{b236eb1c-b6b5-46ce-ae13-5da3e6cdd108}</Implicit_Jitter_Distribution>
-    <LibraryReferences>{625b3260-72e7-4111-abfa-f567b4fd2cd4}</LibraryReferences>
+    <ProjectGuid>{330972fc-a7de-499a-8708-84025ce68523}</ProjectGuid>
+    <Name>SPT_Base_Types</Name>
+    <Application>{6cf95d78-4d91-406c-8dc9-3726d15258b1}</Application>
+    <TypeSystem>{c008d8b8-bb46-4653-adb0-a1e749c2786d}</TypeSystem>
+    <Implicit_Task_Info>{d674086b-5640-47dc-bd72-5fba2fff0c60}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{3baa8c12-a362-41bc-b679-9222772ff556}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{dc43bdaf-ba78-4c9a-b1eb-fc4a1d99d5d6}</Implicit_Jitter_Distribution>
+    <LibraryReferences>{e45b9aa5-db52-447c-abf4-b442c776bfd3}</LibraryReferences>
     <FileVersion>1.0.0.0</FileVersion>
     <Company>Beckhoff Automation LLC</Company>
-    <Title>SPT PackML Base</Title>
-    <ProjectVersion>4.0.0.0</ProjectVersion>
-    <DefaultNamespace>SPT_PackMLBase</DefaultNamespace>
-    <Placeholder>SPT PackML Base</Placeholder>
+    <Title>SPT Base Types</Title>
+    <ProjectVersion>4.0.0.1</ProjectVersion>
+    <DefaultNamespace>SPT_BaseTypes</DefaultNamespace>
+    <Placeholder>SPT Base Types</Placeholder>
     <Released>false</Released>
     <LibraryCategories>
       <LibraryCategory xmlns="">
@@ -73,50 +73,14 @@
       </LibraryCategory>
     </LibraryCategories>
     <SelectedLibraryCategories>
-      <Id xmlns="">{59986ef5-2ee3-44af-8d21-08a1ba9efad2}</Id>
+      <Id xmlns="">{112ed4e3-9bae-4e5d-96f6-e80679f1a619}</Id>
     </SelectedLibraryCategories>
-    <Description>4.0.0.0 - Bonkers</Description>
+    <Description>4.0.0.1 - removing other libs code</Description>
   </PropertyGroup>
-  <ItemGroup>
-    <PlaceholderResolution Include="SPT Base Types">
-      <Resolution>SPT Base Types, 3.1.0 (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT Event Logger">
-      <Resolution>SPT Event Logger, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="SPT Utilities">
-      <Resolution>SPT Utilities, * (Beckhoff Automation LLC)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_EtherCAT">
-      <Resolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_Standard">
-      <Resolution>Tc2_Standard, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_System">
-      <Resolution>Tc2_System, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc2_Utilities">
-      <Resolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc3_EventLogger">
-      <Resolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc3_Module">
-      <Resolution>Tc3_Module, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-    <PlaceholderResolution Include="Tc3_PackML_V2">
-      <Resolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</Resolution>
-    </PlaceholderResolution>
-  </ItemGroup>
   <ItemGroup>
     <PlaceholderReference Include="SPT Event Logger">
       <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_EventLogger</Namespace>
-    </PlaceholderReference>
-    <PlaceholderReference Include="SPT Utilities">
-      <DefaultResolution>SPT Utilities, * (Beckhoff Automation LLC)</DefaultResolution>
-      <Namespace>SPT_Utilities</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="System_VisuElemMeter">
       <DefaultResolution>VisuElemMeter, 3.5.13.0 (System)</DefaultResolution>
@@ -160,54 +124,53 @@
       <SystemLibrary>true</SystemLibrary>
       <ResolverGuid>2717eb6a-dd07-4c66-8d8d-cacebd7b18ae</ResolverGuid>
     </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_EtherCAT">
+      <DefaultResolution>Tc2_EtherCAT, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_EtherCAT</Namespace>
+    </PlaceholderReference>
     <PlaceholderReference Include="Tc2_Standard">
       <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Standard</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_Utilities">
+      <DefaultResolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Utilities</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc3_EventLogger">
       <DefaultResolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_EventLogger</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="Tc3_Module">
-      <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
-      <Namespace>Tc3_Module</Namespace>
+    <PlaceholderReference Include="Tc3_JsonXml">
+      <DefaultResolution>Tc3_JsonXml, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_JsonXml</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc3_PackML_V2">
       <DefaultResolution>Tc3_PackML_V2, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_PackML_V2</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="tcl_SimpleUnitTestLibrary">
-      <DefaultResolution>tcl_SimpleUnitTestLibrary, * (Red Rock Controls Limited)</DefaultResolution>
-      <Namespace>tcl_SimpleUnitTestLibrary</Namespace>
-    </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DUT" />
-    <Folder Include="DUT\HMI" />
+    <Folder Include="Framework Base" />
     <Folder Include="Interfaces" />
-    <Folder Include="Tests" />
+    <Folder Include="Enums" />
     <Folder Include="Project Information" />
-    <Folder Include="Tests\ModeTests" />
+    <Folder Include="Tracing" />
     <Folder Include="Version" />
-    <Folder Include="VISUs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DUT\E_PMLUnitMode.TcDUT" />
-    <Compile Include="DUT\HMI\ST_PackMLBaseModule_Command.TcDUT" />
-    <Compile Include="DUT\HMI\ST_PackMLBaseModule_Config.TcDUT" />
-    <Compile Include="DUT\HMI\ST_PackMLBaseModule_HMI.TcDUT" />
-    <Compile Include="DUT\HMI\ST_PackMLBaseModule_Status.TcDUT" />
-    <Compile Include="DUT\ST_PackML_SubUnitInfoExt.TcDUT" />
-    <Compile Include="FB_PackML_BaseModule.TcPOU" />
-    <Compile Include="FB_PackML_ModeLogger.TcPOU" />
-    <Compile Include="FB_PackML_StateLogger.TcPOU" />
-    <Compile Include="GlobalTextList.TcGTLO">
+    <Compile Include="Enums\E_AlarmResponse.TcTLEO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />
-    <Compile Include="Interfaces\I_PackML_Control.TcIO" />
-    <Compile Include="Interfaces\I_PackML_ExternalController.TcIO" />
-    <Compile Include="Parameters_PackML_Base.TcGVL">
+    <Compile Include="Framework Base\FB_BaseFB.TcPOU" />
+    <Compile Include="Framework Base\FB_CyclicFB.TcPOU" />
+    <Compile Include="GlobalTextList.TcGTLO" />
+    <Compile Include="Interfaces\I_BaseFB.TcIO" />
+    <Compile Include="Interfaces\I_CyclicFB.TcIO" />
+    <Compile Include="Parameters_Tracing.TcGVL">
       <LinkAlways>true</LinkAlways>
     </Compile>
     <Compile Include="Project Information\F_GetCompany.TcPOU">
@@ -219,57 +182,29 @@
     <Compile Include="Project Information\F_GetVersion.TcPOU">
       <SystemCall>true</SystemCall>
     </Compile>
-    <Compile Include="Task_3.TcTTO">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModeTests\EquipmentModule.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModeTests\T_ProductionToMaintenaceInAbort.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\PRG_Tests.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="TestUI.TcVIS">
-      <SubType>Code</SubType>
-      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
+    <Compile Include="Tracing\FB_TraceLog.TcPOU" />
+    <Compile Include="Tracing\Tracing.TcGVL">
+      <LinkAlways>true</LinkAlways>
     </Compile>
     <Compile Include="Version\Global_Version.TcGVL" />
-    <Compile Include="Visualization Manager.TcVMO">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="VISUs\V_MachineModule.TcVIS">
-      <SubType>Code</SubType>
-      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
-    </Compile>
-    <Compile Include="VISUs\V_Module.TcVIS">
-      <SubType>Code</SubType>
-      <DependentUpon>Visualization Manager.TcVMO</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PinnedGlobalDataType Include="BaseAlarms" />
-    <PinnedGlobalDataType Include="PackMLBase_Alarms" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SPT_PackML_Base.tmc">
+    <Content Include="LICENSE" />
+    <None Include="SPT_Base_Types.tmc">
       <SubType>Content</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <LibraryReference Include="SPT Base Types,newest,Beckhoff Automation LLC">
-      <Namespace>SPT_BaseTypes</Namespace>
-    </LibraryReference>
-    <LibraryReference Include="SPT Component Base,newest,Beckhoff Automation LLC">
-      <Namespace>SPT_ComponentBase</Namespace>
-    </LibraryReference>
+    <PinnedGlobalDataType Include="BaseAlarms" />
+    <PinnedGlobalDataType Include="ComponentBase" />
+    <PinnedGlobalDataType Include="PackMLBase_Alarms" />
+    <PinnedGlobalDataType Include="Tracing" />
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
-        <Data>
-          <o xml:space="preserve" t="OptionKey">
+  <Data>
+    <o xml:space="preserve" t="OptionKey">
       <v n="Name">"&lt;ProjectRoot&gt;"</v>
       <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
         <v>{FE9F63D4-9E34-43ce-9322-D46747A00F33}</v>
@@ -339,13 +274,15 @@
           <v n="Name">"{C70B7845-2722-4a9b-A0EA-88C877A4B36F}"</v>
           <d n="SubKeys" t="Hashtable" />
           <d n="Values" t="Hashtable" ckt="String">
+            <v>EnableMaxAuthenticationTrials</v>
+            <v>true</v>
             <v>MaxAuthenticationTrials</v>
             <v>3</v>
             <v>UserList</v>
             <o t="UserList">
               <a n="Users" cet="User">
                 <o>
-                  <v n="Id">{d7039059-78ca-4e44-bcb1-6757aba6a2ac}</v>
+                  <v n="Id">{6ddaf6e2-1a42-4546-93d9-ff00c503b040}</v>
                   <v n="Name">"Owner"</v>
                   <v n="FullName">""</v>
                   <v n="Description">""</v>
@@ -363,24 +300,24 @@
             <o t="GroupList">
               <a n="Groups" cet="Group">
                 <o>
-                  <v n="Id">{0b5802f8-9cfe-47b7-9461-6cd44e93e3c5}</v>
-                  <v n="Name">"Everyone"</v>
-                  <v n="Description">""</v>
-                  <v n="IsEveryoneGroup">true</v>
-                  <v n="IsOwnerGroup">false</v>
-                  <l n="UserMembers" t="ArrayList" cet="Guid">
-                    <v>d7039059-78ca-4e44-bcb1-6757aba6a2ac</v>
-                  </l>
-                  <l n="GroupMembers" t="ArrayList" />
-                </o>
-                <o>
-                  <v n="Id">{7e35ca8a-2fb5-4fb7-8c31-52bbacec3b42}</v>
+                  <v n="Id">{d89aff2d-2ee7-42c8-b34c-d777a06939ec}</v>
                   <v n="Name">"Owner"</v>
                   <v n="Description">""</v>
                   <v n="IsEveryoneGroup">false</v>
                   <v n="IsOwnerGroup">true</v>
                   <l n="UserMembers" t="ArrayList" cet="Guid">
-                    <v>d7039059-78ca-4e44-bcb1-6757aba6a2ac</v>
+                    <v>6ddaf6e2-1a42-4546-93d9-ff00c503b040</v>
+                  </l>
+                  <l n="GroupMembers" t="ArrayList" />
+                </o>
+                <o>
+                  <v n="Id">{67bf4428-3c76-4371-8a98-aed59de442e9}</v>
+                  <v n="Name">"Everyone"</v>
+                  <v n="Description">""</v>
+                  <v n="IsEveryoneGroup">true</v>
+                  <v n="IsOwnerGroup">false</v>
+                  <l n="UserMembers" t="ArrayList" cet="Guid">
+                    <v>6ddaf6e2-1a42-4546-93d9-ff00c503b040</v>
                   </l>
                   <l n="GroupMembers" t="ArrayList" />
                 </o>
@@ -389,12 +326,10 @@
             <v>UserAuthentication</v>
             <o t="UserAuthentication">
               <d n="UserToPasswordHash" t="Hashtable" ckt="Guid" cvt="String">
-                <v>d7039059-78ca-4e44-bcb1-6757aba6a2ac</v>
+                <v>6ddaf6e2-1a42-4546-93d9-ff00c503b040</v>
                 <v>d41d8cd98f00b204e9800998ecf8427e</v>
               </d>
             </o>
-            <v>EnableMaxAuthenticationTrials</v>
-            <v>true</v>
           </d>
         </o>
         <v>{192FAD59-8248-4824-A8DE-9177C94C195A}</v>
@@ -421,23 +356,23 @@
       </d>
       <d n="Values" t="Hashtable" />
     </o>
-        </Data>
-        <TypeList>
-          <Type n="ArrayList">System.Collections.ArrayList</Type>
-          <Type n="Boolean">System.Boolean</Type>
-          <Type n="Group">{daecd4be-1e2b-4335-a125-4a1ac83ea49f}</Type>
-          <Type n="GroupList">{bf4dffda-f055-446d-9d7a-5f126720896b}</Type>
-          <Type n="Guid">System.Guid</Type>
-          <Type n="Guid[]">System.Guid[]</Type>
-          <Type n="Hashtable">System.Collections.Hashtable</Type>
-          <Type n="Int32">System.Int32</Type>
-          <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
-          <Type n="String">System.String</Type>
-          <Type n="User">{cd83029e-13b0-491e-9e4b-921adda0d86b}</Type>
-          <Type n="UserAuthentication">{3635a671-97f5-41bb-9e29-0ebb9795975c}</Type>
-          <Type n="UserList">{9fe6b547-6bc8-4f11-b589-b517860c5891}</Type>
-        </TypeList>
-      </XmlArchive>
+  </Data>
+  <TypeList>
+    <Type n="ArrayList">System.Collections.ArrayList</Type>
+    <Type n="Boolean">System.Boolean</Type>
+    <Type n="Group">{daecd4be-1e2b-4335-a125-4a1ac83ea49f}</Type>
+    <Type n="GroupList">{bf4dffda-f055-446d-9d7a-5f126720896b}</Type>
+    <Type n="Guid">System.Guid</Type>
+    <Type n="Guid[]">System.Guid[]</Type>
+    <Type n="Hashtable">System.Collections.Hashtable</Type>
+    <Type n="Int32">System.Int32</Type>
+    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+    <Type n="String">System.String</Type>
+    <Type n="User">{cd83029e-13b0-491e-9e4b-921adda0d86b}</Type>
+    <Type n="UserAuthentication">{3635a671-97f5-41bb-9e29-0ebb9795975c}</Type>
+    <Type n="UserList">{9fe6b547-6bc8-4f11-b589-b517860c5891}</Type>
+  </TypeList>
+</XmlArchive>
     </PlcProjectOptions>
   </ProjectExtensions>
 </Project>

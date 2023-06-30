@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CyclicFB" Id="{394075cc-3b9c-44ac-8717-5976ed11af50}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'no_call'}
+FUNCTION_BLOCK ABSTRACT FB_CyclicFB EXTENDS FB_BaseFB IMPLEMENTS I_CyclicFB
+VAR
+  _InitComplete : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Derivatives of FB_CyclicFB should *NOT* have code in the function block body
+
+// Use CyclicLogic() instead     ]]></ST>
+    </Implementation>
+    <Folder Name="I_CyclicFB" Id="{15900726-6cfb-42d1-b875-3aa8d1a97c91}" />
+    <Method Name="CyclicLogic" Id="{6b9add30-ba72-4bcd-ae3f-b29cc64f5782}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[METHOD PUBLIC ABSTRACT CyclicLogic
+VAR_INPUT
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="InitComplete" Id="{ea567527-e93c-44d7-8358-003786bba1a3}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[PROPERTY InitComplete : BOOL]]></Declaration>
+      <Get Name="Get" Id="{c6fa949e-f03d-408b-8b5c-72f0d79338a7}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[InitComplete := _InitComplete;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_CyclicFB">
+      <LineId Id="51" Count="1" />
+      <LineId Id="22" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CyclicFB.CyclicLogic">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_CyclicFB.InitComplete.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

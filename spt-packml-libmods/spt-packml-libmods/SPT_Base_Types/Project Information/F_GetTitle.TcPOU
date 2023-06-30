@@ -1,25 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="F_GetVersion" Id="{998642a0-7fe3-0d02-3ec3-3432a950e8ce}" SpecialFunc="None">
+  <POU Name="F_GetTitle" Id="{aac24ec3-7d32-0ef1-0a10-c8a51edb956e}" SpecialFunc="None">
     <Declaration><![CDATA[// This function has been automatically generated from the project information.
 {attribute 'signature_flag' := '1073741824'}
 {attribute 'TcGenerated'}
 {attribute 'no-analysis'}
-FUNCTION F_GetVersion : ST_LibVersion
+FUNCTION F_GetTitle : WSTRING
 VAR_INPUT
 	
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[F_GetVersion.iMajor := 4;
-F_GetVersion.iMinor := 0;
-F_GetVersion.iBuild := 0;
-F_GetVersion.iRevision := 0;
-F_GetVersion.sVersion := '4.0.0.0';
-F_GetVersion.nFlags := 0;
+      <ST><![CDATA[F_GetTitle := "SPT Base Types";
 ]]></ST>
     </Implementation>
-    <LineIds Name="F_GetVersion">
-      <LineId Id="521" Count="5" />
+    <LineIds Name="F_GetTitle">
+      <LineId Id="16" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

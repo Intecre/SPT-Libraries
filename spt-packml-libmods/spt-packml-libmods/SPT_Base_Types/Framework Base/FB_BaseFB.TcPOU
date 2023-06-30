@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_BaseFB" Id="{6ed07efa-981d-468f-96e4-311962a2c1b8}" SpecialFunc="None">
+    <Declaration><![CDATA[{attribute 'reflection'}
+FUNCTION_BLOCK ABSTRACT FB_BaseFB IMPLEMENTS I_BaseFB
+VAR
+  {attribute 'instance-path'}
+  {attribute 'noinit'}
+  InstancePath : STRING;
+END_VAR
+
+// I_BaseFB
+VAR
+  _Busy : BOOL := TRUE;
+  _Error : BOOL;
+  _ErrorID : UDINT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Derivatives of FB_BaseFB can have code in the function block body     ]]></ST>
+    </Implementation>
+    <Folder Name="I_BaseFB" Id="{2446e10f-9689-4d09-8275-cafb17936ff6}" />
+    <Property Name="Busy" Id="{4d6cbdf9-39d1-402a-bdf7-e99c763ca664}" FolderPath="I_BaseFB\">
+      <Declaration><![CDATA[PROPERTY Busy : BOOL]]></Declaration>
+      <Get Name="Get" Id="{510bfdb9-9653-47e3-8858-155884e2d528}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Busy := _Busy;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="Error" Id="{34ee3fc8-e733-4c8d-957d-73debe23ad7c}" FolderPath="I_BaseFB\">
+      <Declaration><![CDATA[PROPERTY Error : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b329f8a8-e324-48ec-9892-094f3f1b91ee}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Error := _Error;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{7222581b-9e78-401f-a0dd-949f1d909b6b}" FolderPath="I_BaseFB\">
+      <Declaration><![CDATA[PROPERTY ErrorID : UDINT]]></Declaration>
+      <Get Name="Get" Id="{733202ff-38c2-4e4c-bf03-c44f4b2507c6}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ErrorID := _ErrorID;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="Marker" Id="{3f6d42cb-413f-01fd-1c14-04724641b65a}">
+      <Declaration><![CDATA[METHOD PUBLIC Marker
+VAR_INPUT
+  Message : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Tracing.GlobalTraceLog.AddEntry(InstancePath, Message, 1);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Trace" Id="{eba63575-88fd-04fd-3b9f-7fd7e52b185c}">
+      <Declaration><![CDATA[METHOD PUBLIC Trace
+VAR_INPUT
+  Message : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Tracing.GlobalTraceLog.AddEntry(InstancePath, Message, 0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TraceWithJson" Id="{2f3817ed-644b-49e3-896f-ee1fa4905779}">
+      <Declaration><![CDATA[METHOD PUBLIC TraceWithJson
+VAR_INPUT
+  Message : T_MaxString;
+  Json : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[Tracing.GlobalTraceLog.AddEntryWithJson(
+  InstancePath,
+  Message,
+  0,
+  Json
+);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_BaseFB">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.ErrorID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.Marker">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.Trace">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_BaseFB.TraceWithJson">
+      <LineId Id="50" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

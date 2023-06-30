@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ComponentBase" Id="{15c3b5a8-8670-490c-b414-b08fcf45bdb2}">
+    <Declaration><![CDATA[INTERFACE I_ComponentBase EXTENDS I_CyclicFB]]></Declaration>
+    <Folder Name="Methods" Id="{1d45ec75-f82c-41f0-8f3b-294618d487e7}" />
+    <Folder Name="Properties" Id="{c096f5f4-bafd-4904-965c-ac7dcc84b040}" />
+    <Method Name="AllowHMIControl" Id="{ae6decc3-fa9e-42b8-94a0-5208928802f5}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD PUBLIC AllowHMIControl
+VAR_INPUT
+END_VAR]]></Declaration>
+    </Method>
+    <Method Name="BlockHMIControl" Id="{50ed9e8c-3414-4c5e-96e7-2149b6e9b3aa}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD PUBLIC BlockHMIControl
+VAR_INPUT
+END_VAR]]></Declaration>
+    </Method>
+    <Property Name="CurrentAlarmSeverity" Id="{8639be37-cb4c-46ca-a2e9-f2a06f84f962}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY CurrentAlarmSeverity : TcEventSeverity]]></Declaration>
+      <Get Name="Get" Id="{98df4fdf-a6a7-442a-88af-4d7b03349a32}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="InSimulation" Id="{bf683f89-b05a-4051-a8af-1aeaecf654a4}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY InSimulation : BOOL]]></Declaration>
+      <Get Name="Get" Id="{dece0953-1f5d-41bd-a40d-61b0a627d255}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{260d8380-db5e-48fc-a27b-5d5363e23b9d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="Name" Id="{6c5434ae-4a2b-4b17-be3a-325191d48afa}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{3f489847-a46c-43d8-887c-a8569d4ee730}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{509096af-893b-4407-b670-7197bcb594c8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{8ad1749f-85a0-4e85-ae14-cbbdaa413143}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ParentResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse]]></Declaration>
+      <Get Name="Get" Id="{b7aff9ba-d83c-41f2-a704-e46dc25318ea}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{2b63b191-88ef-485a-8b19-d8e8beb2899b}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Method Name="Reset" Id="{31775d7d-728c-4e84-8e04-2a11e4275600}" FolderPath="Methods\">
+      <Declaration><![CDATA[METHOD PUBLIC Reset : BOOL]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

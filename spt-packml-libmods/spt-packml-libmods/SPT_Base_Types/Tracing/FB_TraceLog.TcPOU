@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_TraceLog" Id="{28de2605-9ca2-00e8-321d-99d1f572ce7e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FINAL FB_TraceLog
+VAR
+  Event : FB_TcMessage;
+  JsonParser : FB_JsonDomParser;
+  TimeFormatter : FB_FormatString;
+  MessagesSentThisScan : UDINT;
+  Previous_AddEntrySource : T_MaxString;
+  Previous_AddEntryMessage : T_MaxString;
+  Previous_AddEntryFlags : UDINT;
+  Previous_AddEntryJsonSource : T_MaxString;
+  Previous_AddEntryJsonMessage : T_MaxString;
+  Previous_AddEntryJsonFlags : UDINT;
+  Previous_AddEntryJson : T_MaxString;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddContext" Id="{5dae891f-91b6-0fdb-0fda-88cc66933b31}">
+      <Declaration><![CDATA[METHOD PRIVATE AddContext
+VAR_INPUT
+  Source : T_MaxString;
+  Flags : UDINT;
+END_VAR
+
+VAR
+  CurrentDCTime : DCTIMESTRUCT;
+  DCTime100Nsec : WORD;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Collect DC timestamp info and properly format string
+CurrentDCTime := DCTIME64_TO_DCTIMESTRUCT(F_GetActualDcTime64());
+DCTime100Nsec := CurrentDCTime.wNanoseconds / 100;
+TimeFormatter(
+  sFormat := '%2.2d:%2.2d:%2.2d.%3.3d%3.3d%1.1d',
+  arg1 := F_WORD(CurrentDCTime.wHour),
+  arg2 := F_WORD(CurrentDCTime.wMinute),
+  arg3 := F_WORD(CurrentDCTime.wSecond),
+  arg4 := F_WORD(CurrentDCTime.wMilliseconds),
+  arg5 := F_WORD(CurrentDCTime.wMicroseconds),
+  arg6 := F_WORD(DCTime100Nsec)
+);
+
+Event.ipArguments.AddString(TimeFormatter.sOut); //DC Timestamp string
+Event.ipArguments.AddString(Source); //POU calling the Trace() function -- this should come automatically
+Event.ipArguments.AddString(TwinCAT_SystemInfoVarList._TaskInfo[GETCURTASKINDEXEX()].TaskName); //Task which called the POU last
+Event.ipArguments.AddUDInt(TwinCAT_SystemInfoVarList._TaskInfo[GETCURTASKINDEXEX()].CycleCount); //Cycle count of above task
+Event.ipArguments.AddUDInt(Flags); //General-use flags (application dependent)]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddEntry" Id="{6e5d980d-acce-4536-975d-9ddfa7b4dfbb}">
+      <Declaration><![CDATA[METHOD PUBLIC AddEntry
+VAR_INPUT
+  Source : T_MaxString;
+  Message : T_MaxString;
+  Flags : UDINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[{analysis -62}
+IF NOT TracingAllowed THEN
+  {analysis -90}
+  RETURN;
+END_IF
+
+IF NOT Parameters_Tracing.ALLOW_DUPLICATE_SEQUENTIAL_MESSAGES THEN
+  IF (MEMCMP(ADR(Source), ADR(Previous_AddEntrySource), SIZEOF(T_MaxString)) = 0)
+       AND (MEMCMP(ADR(Message), ADR(Previous_AddEntryMessage), SIZEOF(T_MaxString)) = 0)
+       AND (Flags = Previous_AddEntryFlags) THEN
+    //This message is identical to the last message sent--ignore
+    RETURN;
+  END_IF
+END_IF
+
+Event.ipArguments.Clear().AddString(Message);
+AddContext(Source := Source, Flags := Flags);
+Event.Send(0);
+MessagesSentThisScan := MessagesSentThisScan + 1;
+MEMCPY(ADR(Previous_AddEntrySource), ADR(Source), SIZEOF(T_MaxString));
+MEMCPY(ADR(Previous_AddEntryMessage), ADR(Message), SIZEOF(T_MaxString));
+Previous_AddEntryFlags := Flags;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddEntryWithJson" Id="{11b27d80-e227-0e14-352d-908df78af48c}">
+      <Declaration><![CDATA[METHOD PUBLIC AddEntryWithJson
+VAR_INPUT
+  Source : T_MaxString;
+  Message : T_MaxString;
+  Flags : UDINT;
+  Json : T_MaxString;
+END_VAR
+
+VAR
+  Document : SJsonValue;
+  JsonAttribute : T_MaxString;
+  TaskName : T_MaxString;
+  temp : udint;
+END_VAR
+
+VAR_INST
+  LastScanCount : UDINT;
+  MessagesSentThisScan : UDINT;
+  MissedMessages : UDINT;
+  Throttled : BOOL;
+END_VAR
+
+VAR
+  ThrottledNotificationString : T_MaxString;
+  CurrentDCTime : DCTIMESTRUCT;
+  DCTime100Nsec : WORD;
+  DCTimeString : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[{analysis -62}
+IF NOT TracingAllowed THEN
+  RETURN;
+END_IF
+
+IF NOT Parameters_Tracing.ALLOW_DUPLICATE_SEQUENTIAL_MESSAGES THEN
+  IF (MEMCMP(ADR(Source), ADR(Previous_AddEntryJsonSource), SIZEOF(T_MaxString)) = 0)
+       AND (MEMCMP(ADR(Message), ADR(Previous_AddEntryJsonMessage), SIZEOF(T_MaxString)) = 0)
+       AND (Flags = Previous_AddEntryJsonFlags)
+       AND (MEMCMP(ADR(Json), ADR(Previous_AddEntryJson), SIZEOF(T_MaxString)) = 0) THEN
+    //This message is identical to the last message sent--ignore
+    RETURN;
+  END_IF
+END_IF
+
+Event.ipArguments.Clear().AddString(Message);
+AddContext(Source := Source, Flags := Flags);
+Document := JsonParser.NewDocument();
+JsonParser.AddJsonMember(Document, 'ExtendedInfo', Json);
+JsonAttribute := JsonParser.GetJson(Document);
+Event.SetJsonAttribute(JsonAttribute);
+Event.Send(0);
+MessagesSentThisScan := MessagesSentThisScan + 1;
+MEMCPY(ADR(Previous_AddEntryJsonSource), ADR(Source), SIZEOF(T_MaxString));
+MEMCPY(ADR(Previous_AddEntryJsonMessage), ADR(Message), SIZEOF(T_MaxString));
+Previous_AddEntryFlags := Flags;
+MEMCPY(ADR(Previous_AddEntryJsonMessage), ADR(Json), SIZEOF(T_MaxString));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{e4141fc1-d158-486e-a43a-d297989c1988}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+  bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+  bInCopyCode : BOOL; // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+
+VAR
+  hr : HRESULT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[{analysis -15}
+IF NOT Event.EqualsToEventEntryEx(TC_EVENTS.Tracing.TraceEvent) THEN
+  Event.CreateEx(TC_EVENTS.Tracing.TraceEvent, 0);
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="TracingAllowed" Id="{cd9d203f-7217-0fd5-0742-c7f4c8bc9c18}">
+      <Declaration><![CDATA[PROPERTY PRIVATE TracingAllowed : BOOL]]></Declaration>
+      <Get Name="Get" Id="{5ec72f86-c45f-0d42-25de-a8845fe5e3ad}">
+        <Declaration><![CDATA[VAR_INST
+  LastScanCount : UDINT;
+  MissedMessages : UDINT;
+  Throttled : BOOL;
+END_VAR
+
+VAR
+  ThrottledNotificationString : T_MaxString;
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[{analysis -62}
+IF NOT Parameters_Tracing.TRACING_ENABLED THEN
+  TracingAllowed := FALSE;
+  RETURN;
+END_IF
+
+IF TwinCAT_SystemInfoVarList._TaskInfo[GETCURTASKINDEXEX()].CycleCount = LastScanCount THEN
+  //Trying to send multiple messages in same scan
+  IF Throttled THEN
+    MissedMessages := MissedMessages + 1;
+    RETURN;
+  ELSIF MessagesSentThisScan >= Parameters_Tracing.MAX_LOG_ENTRIES_PER_SCAN AND NOT Throttled THEN
+    //Need to throttle messsage queue
+    Event.ipArguments.Clear().AddString('Too many messages sent in single scan; tracing throttled.');
+    Event.Send(0);
+    MissedMessages := MissedMessages + 1;
+    Throttled := TRUE;
+    TracingAllowed := FALSE;
+    RETURN;
+  ELSE
+    TracingAllowed := TRUE;
+  END_IF
+ELSE
+  IF Throttled THEN
+    ThrottledNotificationString := CONCAT('Missed ', CONCAT(TO_STRING(MissedMessages), ' throttled messages previously.'));
+    Event.ipArguments.Clear().AddString(ThrottledNotificationString);
+    Event.Send(0);
+    MissedMessages := 0;
+  END_IF
+
+  LastScanCount := TwinCAT_SystemInfoVarList._TaskInfo[GETCURTASKINDEXEX()].CycleCount;
+  MessagesSentThisScan := 0;
+  Throttled := FALSE;
+  TracingAllowed := TRUE;
+END_IF]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="FB_TraceLog">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TraceLog.AddContext">
+      <LineId Id="171" Count="16" />
+      <LineId Id="45" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TraceLog.AddEntry">
+      <LineId Id="797" Count="20" />
+      <LineId Id="741" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TraceLog.AddEntryWithJson">
+      <LineId Id="991" Count="25" />
+      <LineId Id="861" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TraceLog.FB_init">
+      <LineId Id="125" Count="2" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TraceLog.TracingAllowed.Get">
+      <LineId Id="250" Count="33" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

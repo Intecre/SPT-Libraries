@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ComponentBase" Id="{93c9c074-e59b-49de-8b78-d1cf33f60885}" SpecialFunc="None">
+    <Declaration><![CDATA[//! @summary Basic framework of a component
+FUNCTION_BLOCK ABSTRACT FB_ComponentBase EXTENDS FB_CyclicFB IMPLEMENTS I_ComponentBase
+VAR
+    //I_BasicComponent internal property variables
+    _CurrentAlarmSeverity           : TcEventSeverity;
+    _Name                           : STRING; //String name of the component
+    _ParentFaultResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse
+        := [E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.Abort_ImmediateError, E_AlarmResponse.Abort_ImmediateError];
+    _Simulate : BOOL; //TRUE disables all hardware I/O and simulates input and output behavior
+
+    //Alarming
+    ComponentBaseAlarms : ARRAY[1..Parameters_BaseComponent.COMPONENT_BASE_ALARM_COUNT] OF FB_TcAlarm;
+
+    //HMI Monitoring and control structure
+    ComponentBase_HMI           : ST_ComponentBase_HMI;
+    HMICommand_RT               : R_TRIG;
+    HMICommandActive_Base       : BOOL;
+    HMICommandActive_Descendant : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="I_ComponentBase" Id="{c6d497f2-156e-440d-9c2c-1c03eea21d72}">
+      <Folder Name="Methods" Id="{256a27d0-cb20-46ab-abcb-85152c0ab3db}" />
+      <Folder Name="Properties" Id="{e5c64086-407c-425b-a16b-0d3b6dfdd425}" />
+    </Folder>
+    <Folder Name="I_CyclicFB" Id="{f32e7183-349f-4f13-b1aa-b7b32b64470b}" />
+    <Method Name="AllowHMIControl" Id="{ea5b1cbc-fba4-4a06-93f5-52bf62fd6968}" FolderPath="I_ComponentBase\Methods\">
+      <Declaration><![CDATA[//! @summary Sets permissive bit to allow HMI control of component functions
+METHOD PUBLIC AllowHMIControl
+
+//! @description This method is called as required by the parent module of this component]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ComponentBase_HMI.Status.HMIControlAvailable := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="BlockHMIControl" Id="{c5acfaad-2e13-4de2-829a-75ce5beb31b8}" FolderPath="I_ComponentBase\Methods\">
+      <Declaration><![CDATA[//! @summary Clears permissive bit to allow HMI control of component functions
+METHOD PUBLIC BlockHMIControl
+
+//! @description This method is called as required by the parent module of this component]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ComponentBase_HMI.Status.HMIControlAvailable := FALSE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CreateEvents" Id="{540c8e54-f71b-4d76-84cd-99f008f0d07e}">
+      <Declaration><![CDATA[//! @summary Initializes event function blocks using this components's name
+{attribute 'call_after_online_change_slot' := '<slot>'}
+METHOD PROTECTED CreateEvents
+
+//! @description This method is called by <c>Initialize()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_CreateAllEventsInClass(Alarms     := ComponentBaseAlarms,
+                         ClassSize  := SIZEOF(TC_EVENTS.ComponentBase),
+                         pInitEvent := ADR(TC_EVENTS.ComponentBase.InitReferenceEvent),
+                         Prefix     := _Name);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="CurrentAlarmSeverity" Id="{4c1ed095-36f6-4772-b073-d37fe8b8ece6}" FolderPath="I_ComponentBase\Properties\">
+      <Declaration><![CDATA[//! @summary Returns the current alarm severity for this component
+PROPERTY CurrentAlarmSeverity : TcEventSeverity]]></Declaration>
+      <Get Name="Get" Id="{56cbfb47-bce3-46c2-a3a7-623cff7e3583}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentAlarmSeverity := _CurrentAlarmSeverity;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{afd9b957-a135-4679-8622-fc5b52009de2}" FolderPath="I_CyclicFB\">
+      <Declaration><![CDATA[//! @summary This method serves as the entry point for all underlying FB logic
+METHOD PUBLIC CyclicLogic
+
+//! @description This method should be called cyclically by descendant function blocks by invoking <c>SUPER^.CyclicLogic()</c>.  Alternatively, the contents of this method could be reimplemented entirely in which case a call to this method would not be necessary.]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT _InitComplete THEN
+    _InitComplete := Initialize();
+    RETURN;
+END_IF
+
+Monitoring();       //Constant error and status monitoring
+HMICommunication(); //Keeps the HMI data up to date, and processes requests from the HMI for this component
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="HMICommunication" Id="{1d2523ef-921c-4ac8-8add-7cf4a36da1ba}">
+      <Declaration><![CDATA[//! @summary Provides interlocks for HMI control and updates HMI status information for this component
+METHOD PROTECTED HMICommunication
+
+//! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Extend this method in extended FBs to communicate specific implementation data
+
+//Process HMI requests
+HMICommand_RT(CLK := (ComponentBase_HMI.Status.HMIControlAvailable AND NOT HMICommandActive_Descendant) AND
+                     (ComponentBase_HMI.Command.Reset XOR ComponentBase_HMI.Command.SimulatedOperation XOR ComponentBase_HMI.Command.StandardOperation));
+
+//Desendant components should observe this to interlock HMI commands
+HMICommandActive_Base :=
+    ComponentBase_HMI.Status.HMIControlAvailable AND (ComponentBase_HMI.Command.Reset OR ComponentBase_HMI.Command.SimulatedOperation OR ComponentBase_HMI.Command.StandardOperation);
+
+IF HMICommand_RT.Q THEN
+    IF ComponentBase_HMI.Command.Reset THEN
+        Reset();
+    END_IF
+
+    IF ComponentBase_HMI.Command.SimulatedOperation THEN
+        _Simulate := TRUE;
+    END_IF
+
+    IF ComponentBase_HMI.Command.StandardOperation THEN
+        _Simulate := FALSE;
+    END_IF
+END_IF
+
+//Update HMI status info
+ComponentBase_HMI.Config.Name         := _Name;
+ComponentBase_HMI.Status.Busy         := _Busy;
+ComponentBase_HMI.Status.Error        := _Error;
+ComponentBase_HMI.Status.InSimulation := _Simulate;
+ComponentBase_HMI.Status.ErrorID      := _ErrorID;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{1cd968e9-db2d-41e3-8a70-d048b41b074e}">
+      <Declaration><![CDATA[//! @summary Basic component initialization logic
+METHOD PROTECTED Initialize : BOOL;
+
+//! @description This method is called by <c>CyclicLogic()</c> as required]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Extend initialize as needed in extended FBs
+CreateEvents();
+Initialize := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="InSimulation" Id="{ebb42854-1266-4f6c-84a1-4c0a912b758b}" FolderPath="I_ComponentBase\Properties\">
+      <Declaration><![CDATA[//! @summary Enable/Disable simulation logic for this component
+PROPERTY InSimulation : BOOL]]></Declaration>
+      <Get Name="Get" Id="{17d1377a-ffdb-4d07-8b8e-165928f3cf8f}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[InSimulation := _Simulate;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{8823fd28-0770-436d-aba3-dbafa54451f7}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Simulate := InSimulation;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="Monitoring" Id="{bfd9d149-0427-4d13-a652-4580ad3b7638}">
+      <Declaration><![CDATA[//! Provides basic error detection and event handling for this component
+METHOD PROTECTED Monitoring
+
+(*! @descriptionThis method is called cyclically by <c>CyclicLogic()</c>*)]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//Extend from extended FB with monitoring logic
+IF NOT ComponentBaseAlarms[E_ComponentBase.SimulationWarning].bRaised AND _Simulate THEN
+    ComponentBaseAlarms[E_ComponentBase.SimulationWarning].Raise(0);
+ELSIF ComponentBaseAlarms[E_ComponentBase.SimulationWarning].bRaised AND NOT _Simulate THEN
+    ComponentBaseAlarms[E_ComponentBase.SimulationWarning].Clear(0, 0);
+END_IF
+
+_CurrentAlarmSeverity := TcEventSeverity.Verbose;
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := ComponentBaseAlarms, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Name" Id="{8d65d0ee-79e5-44fd-9af0-abf9b261fcfa}" FolderPath="I_ComponentBase\Properties\">
+      <Declaration><![CDATA[//! @summary Get/Set this component's name
+PROPERTY Name : STRING]]></Declaration>
+      <Get Name="Get" Id="{730ced66-cd8b-4cdd-b343-9360b6ba9ca2}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Name := _Name;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{265a41da-87cb-4c50-a4fb-f10a6353512e}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_Name := Name;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{5e478b72-2e85-494a-a87e-ba24710c8f22}" FolderPath="I_ComponentBase\Properties\">
+      <Declaration><![CDATA[PROPERTY ParentResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse]]></Declaration>
+      <Get Name="Get" Id="{d3f1cd92-9778-489c-9fbe-45479865a0e2}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ParentResponseDefinitions[TcEventSeverity.Verbose]  := _ParentFaultResponseDefinitions[TcEventSeverity.Verbose];
+ParentResponseDefinitions[TcEventSeverity.Info]     := _ParentFaultResponseDefinitions[TcEventSeverity.Info];
+ParentResponseDefinitions[TcEventSeverity.Warning]  := _ParentFaultResponseDefinitions[TcEventSeverity.Warning];
+ParentResponseDefinitions[TcEventSeverity.Error]    := _ParentFaultResponseDefinitions[TcEventSeverity.Error];
+ParentResponseDefinitions[TcEventSeverity.Critical] := _ParentFaultResponseDefinitions[TcEventSeverity.Critical];]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{20a304a7-760f-41cb-be63-cdd367d0ff02}">
+        <Declaration><![CDATA[VAR
+END_VAR]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_ParentFaultResponseDefinitions[TcEventSeverity.Verbose]  := ParentResponseDefinitions[TcEventSeverity.Verbose];
+_ParentFaultResponseDefinitions[TcEventSeverity.Info]     := ParentResponseDefinitions[TcEventSeverity.Info];
+_ParentFaultResponseDefinitions[TcEventSeverity.Warning]  := ParentResponseDefinitions[TcEventSeverity.Warning];
+_ParentFaultResponseDefinitions[TcEventSeverity.Error]    := ParentResponseDefinitions[TcEventSeverity.Error];
+_ParentFaultResponseDefinitions[TcEventSeverity.Critical] := ParentResponseDefinitions[TcEventSeverity.Critical];]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="RaiseAlarm" Id="{2c95cd98-f45d-4c55-8c68-a145068d3a38}">
+      <Declaration><![CDATA[//! @summary Raise an alarm, passing the faulted FB's error ID as a paramter
+METHOD PROTECTED RaiseAlarm
+VAR_IN_OUT
+    Alarm : FB_TcAlarm;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_RaiseAlarm(Alarm := Alarm);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RaiseAlarmWithStrings" Id="{9b6b1366-567f-4c88-8d80-c1800b1766d5}">
+      <Declaration><![CDATA[//! @summary Raises an alarm and passes string arguments as parameters for extra fault context/info
+METHOD PROTECTED RaiseAlarmWithStrings
+VAR_IN_OUT
+    Alarm : FB_TcAlarm; //! Alarm to be raised
+END_VAR
+
+VAR_INPUT
+    String_1 : STRING; //! First string parameter (The Name of this component will be applied first automatically)
+    String_2 : STRING; //! Second string parameter
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_RaiseAlarmWithStringsAndFlags(Alarm     := Alarm,
+                                ErrorFlag := _Error,
+                                ErrorID   := _ErrorID,
+                                String_1  := _Name,
+                                String_2  := String_1,
+                                String_3  := String_2);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RaiseEventWithStrings" Id="{7e10a5a7-346f-042d-3a9c-c3fd4efe1b1f}">
+      <Declaration><![CDATA[//! @summary Raises an alarm and passes string arguments as parameters for extra fault context/info
+METHOD PROTECTED RaiseEventWithStrings
+VAR_IN_OUT
+    Alarm : FB_TcAlarm; //! Alarm to be raised
+END_VAR
+
+VAR_INPUT
+    String_1 : STRING; //! First string parameter (The Name of this component will be applied first automatically)
+    String_2 : STRING; //! Second string parameter
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[F_RaiseAlarmWithStringParameters(Alarm     := Alarm,
+                                String_1  := _Name,
+                                String_2  := String_1,
+                                String_3  := String_2);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Reset" Id="{fdbb4a8b-7401-4011-85e0-df5c0eb6b89d}" FolderPath="I_ComponentBase\Methods\">
+      <Declaration><![CDATA[//! @summary Clears error flags and error IDs for this component
+METHOD PUBLIC Reset : BOOL]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//This may or may not be called depending on the component type 
+
+//which derives FB_ComponentBase
+F_ClearAllEventsInClass(ComponentBaseAlarms);
+Reset := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_ComponentBase">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.AllowHMIControl">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.BlockHMIControl">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.CreateEvents">
+      <LineId Id="96" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.CurrentAlarmSeverity.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.CyclicLogic">
+      <LineId Id="184" Count="6" />
+      <LineId Id="73" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.HMICommunication">
+      <LineId Id="348" Count="28" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.Initialize">
+      <LineId Id="98" Count="1" />
+      <LineId Id="78" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.InSimulation.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.InSimulation.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.Monitoring">
+      <LineId Id="186" Count="7" />
+      <LineId Id="38" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.ParentResponseDefinitions.Get">
+      <LineId Id="47" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.ParentResponseDefinitions.Set">
+      <LineId Id="47" Count="3" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.RaiseAlarm">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.RaiseAlarmWithStrings">
+      <LineId Id="155" Count="4" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.RaiseEventWithStrings">
+      <LineId Id="155" Count="0" />
+      <LineId Id="158" Count="1" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_ComponentBase.Reset">
+      <LineId Id="70" Count="3" />
+      <LineId Id="56" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
