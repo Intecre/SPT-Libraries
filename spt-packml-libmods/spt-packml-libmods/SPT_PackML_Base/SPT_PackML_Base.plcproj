@@ -184,7 +184,9 @@
   <ItemGroup>
     <Folder Include="DUT" />
     <Folder Include="DUT\HMI" />
+    <Folder Include="Intecre\Interfaces" />
     <Folder Include="Interfaces" />
+    <Folder Include="Intecre" />
     <Folder Include="Tests" />
     <Folder Include="Project Information" />
     <Folder Include="Tests\ModeTests" />
@@ -202,6 +204,12 @@
     <Compile Include="FB_PackML_ModeLogger.TcPOU" />
     <Compile Include="FB_PackML_StateLogger.TcPOU" />
     <Compile Include="GlobalTextList.TcGTLO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Interfaces\I_PackMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Interfaces\T_BaseMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />
@@ -223,6 +231,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeTests\EquipmentModule.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModeTests\T_CantChangeModInExecute.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModeTests\T_CantChangeStateFromIdleToSuspend.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModeTests\T_JogThroughStates.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeTests\T_ProductionToMaintenaceInAbort.TcPOU">

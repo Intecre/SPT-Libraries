@@ -21,6 +21,10 @@ VAR
 END_VAR
 
 VAR
+    //cs classes
+    //ModeManager : T_ModeManager;
+    
+    //spt classes
     ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions
     CustomModes                       : PML_UnitModeConfig;         //Used to define custom machine modes if desired

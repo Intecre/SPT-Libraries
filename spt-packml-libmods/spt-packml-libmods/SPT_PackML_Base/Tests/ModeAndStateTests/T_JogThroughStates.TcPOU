@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_JogThroughStates" Id="{2d0cac38-8dd5-4e55-9c85-df5389e732fb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_JogThroughStates EXTENDS T_UnitTestBase
+VAR
+  em : EquipmentModule;
+  cmdTriggered : BOOL;
+  actual, expected : E_PMLUnitMode;
+  scanCounter : INT;
+  myTestState : (ARRANGE, ACT, ASSERT);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+CycleModuleLogicToAllowChangesToFilterThrough();
+
+IF em.InitComplete THEN
+  myTestState := ACT;
+  em.ChangeState(E_PMLCommand.ePMLCommand_Clear);
+END_IF
+
+// clearing -> stopped
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Stopped), 'clearing -> stopped assert : actual := em.CurrentState;');
+
+// stopped -> Idle
+em.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Idle), 'stopped -> Idle assert : actual := em.CurrentState;');
+
+// Idle - > Execute
+em.ChangeState(E_PMLCommand.ePMLCommand_Start);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Execute), 'Idle - > Execute assert : actual := em.CurrentState;');
+
+// Execute -> Hold
+em.ChangeState(E_PMLCommand.ePMLCommand_Hold);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Held), 'Execute -> Hold assert : actual := em.CurrentState;');
+
+// Hold -> Execute
+em.ChangeState(E_PMLCommand.ePMLCommand_Unhold);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Execute), 'Hold -> Execute assert : actual := em.CurrentState;');
+
+// Execute -> Suspend
+em.ChangeState(E_PMLCommand.ePMLCommand_Suspend);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Suspended), 'Execute -> Suspend assert : actual := em.CurrentState;');
+
+// Suspend - > Execute
+em.ChangeState(E_PMLCommand.ePMLCommand_Unsuspend);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Execute), 'Suspend - > Execute assert : actual := em.CurrentState;');
+
+// Execute -> Complete
+em.ChangeState(E_PMLCommand.ePMLCommand_Complete);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Complete), 'Execute -> Complet assert : actual := em.CurrentState;');
+
+// Complete -> Idle
+em.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Idle), 'Complete -> Idle assert : actual := em.CurrentState;');
+
+// Idle -> Stopped
+em.ChangeState(E_PMLCommand.ePMLCommand_Stop);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Stopped), 'Idle -> Stopped assert : actual := em.CurrentState;');
+
+// Stopped -> Idle
+em.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Idle), 'Stopped -> Idle assert : actual := em.CurrentState;');
+
+// Idle -> Abort
+em.ChangeState(E_PMLCommand.ePMLCommand_Abort);
+CycleModuleLogicToAllowChangesToFilterThrough();
+actual := em.CurrentState;
+assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Aborted), 'Idle -> Abort assert : actual := em.CurrentState;');
+
+TestFinished();
+]]></ST>
+    </Implementation>
+    <Method Name="CycleModuleLogicToAllowChangesToFilterThrough" Id="{c15eab2a-9e5a-4d0a-bd53-1f2df4e87a7c}">
+      <Declaration><![CDATA[METHOD CycleModuleLogicToAllowChangesToFilterThrough : BOOL
+VAR_INST
+	i: INT;
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//em.CyclicLogic();
+//CycleModuleLogicToAllowChangesToFilterThrough := i >= 100;
+//i := SEL(i >= 100, i + 1, 0);
+
+FOR i := 0 TO 100 DO
+  em.CyclicLogic();
+END_FOR
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_JogThroughStates">
+      <LineId Id="115" Count="6" />
+      <LineId Id="188" Count="0" />
+      <LineId Id="122" Count="3" />
+      <LineId Id="189" Count="0" />
+      <LineId Id="126" Count="4" />
+      <LineId Id="190" Count="0" />
+      <LineId Id="131" Count="4" />
+      <LineId Id="191" Count="0" />
+      <LineId Id="144" Count="3" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="192" Count="0" />
+      <LineId Id="149" Count="3" />
+      <LineId Id="148" Count="0" />
+      <LineId Id="193" Count="0" />
+      <LineId Id="154" Count="3" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="194" Count="0" />
+      <LineId Id="159" Count="3" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="207" Count="0" />
+      <LineId Id="195" Count="0" />
+      <LineId Id="199" Count="3" />
+      <LineId Id="208" Count="0" />
+      <LineId Id="203" Count="3" />
+      <LineId Id="196" Count="1" />
+      <LineId Id="139" Count="3" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="209" Count="0" />
+      <LineId Id="174" Count="3" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="210" Count="0" />
+      <LineId Id="169" Count="3" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="136" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_JogThroughStates.CycleModuleLogicToAllowChangesToFilterThrough">
+      <LineId Id="22" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_PackMode" Id="{e4b9bac6-7505-49c7-9e5a-999006b4101b}">
+    <Declaration><![CDATA[INTERFACE I_PackMode
+]]></Declaration>
+    <Folder Name="ActingStates" Id="{a3e7192b-8992-4b0a-b8e1-4f903b70ba0a}" />
+    <Folder Name="WaitingStates" Id="{b15540d7-d3ca-48c0-aacd-9aae6333cb68}" />
+    <Method Name="Aborted" Id="{0833387d-7548-4826-80d6-9ac13d2cfeb4}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Aborted
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Aborting" Id="{604f4999-3de5-4b93-a226-846bc3058f34}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Aborting
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Clearing" Id="{9c088821-a9de-4721-a746-9b937ec0b301}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Clearing
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Complete" Id="{00a2a142-7d04-42ff-99db-17630015ce9f}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Complete
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Completing" Id="{63b1440f-f3be-4207-8f47-d464e4dde64b}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Completing
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Execute" Id="{6d242a99-eed2-4946-9e6d-17e579eed049}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Execute
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Held" Id="{d5fa5908-7c45-457d-8ff6-fc3048c98a08}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Held
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Holding" Id="{6c504c87-f722-428a-a2ad-81eee0a58868}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Holding
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Idle" Id="{5b159328-3a88-47d4-b076-ed43c3b30a40}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Idle
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Resetting" Id="{6ab4214b-68eb-480b-842c-38556ad76e31}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Resetting
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Starting" Id="{d0a00753-809d-47a6-b5a1-58b85f004096}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Starting
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Stopped" Id="{cdafe17b-291f-4cb9-b9e7-bd24bea4278e}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Stopped
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Stopping" Id="{0cdc8f04-a0f6-4026-b286-dcc591353a36}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Stopping
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Suspended" Id="{324fa212-32fb-45b3-a9df-33ccea99a4bb}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[METHOD Suspended
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Suspending" Id="{fd46e7a8-e713-4503-a27a-b5ae00480a6a}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Suspending
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Unholding" Id="{f50189c1-632a-46c9-b3f5-6e5f5c632627}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Unholding
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Unsuspending" Id="{5f2ed6f2-51d9-44c0-9f97-66a2f8456a38}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[METHOD Unsuspending
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

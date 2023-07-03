@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_CantChangeStateFromIdleToSuspend" Id="{3cb9b207-189c-4f39-86b0-dd1023fa6ad6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_CantChangeStateFromIdleToSuspend EXTENDS T_UnitTestBase
+VAR
+  em : EquipmentModule;
+  cmdTriggered : BOOL;
+  actual, expected : E_PMLUnitMode;
+  scanCounter : INT;
+  myTestState : (ARRANGE, ACT, ASSERT);
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE myTestState OF
+  ARRANGE:
+    CycleModuleLogicToAllowChangesToFilterThrough();
+
+    IF em.InitComplete THEN
+      em.ChangeState(E_PMLCommand.ePMLCommand_Clear);
+      CycleModuleLogicToAllowChangesToFilterThrough();
+      em.ChangeState(E_PMLCommand.ePMLCommand_Reset);
+      CycleModuleLogicToAllowChangesToFilterThrough();
+      myTestState := ACT;
+    END_IF
+
+  ACT:
+    em.ChangeState(E_PMLCommand.ePMLCommand_Hold);
+    CycleModuleLogicToAllowChangesToFilterThrough();
+    actual := em.CurrentState;
+    myTestState := ASSERT;
+
+  ASSERT:
+    assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(E_PMLState.ePMLState_Idle), 'actual := em.CurrentState;');
+    TestFinished();
+END_CASE]]></ST>
+    </Implementation>
+    <Method Name="CycleModuleLogicToAllowChangesToFilterThrough" Id="{2af72423-d40f-459a-9df6-e2a8b194de35}">
+      <Declaration><![CDATA[METHOD CycleModuleLogicToAllowChangesToFilterThrough : BOOL
+VAR_INST
+	i: INT;
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//em.CyclicLogic();
+//CycleModuleLogicToAllowChangesToFilterThrough := i >= 100;
+//i := SEL(i >= 100, i + 1, 0);
+
+FOR i := 0 TO 100 DO
+  em.CyclicLogic();
+END_FOR
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_CantChangeStateFromIdleToSuspend">
+      <LineId Id="61" Count="4" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="83" Count="1" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="71" Count="2" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="74" Count="2" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+    <LineIds Name="T_CantChangeStateFromIdleToSuspend.CycleModuleLogicToAllowChangesToFilterThrough">
+      <LineId Id="22" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

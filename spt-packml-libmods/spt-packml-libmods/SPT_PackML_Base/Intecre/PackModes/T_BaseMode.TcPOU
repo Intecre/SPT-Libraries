@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_BaseMode" Id="{e529a071-6118-4f9e-bb57-081bd478720f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_BaseMode IMPLEMENTS I_PackMode
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="ActingStates" Id="{07ad3554-1045-41d8-8cba-5fe80924805e}" />
+    <Folder Name="WaitingStates" Id="{091b64c0-263b-4a2f-8509-64b92535fb4b}" />
+    <Method Name="Aborted" Id="{ff791c37-6c7c-4fdc-8617-29f763dc48d7}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Aborted
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Aborting" Id="{3e8e7892-4bb0-4922-8a9a-015c48efff1e}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Aborting
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Clearing" Id="{f4ac0fe3-c9c8-4544-88d2-f7b6c093c564}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Clearing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Complete" Id="{3a077633-d3ce-441a-b7ad-0f2144b1d9fb}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Complete
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Completing" Id="{c2540e52-6719-4b0c-9487-f6d5ca2f6df0}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Completing
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Execute" Id="{201854c4-3d73-4adf-a610-f5dc16a9cee0}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Execute
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Held" Id="{9b80ca93-f07a-45e0-8d8a-40221f4762bb}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Held
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Holding" Id="{f59b21da-86ac-4af6-84a8-c8dd65f726c9}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Holding
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Idle" Id="{f7af9414-0967-4ea0-b37d-1eeb0473981f}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Idle
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Resetting" Id="{609fa116-bf8e-4353-a766-58f5a27b7db1}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Resetting
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Starting" Id="{5541f051-747b-4c88-b64b-e8084a973b8d}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Starting
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stopped" Id="{6c9ec9e7-0db5-4794-ab34-0a245c70829a}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Stopped
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Stopping" Id="{04a30b4b-4964-4f78-ba85-120e4cc19813}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Stopping
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Suspended" Id="{99866019-09d0-4ca3-a85c-1f9199160951}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Suspended
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Suspending" Id="{55e031be-a07e-4434-b673-0d84f4347e3a}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Suspending
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Unholding" Id="{b01b9486-4a69-49ed-a4fc-6be449ee33fa}" FolderPath="WaitingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Unholding
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Unsuspending" Id="{ed108570-a1e9-4f83-9df2-6b8b4e25505a}" FolderPath="ActingStates\">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Unsuspending
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_BaseMode">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Aborted">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Aborting">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Clearing">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Complete">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Completing">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Execute">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Held">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Holding">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Idle">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Resetting">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Starting">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Stopped">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Stopping">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Suspended">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Suspending">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Unholding">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseMode.Unsuspending">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

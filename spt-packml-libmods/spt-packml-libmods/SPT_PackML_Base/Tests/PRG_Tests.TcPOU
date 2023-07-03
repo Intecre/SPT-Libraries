@@ -8,6 +8,9 @@ VAR
   //Modes
   modeTestSuite : T_TestSuite;
   ProductionToMaintenaceInAbort : T_ProductionToMaintenaceInAbort(modeTestSuite);
+  CantChangeModInExecute : T_CantChangeModInExecute(modeTestSuite);
+  JogThroughStates : T_JogThroughStates(modeTestSuite);
+  CantChangeStateFromIdleToSuspend : T_CantChangeStateFromIdleToSuspend(modeTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>
