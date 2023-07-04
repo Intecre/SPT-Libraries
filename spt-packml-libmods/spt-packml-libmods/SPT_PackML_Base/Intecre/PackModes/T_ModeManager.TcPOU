@@ -21,7 +21,6 @@ VAR
   MaintenanceMode : I_PackMode;
   ManualMode : I_PackMode;
   CustomPackModes : ARRAY[0..15] OF I_PackMode; // mobject ?
-  CustomPackModesCount : UINT := 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -33,12 +32,13 @@ END_VAR
     <Method Name="AddCustomPackMode" Id="{6ea33754-fbd2-44c2-b121-20d3288e8049}" FolderPath="Public\">
       <Declaration><![CDATA[METHOD AddCustomPackMode : BOOL
 VAR_INPUT
-  newPackMode : T_BaseMode;
+  index : UINT;
+  newPackMode : I_PackMode;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//custompackmodes[CustomPackModesCount] := newPackMode;
-//CustomPackModesCount := CustomPackModesCount +1;]]></ST>
+        <ST><![CDATA[custompackmodes[index] := newPackMode;
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddPackModes" Id="{85ef9fb9-fb0f-40b0-a83e-84ca52cbb7f9}" FolderPath="Public\">
@@ -196,7 +196,8 @@ END_IF
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.AddCustomPackMode">
-      <LineId Id="11" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="19" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.AddPackModes">
       <LineId Id="5" Count="0" />

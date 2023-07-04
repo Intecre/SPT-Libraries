@@ -13,15 +13,18 @@ VAR
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[modemanager.AddCustomPackMode(customMode);
-expected := customMode;
+      <ST><![CDATA[modemanager.AddCustomPackMode(0, customMode);
 actual := modeManager.CustomPackModes[0];
+expected := customMode;
 result := actual = expected;
 assertion.AssertEquals_BOOL(TRUE, result, 'result := actual = expected;');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_AddCustomPackModeSetsCorrectly">
-      <LineId Id="37" Count="4" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="40" Count="1" />
       <LineId Id="19" Count="0" />
     </LineIds>
   </POU>
