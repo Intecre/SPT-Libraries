@@ -17,7 +17,7 @@ VAR
   InitModeManagerWithState : T_InitModeManagerWithState(modeTestSuite);
   ModeChangeFromProductionToMaintenance : T_ModeChangeFromProductionToMaintenance(modeTestSuite);
   ModeInitialisedFromInvalidToProduction : T_ModeInitialisedFromInvalidToProduction(modeTestSuite);
-  
+  AddCustomPackModeSetsCorrectly : T_AddCustomPackModeSetsCorrectly(modeTestSuite);
   
 END_VAR
 ]]></Declaration>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AddCustomPackModeSetsCorrectly" Id="{e829e8cc-688d-4c43-b94f-41c994699b59}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AddCustomPackModeSetsCorrectly EXTENDS T_UnitTestBase
+VAR
+  mockState : T_MockStateModule;
+  modeManager : T_ModeManager(mockState);
+
+  customMode : T_BaseMode;
+  expected, actual : I_PackMode;
+
+  result : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[modemanager.AddCustomPackMode(customMode);
+expected := customMode;
+actual := modeManager.CustomPackModes[0];
+result := actual = expected;
+assertion.AssertEquals_BOOL(TRUE, result, 'result := actual = expected;');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_AddCustomPackModeSetsCorrectly">
+      <LineId Id="37" Count="4" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

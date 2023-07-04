@@ -20,7 +20,8 @@ VAR
   ProductionMode : I_PackMode;
   MaintenanceMode : I_PackMode;
   ManualMode : I_PackMode;
-  CustomPackModes : ARRAY[3..16] OF I_PackMode; // mobject ?
+  CustomPackModes : ARRAY[0..15] OF I_PackMode; // mobject ?
+  CustomPackModesCount : UINT := 0;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -36,7 +37,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[// mobject.list.add(newmode);]]></ST>
+        <ST><![CDATA[//custompackmodes[CustomPackModesCount] := newPackMode;
+//CustomPackModesCount := CustomPackModesCount +1;]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddPackModes" Id="{85ef9fb9-fb0f-40b0-a83e-84ca52cbb7f9}" FolderPath="Public\">
@@ -48,9 +50,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//ProductionMode := prodMode;
-//MaintenanceMode := maintMode;
-//ManualMode := manMode;]]></ST>
+        <ST><![CDATA[ProductionMode := prodMode;
+MaintenanceMode := maintMode;
+ManualMode := manMode;]]></ST>
       </Implementation>
     </Method>
     <Method Name="AddStateModule" Id="{21fe5c2d-7a9b-4ad5-84ff-7ae76830a6cd}" FolderPath="Public\">
@@ -60,7 +62,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//_state := stateModule;]]></ST>
+        <ST><![CDATA[_state := stateModule;]]></ST>
       </Implementation>
     </Method>
     <Method Name="ChangeMode" Id="{bd04e302-796d-445f-9395-38f8b1c8f63e}" FolderPath="Public\">
@@ -70,9 +72,9 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF Mode <> _CommandedMode THEN
-//    ModeCommand := Mode;
-//END_IF
+        <ST><![CDATA[IF Mode <> _CommandedMode THEN
+    _CommandedMode := Mode;
+END_IF
 
 ]]></ST>
       </Implementation>
@@ -194,7 +196,7 @@ END_IF
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.AddCustomPackMode">
-      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="1" />
     </LineIds>
     <LineIds Name="T_ModeManager.AddPackModes">
       <LineId Id="5" Count="0" />

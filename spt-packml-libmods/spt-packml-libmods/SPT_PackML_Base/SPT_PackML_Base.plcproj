@@ -256,6 +256,9 @@
     <Compile Include="Tests\ModeManagerTests\Mock Objects\T_MockStateModule.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModeManagerTests\T_AddCustomPackModeSetsCorrectly.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModeManagerTests\T_AddPackModeSetsCorrectly.TcPOU">
       <SubType>Code</SubType>
     </Compile>
