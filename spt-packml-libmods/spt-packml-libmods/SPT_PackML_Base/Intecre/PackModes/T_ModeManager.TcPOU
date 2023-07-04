@@ -5,9 +5,9 @@
 VAR
   _state : I_StateModule;
   _LogModeChanges : BOOL := TRUE;
-  _CurrentMode    : E_PMLUnitMode; //Current UnitMode of the module	
-  _CommandedMode  : E_PMLUnitMode; //Current Commanded UnitMode of the module
-  
+  _CurrentMode : E_PMLUnitMode; //Current UnitMode of the module	
+  _CommandedMode : E_PMLUnitMode; //Current Commanded UnitMode of the module
+
   PackModeManager : PML_UnitModeManager;
   CustomModes : PML_UnitModeConfig;
   LastModeCommand : E_PMLUnitMode;
@@ -16,7 +16,7 @@ VAR
   ModeNames : ARRAY[0..31] OF STRING; // ('Production','Maintenance', 'Manual');
   ModeChangeRequested : BOOL;
 
-  CurrentStrategy : I_PackMode;
+  CurrentStrategy : I_PackMode := ProductionMode;
   ProductionMode : I_PackMode;
   MaintenanceMode : I_PackMode;
   ManualMode : I_PackMode;
