@@ -13,6 +13,7 @@ END_VAR
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Folder Name="ActingStates" Id="{07ad3554-1045-41d8-8cba-5fe80924805e}" />
+    <Folder Name="Properties" Id="{c547770d-106f-4617-b0d0-830f34c2f4dd}" />
     <Folder Name="WaitingStates" Id="{091b64c0-263b-4a2f-8509-64b92535fb4b}" />
     <Method Name="Aborted" Id="{ff791c37-6c7c-4fdc-8617-29f763dc48d7}" FolderPath="WaitingStates\">
       <Declaration><![CDATA[{warning 'add method implementation '}

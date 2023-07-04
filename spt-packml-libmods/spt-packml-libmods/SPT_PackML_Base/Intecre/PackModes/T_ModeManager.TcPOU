@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModeManager" Id="{ea4887d2-59b6-4466-9a73-4e1ef78db5cc}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModeManager
+VAR
+  _state : I_StateModule;
+  _LogModeChanges : BOOL := TRUE;
+  _CurrentMode    : E_PMLUnitMode; //Current UnitMode of the module	
+  _CommandedMode  : E_PMLUnitMode; //Current Commanded UnitMode of the module
+  
+  PackModeManager : PML_UnitModeManager;
+  CustomModes : PML_UnitModeConfig;
+  LastModeCommand : E_PMLUnitMode;
+  PMLModeLogger : FB_PackML_ModeLogger;
+  LastMode : DINT;
+  ModeNames : ARRAY[0..31] OF STRING; // ('Production','Maintenance', 'Manual');
+  ModeChangeRequested : BOOL;
+
+  CurrentStrategy : I_PackMode;
+  ProductionMode : I_PackMode;
+  MaintenanceMode : I_PackMode;
+  ManualMode : I_PackMode;
+  CustomPackModes : ARRAY[3..16] OF I_PackMode; // mobject ?
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Private" Id="{5e3cd00c-f349-44a6-b04a-0f911deef120}" />
+    <Folder Name="Properties" Id="{62ed7422-cd3b-4ece-b766-f08a5786b32e}" />
+    <Folder Name="Public" Id="{63204732-e3ed-499c-a1cc-5d83bb8d3ea1}" />
+    <Method Name="AddCustomPackMode" Id="{6ea33754-fbd2-44c2-b121-20d3288e8049}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD AddCustomPackMode : BOOL
+VAR_INPUT
+  newPackMode : T_BaseMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[// mobject.list.add(newmode);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddPackModes" Id="{85ef9fb9-fb0f-40b0-a83e-84ca52cbb7f9}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD AddPackModes : BOOL
+VAR_INPUT
+  prodMode : I_PackMode;
+  maintMode : I_PackMode;
+  manMode : I_PackMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//ProductionMode := prodMode;
+//MaintenanceMode := maintMode;
+//ManualMode := manMode;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddStateModule" Id="{21fe5c2d-7a9b-4ad5-84ff-7ae76830a6cd}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC AddStateModule
+VAR_INPUT
+  stateModule : I_StateModule;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//_state := stateModule;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ChangeMode" Id="{bd04e302-796d-445f-9395-38f8b1c8f63e}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC ChangeMode
+VAR_INPUT
+  Mode : E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//IF Mode <> _CommandedMode THEN
+//    ModeCommand := Mode;
+//END_IF
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="CurrentMode" Id="{bb96f9bc-1fcf-4ca4-92d4-7395e019defd}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Get Name="Get" Id="{91c66e1f-6a18-49bb-b03e-42a8637455f2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentMode := _CurrentMode;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{0e92f0a6-71a1-4978-80c8-56ca48fef23c}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC CyclicLogic
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ModeControl();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{bba8bd93-3ac1-495e-a997-963b53b268fd}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+  stateModule : I_StateModule;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_state := stateModule;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ListenForModeChange" Id="{e0d2514d-fec9-45cd-834c-1067f21c9d10}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE ListenForModeChange
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+//On startup, Mode is invalid, set it to production
+IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+    ModeChangeRequested := TRUE;
+    _CommandedMode      := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
+    LastModeCommand := _CommandedMode;
+
+    //If mode is valid and the command has changed, attempt to change modes
+ELSIF _CommandedMode <> LastModeCommand THEN
+    ModeChangeRequested               := TRUE;
+
+    LastModeCommand := _CommandedMode;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ModeChange" Id="{d05f0be5-01e9-43f5-8ab0-a0bdd61d255d}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE ModeChange
+VAR_INPUT
+END_VAR
+
+VAR
+  SequenceState, DescendantSequenceState : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[    //Handles mode changes based on ModeCommand and the state transition rules defined in the pre-defined protected modes or custom modes
+    PackModeManager(bExecute     := TRUE,
+                eModeCommand := _CommandedMode,
+                eState       := _state.CurrentState,
+                eModeStatus  => _CurrentMode);
+
+        //If PackML mode has changed
+        IF PackModeManager.eModeStatus <> LastMode THEN
+            LastMode                := PackModeManager.eModeStatus;
+            SequenceState           := 0;
+            DescendantSequenceState := 0;
+
+            //If state change logging is not suppressed
+            IF _LogModeChanges THEN
+                //PMLModeLogger(Alarms := PackMLAlarms, ModulePrefix := _Name, Mode := ModeManager.eModeStatus);
+            END_IF
+
+        END_IF
+
+        // Reset mode control command
+        PackModeManager(bExecute := FALSE);
+        ModeChangeRequested := FALSE;
+        
+    IF PackModeManager.bError THEN
+        //IF ReachedInitialDefaultStateAndMode THEN
+        //    IF NOT PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].bRaised THEN
+        //        PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].Raise(0);
+        //    END_IF
+        //END_IF
+
+        // Reset mode control command
+        PackModeManager(bExecute := FALSE);
+        ModeChangeRequested := FALSE;
+     END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ModeControl" Id="{b6127da8-0de3-408d-a711-2f3c4fe9482b}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE ModeControl //Final ?
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[ListenForModeChange();
+
+IF ModeChangeRequested THEN
+    ModeChange();
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ModeManager">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.AddCustomPackMode">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.AddPackModes">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.AddStateModule">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.ChangeMode">
+      <LineId Id="6" Count="3" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.CurrentMode.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.CyclicLogic">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.FB_init">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.ListenForModeChange">
+      <LineId Id="6" Count="11" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.ModeChange">
+      <LineId Id="6" Count="21" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="28" Count="9" />
+      <LineId Id="43" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.ModeControl">
+      <LineId Id="94" Count="2" />
+      <LineId Id="129" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="131" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

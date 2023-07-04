@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_MockStateModule" Id="{494731a3-e8ea-4298-9b19-67e585bf4363}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_MockStateModule IMPLEMENTS I_StateModule
+VAR_INPUT
+  _currentState : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="CurrentState" Id="{42c943d7-3807-4dad-aa79-0e2eaba5dc8a}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY CurrentState : UINT
+]]></Declaration>
+      <Get Name="Get" Id="{55a7497a-587c-405e-812f-a54ec1698e9c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CurrentState := _currentState;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="T_MockStateModule">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_MockStateModule.CurrentState.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

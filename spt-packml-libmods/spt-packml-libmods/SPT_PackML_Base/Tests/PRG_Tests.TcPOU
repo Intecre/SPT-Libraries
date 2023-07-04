@@ -11,6 +11,14 @@ VAR
   CantChangeModInExecute : T_CantChangeModInExecute(modeTestSuite);
   JogThroughStates : T_JogThroughStates(modeTestSuite);
   CantChangeStateFromIdleToSuspend : T_CantChangeStateFromIdleToSuspend(modeTestSuite);
+  
+  // set mode
+  AddPackModeSetsCorrectly : T_AddPackModeSetsCorrectly(modeTestSuite);  
+  InitModeManagerWithState : T_InitModeManagerWithState(modeTestSuite);
+  ModeChangeFromProductionToMaintenance : T_ModeChangeFromProductionToMaintenance(modeTestSuite);
+  ModeInitialisedFromInvalidToProduction : T_ModeInitialisedFromInvalidToProduction(modeTestSuite);
+  
+  
 END_VAR
 ]]></Declaration>
     <Implementation>

@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_InitModeManagerWithState" Id="{2953af92-bc5e-426d-b2e3-d4ccc528258d}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_InitModeManagerWithState EXTENDS T_UnitTestBase
+VAR
+  stateModule : T_MockStateModule;
+  modeManager : T_ModeManager(stateModule);
+  
+  actual, expected : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//arrange
+stateModule._currentState := 5;
+
+//act
+
+actual := modeManager._state.CurrentState;
+expected := 5;
+//assert
+assertion.AssertEquals_UDINT(actual, expected , 'actual := modeManager._state');
+TestFinished(); 
+
+]]></ST>
+    </Implementation>
+    <LineIds Name="T_InitModeManagerWithState">
+      <LineId Id="25" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

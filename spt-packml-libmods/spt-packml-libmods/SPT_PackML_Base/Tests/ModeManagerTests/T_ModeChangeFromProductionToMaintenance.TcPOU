@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModeChangeFromProductionToMaintenance" Id="{738a0f00-8349-4471-bf75-f1cc1179c765}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModeChangeFromProductionToMaintenance EXTENDS T_UnitTestBase
+VAR
+  mockState : T_MockStateModule;
+  modeManager : T_ModeManager(mockState);
+  expected, actual : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CycleModuleLogicToAllowChangesToFilterThrough();
+modeManager.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Maintenance);
+CycleModuleLogicToAllowChangesToFilterThrough();
+
+actual := TO_UINT(modeManager.CurrentMode);
+expected := TO_UINT(E_PMLUnitMode.ePMLUnitMode_Maintenance);
+assertion.AssertEquals_UINT(expected, actual, 'actual := TO_UINT(modeManager.CurrentMode)');
+TestFinished(); ]]></ST>
+    </Implementation>
+    <Method Name="CycleModuleLogicToAllowChangesToFilterThrough" Id="{77dca678-9999-44f8-ba35-3484f59b06bc}">
+      <Declaration><![CDATA[METHOD CycleModuleLogicToAllowChangesToFilterThrough : BOOL
+VAR_INST
+	i: INT;
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[modeManager.CyclicLogic();
+CycleModuleLogicToAllowChangesToFilterThrough := i >= 10;
+i := SEL(i >= 10, i + 1, 0);
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ModeChangeFromProductionToMaintenance">
+      <LineId Id="15" Count="1" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeChangeFromProductionToMaintenance.CycleModuleLogicToAllowChangesToFilterThrough">
+      <LineId Id="14" Count="2" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

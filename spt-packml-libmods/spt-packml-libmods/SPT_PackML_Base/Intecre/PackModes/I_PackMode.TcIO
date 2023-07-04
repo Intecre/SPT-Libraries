@@ -4,6 +4,7 @@
     <Declaration><![CDATA[INTERFACE I_PackMode
 ]]></Declaration>
     <Folder Name="ActingStates" Id="{a3e7192b-8992-4b0a-b8e1-4f903b70ba0a}" />
+    <Folder Name="Properties" Id="{acd9d03c-99b3-49de-a279-c33d234daa81}" />
     <Folder Name="WaitingStates" Id="{b15540d7-d3ca-48c0-aacd-9aae6333cb68}" />
     <Method Name="Aborted" Id="{0833387d-7548-4826-80d6-9ac13d2cfeb4}" FolderPath="WaitingStates\">
       <Declaration><![CDATA[METHOD Aborted

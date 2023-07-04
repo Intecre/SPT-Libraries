@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModeInitialisedFromInvalidToProduction" Id="{7a8b6319-64c3-428e-a95a-938b00277ced}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModeInitialisedFromInvalidToProduction EXTENDS T_UnitTestBase
+VAR
+  mockState : T_MockStateModule;
+  modeManager : T_ModeManager(mockState);
+  expected, actual : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CycleModuleLogicToAllowChangesToFilterThrough();
+
+expected := TO_UINT(E_PMLUnitMode.ePMLUnitMode_Production);
+actual := TO_UINT(modeManager._CurrentMode);
+assertion.AssertEquals_UINT(expected, actual, 'actual := modeManager._CurrentMode'); 
+
+TestFinished(); ]]></ST>
+    </Implementation>
+    <Method Name="CycleModuleLogicToAllowChangesToFilterThrough" Id="{dbbabcf2-0662-4caf-9f32-66a817ad1d97}">
+      <Declaration><![CDATA[METHOD CycleModuleLogicToAllowChangesToFilterThrough : BOOL
+VAR_INST
+	i: INT;
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[modeManager.CyclicLogic();
+CycleModuleLogicToAllowChangesToFilterThrough := i >= 10;
+i := SEL(i >= 10, i + 1, 0);
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ModeInitialisedFromInvalidToProduction">
+      <LineId Id="9" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="23" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeInitialisedFromInvalidToProduction.CycleModuleLogicToAllowChangesToFilterThrough">
+      <LineId Id="14" Count="2" />
+      <LineId Id="13" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

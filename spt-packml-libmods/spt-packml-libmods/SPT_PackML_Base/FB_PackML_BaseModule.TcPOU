@@ -22,7 +22,7 @@ END_VAR
 
 VAR
     //cs classes
-    //ModeManager : T_ModeManager;
+    //T_ModeManager : T_ModeManager;
     
     //spt classes
     ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
@@ -262,7 +262,11 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Mode <> _CommandedMode THEN
     ModeCommand := Mode;
-END_IF]]></ST>
+END_IF
+
+
+
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="ChangeState" Id="{57d1b99b-67e4-43ab-b19f-d0ba246e5623}" FolderPath="I_PackML_Control\Methods\">
@@ -1014,7 +1018,7 @@ END_VAR]]></Declaration>
             ipExternalControllers[i].ModeChanged(_CommandedMode);
         END_IF
     END_FOR
-
+    
     //ModeChangeRequested := TRUE;
 END_IF]]></ST>
         </Implementation>
@@ -1896,6 +1900,10 @@ END_IF]]></ST>
     <LineIds Name="FB_PackML_BaseModule.ChangeMode">
       <LineId Id="3" Count="1" />
       <LineId Id="2" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ChangeState">
       <LineId Id="3" Count="1" />
@@ -1984,7 +1992,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeCommand.Set">
-      <LineId Id="3" Count="11" />
+      <LineId Id="3" Count="9" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="14" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeControl">

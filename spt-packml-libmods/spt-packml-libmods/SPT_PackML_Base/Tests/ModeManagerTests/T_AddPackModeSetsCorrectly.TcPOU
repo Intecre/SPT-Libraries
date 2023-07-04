@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AddPackModeSetsCorrectly" Id="{b4da4a75-bd92-4e63-be2c-5d78a1decb96}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AddPackModeSetsCorrectly EXTENDS T_UnitTestBase
+VAR
+  mockState : T_MockStateModule;
+  modeManager : T_ModeManager(mockState);
+
+  maintenanceMode : T_BaseMode;
+  productionMode : T_BaseMode;
+  manualMode : T_BaseMode;
+
+  actualMaintenanceMode, actualProdMode, actualManualMode : I_PackMode;
+  expectedMaintenanceMode, expectedProdMode, expectedManualMode : I_PackMode;
+
+  maintenanceResult, productionResult, manualResult : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//act
+modemanager.AddPackModes(productionMode, maintenanceMode, manualMode);
+
+actualMaintenanceMode := modeManager.MaintenanceMode;
+actualProdMode := modeManager.ProductionMode;
+actualManualMode := modeManager.ManualMode;
+expectedMaintenanceMode := maintenanceMode;
+expectedProdMode := productionMode;
+expectedManualMode := manualMode;
+
+maintenanceResult := actualMaintenanceMode = expectedMaintenanceMode;
+productionResult := actualProdMode = expectedProdMode;
+manualResult := actualManualMode = expectedManualMode;
+
+//asert
+assertion.AssertEquals_BOOL(TRUE, maintenanceResult, 'maintenanceResult := modeManager.MaintenanceMode = maintenanceMode');
+assertion.AssertEquals_BOOL(TRUE, productionResult, 'productionResult := modeManager.ProductionMode = productionMode');
+assertion.AssertEquals_BOOL(TRUE, manualResult, 'manualResult := modeManager.ManualMode = manualMode');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_AddPackModeSetsCorrectly">
+      <LineId Id="39" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="55" Count="1" />
+      <LineId Id="72" Count="2" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="49" Count="1" />
+      <LineId Id="21" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
