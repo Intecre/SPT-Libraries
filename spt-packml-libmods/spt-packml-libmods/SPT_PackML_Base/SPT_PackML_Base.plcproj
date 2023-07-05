@@ -260,13 +260,22 @@
     <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\CollectionsTests\T_AddSameComponentTwiceShouldntAdd.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\CollectionsTests\T_CountReturnsCorrect.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_AddMoreThanSizeOfCollectionFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_ClearGroupCountEqualsZeroCompareEqualsFalse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_GetComponentIndexOutOfBoundaryResultsFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">

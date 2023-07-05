@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AddSameComponentTwiceShouldntAdd" Id="{a93610e7-93f0-4e2f-8a19-8e4b314649ef}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AddSameComponentTwiceShouldntAdd  EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent : T_Component;
+  actual : I_ComponentBase;
+  expected : I_ComponentBase;
+  result : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[list.AddComponent(newComponent);
+result := NOT list.AddComponent(newComponent);
+
+assertion.AssertEquals_BOOL(TRUE, result, 'result := NOT list.AddComponent(newComponent)');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_AddSameComponentTwiceShouldntAdd">
+      <LineId Id="15" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

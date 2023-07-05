@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_GetComponentIndexOutOfBoundaryResultsFalse" Id="{f7c8f7ba-ae31-41e2-85cc-10eb490f1c48}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_GetComponentIndexOutOfBoundaryResultsFalse EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent : T_Component;
+  actual : I_ComponentBase;
+  expected : I_ComponentBase;
+  result, tryGetResultWithinMax, tryGetResultAboveMax : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[list.AddComponent(newComponent);
+
+tryGetResultWithinMax := NOT list.TryGetComponent(3, component => actual);
+tryGetResultAboveMax := NOT list.TryGetComponent(13, component => actual);
+
+result := actual = 0;
+assertion.AssertEquals_BOOL(TRUE, result, 'result');
+assertion.AssertEquals_BOOL(TRUE, tryGetResultWithinMax, 'tryGetResultWithinMax');
+assertion.AssertEquals_BOOL(TRUE, tryGetResultAboveMax, 'tryGetResultAboveMax');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_GetComponentIndexOutOfBoundaryResultsFalse">
+      <LineId Id="27" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="26" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

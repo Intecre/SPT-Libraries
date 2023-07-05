@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AddMoreThanSizeOfCollectionFalse" Id="{593c008c-f0f7-4432-bc82-f9a0098d8bbc}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AddMoreThanSizeOfCollectionFalse EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(3);
+  newComponent : ARRAY [1..5] OF T_Component;
+  expected, actual : UINT;
+  result, resultAddOutOfBoundary : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[list.AddComponent(newComponent[1]);
+list.AddComponent(newComponent[2]);
+list.AddComponent(newComponent[3]);
+
+resultAddOutOfBoundary := NOT list.AddComponent(newComponent[4]);
+
+expected := 3;
+actual := list.Count;
+
+assertion.AssertEquals_UINT(expected, actual, 'actual := list.Count');
+assertion.AssertEquals_BOOL(TRUE, resultAddOutOfBoundary, 'resultAddOutOfBoundary');
+TestFinished();
+]]></ST>
+    </Implementation>
+    <LineIds Name="T_AddMoreThanSizeOfCollectionFalse">
+      <LineId Id="20" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -25,7 +25,9 @@ VAR
   CountReturnsCorrect : T_CountReturnsCorrect(componentCollectionTestSuite);
   GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(componentCollectionTestSuite);
   ClearGroupCountEqualsZeroCompareEqualsFalse : T_ClearGroupCountEqualsZeroCompareEqualsFalse(componentCollectionTestSuite);
-
+  AddSameComponentTwiceShouldntAdd : T_AddSameComponentTwiceShouldntAdd(componentCollectionTestSuite);
+  GetComponentIndexOutOfBoundaryResultsFalse : T_GetComponentIndexOutOfBoundaryResultsFalse(componentCollectionTestSuite);
+  AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(componentCollectionTestSuite);
   
 END_VAR
 ]]></Declaration>
