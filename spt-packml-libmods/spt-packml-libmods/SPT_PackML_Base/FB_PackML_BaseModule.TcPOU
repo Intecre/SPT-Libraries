@@ -1,19 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_PackML_BaseModule" Id="{b51128fe-fac6-441f-bd13-bfcb90049779}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT FB_PackML_BaseModule EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_BaseModule, I_PackML_Control
+    <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT FB_PackML_BaseModule EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_BaseModule, I_PackML_Control, I_StateModule
     //I_PMLControl
 VAR
-    _CurrentMode    : E_PMLUnitMode; //Current UnitMode of the module	
-    _CommandedMode  : E_PMLUnitMode; //Current Commanded UnitMode of the module
+    
     _CurrentState   : Tc3_PackML_V2.E_PMLState;
     _CommandedState : Tc3_PackML_V2.E_PMLCommand;
 END_VAR
 
 //I_PMLModuleBase
 VAR
-    _CurrentAlarmSeverity           : TcEventSeverity;
-    _LogModeChanges                 : BOOL := TRUE;  //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
+    _CurrentAlarmSeverity           : TcEventSeverity;   
     _LogStateChanges                : BOOL := FALSE; //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
     _Name                           : STRING;        //Human-readable module name for user-side messaging
     _ParentFaultResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse
@@ -22,18 +20,26 @@ END_VAR
 
 VAR
     //cs classes
-    //T_ModeManager : T_ModeManager;
-    
-    //spt classes
+    OurModeManager : T_ModeManager(THIS^);
+    (* These have been put inside T_ModeManager
     ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
-    StateMachine                      : PML_StateMachine;           //Manages PackML state transitions
     CustomModes                       : PML_UnitModeConfig;         //Used to define custom machine modes if desired
-    PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
     PMLModeLogger                     : FB_PackML_ModeLogger;       //Logs PackML Mode changes	
-    PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
-    PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine
     LastModeCommand                   : E_PMLUnitMode;              //Previous received PackML mode command
     LastMode                          : DINT;                       //Last PackML mode 	
+    _CurrentMode                      : E_PMLUnitMode; //Current UnitMode of the module	
+    _CommandedMode                    : E_PMLUnitMode; //Current Commanded UnitMode of the module
+    _LogModeChanges                   : BOOL := TRUE;  //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
+    ModeChangeRequested               : BOOL;
+    ModeNames                         : ARRAY[0..31] OF STRING;
+    *)
+    
+    //spt classes
+    
+    StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
+    PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
+    PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
+    PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
     LastState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
     StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
     NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
@@ -44,10 +50,8 @@ VAR
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
     ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
     NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
-    ModeNames                         : ARRAY[0..31] OF STRING;
     ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
     ReachedInitialDefaultStateAndMode : BOOL;
-    ModeChangeRequested               : BOOL;
     SequenceState                     : UDINT;
     DescendantSequenceState           : UDINT;
     HMICommand_RT                     : R_TRIG;
@@ -260,9 +264,11 @@ VAR_INPUT
     Mode : E_PMLUnitMode;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Mode <> _CommandedMode THEN
-    ModeCommand := Mode;
-END_IF
+        <ST><![CDATA[//IF Mode <> _CommandedMode THEN
+//    ModeCommand := Mode;
+//END_IF
+
+OurModeManager.ChangeMode(Mode);
 
 
 
@@ -529,13 +535,12 @@ END_VAR]]></Declaration>
       </Get>
     </Property>
     <Property Name="CurrentMode" Id="{bc2b045c-1313-4030-8d9b-1e43964fed78}" FolderPath="I_PackML_Control\Properties\">
-      <Declaration><![CDATA[//! @summary Returns the current PackML mode of this module
-PROPERTY CurrentMode : E_PMLUnitMode]]></Declaration>
+      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLUnitMode]]></Declaration>
       <Get Name="Get" Id="{1dd33fe5-9737-46ae-8efa-b652739a2309}">
         <Declaration><![CDATA[VAR
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[CurrentMode := _CurrentMode;]]></ST>
+          <ST><![CDATA[CurrentMode := OurModeManager.CurrentMode;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -573,7 +578,7 @@ IF NOT _InitComplete THEN
 END_IF
 
 // Inhibit mode & state errors until startup is complete
-IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLState_Aborted AND _CurrentMode = Parameters_PackML_Base.UNIT_MODE_DEFAULT THEN
+IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLState_Aborted AND OurModeManager.CurrentMode = Parameters_PackML_Base.UNIT_MODE_DEFAULT THEN
     ReachedInitialDefaultStateAndMode := TRUE;
 END_IF
 
@@ -595,7 +600,8 @@ END_FOR
 HMICommunication();
 
 // Mode control loop of the module
-ModeControl();
+OurModeManager();
+//ModeControl();
 
 // State control loop of the module
 StateControl();
@@ -694,31 +700,31 @@ METHOD PROTECTED HMICommunication
 //Process HMI requests
 HMICommand_RT(CLK := (PackMLBaseModule_HMI.Status.HMIControlAvailable AND NOT HMICommandActive_Descendant) AND
                      (PackMLBaseModule_HMI.Command.ActivateModeLog XOR PackMLBaseModule_HMI.Command.DeactivatModeLog XOR PackMLBaseModule_HMI.Command.ActivateStateLog XOR
-                     PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> _CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState));
+                     PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState));
 
 //Desendant components should observe this to interlock HMI commands
 HMICommandActive_Base := PackMLBaseModule_HMI.Status.HMIControlAvailable AND
                          (PackMLBaseModule_HMI.Command.ActivateModeLog OR PackMLBaseModule_HMI.Command.DeactivatModeLog OR PackMLBaseModule_HMI.Command.ActivateStateLog OR
-                         PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> _CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState);
+                         PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState);
 
 IF HMICommand_RT.Q THEN
     IF PackMLBaseModule_HMI.Command.ActivateModeLog THEN
-        _LogModeChanges := TRUE;
+        OurModeManager.LogModeChanges := TRUE;
     END_IF
 
     IF PackMLBaseModule_HMI.Command.DeactivatModeLog THEN
-        _LogModeChanges := FALSE;
+        OurModeManager.LogModeChanges := FALSE;
     END_IF
 
     IF PackMLBaseModule_HMI.Command.ActivateStateLog THEN
-        _LogStateChanges := TRUE;
+        LogStateChanges := TRUE;
     END_IF
 
     IF PackMLBaseModule_HMI.Command.DeactivateStateLog THEN
         _LogStateChanges := FALSE;
     END_IF
 
-    IF PackMLBaseModule_HMI.Command.Mode <> _CommandedMode THEN
+    IF PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode THEN
         ModeCommand := PackMLBaseModule_HMI.Command.Mode;
     END_IF
 
@@ -728,10 +734,10 @@ IF HMICommand_RT.Q THEN
 END_IF
 
 PackMLBaseModule_HMI.Config.Name            := _Name;
-PackMLBaseModule_HMI.Config.LogModeChanges  := _LogModeChanges;
+PackMLBaseModule_HMI.Config.LogModeChanges  := OurModeManager.LogModeChanges;
 PackMLBaseModule_HMI.Config.LogStateChanges := _LogStateChanges;
-PackMLBaseModule_HMI.Config.ModeNames       := ModeNames;
-PackMLBaseModule_HMI.Status.Mode            := _CurrentMode;
+PackMLBaseModule_HMI.Config.ModeNames       := OurModeManager.ModeNames;
+PackMLBaseModule_HMI.Status.Mode            := OurModeManager.CurrentMode;
 PackMLBaseModule_HMI.Status.State           := _CurrentState;
 PackMLBaseModule_HMI.Status.Busy            := _Busy;
 PackMLBaseModule_HMI.Status.Error           := _Error;
@@ -745,7 +751,7 @@ METHOD PROTECTED HMIPermissions
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
         <ST><![CDATA[//General Mode Based Monitoring and handling of HMI control
-CASE _CurrentMode OF
+CASE OurModeManager.CurrentMode OF
     E_PMLUnitMode.ePMLUnitMode_Production:
         CASE _CurrentState OF
             E_PMLState.ePMLState_Stopped:
@@ -957,21 +963,22 @@ CASE SequenceState OF
 END_CASE]]></ST>
       </Implementation>
     </Method>
-    <Property Name="LogModeChanges" Id="{021783ae-5efd-4506-a012-4d08fd7e83f7}" FolderPath="I_PackML_BaseModule\Properties\">
-      <Declaration><![CDATA[//! @summary Enable/Disable logging of mode changes
-PROPERTY LogModeChanges : BOOL]]></Declaration>
-      <Get Name="Get" Id="{5e483759-154e-4761-b62a-a7c816d2ebfc}">
+    <Property Name="LogModeChanges" Id="{ca10d3f5-495d-495b-b9de-8fd5e8d5296b}" FolderPath="I_PackML_BaseModule\Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC LogModeChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b0a19dbb-9a9a-4c37-964f-e9614c7c6595}">
         <Declaration><![CDATA[VAR
-END_VAR]]></Declaration>
+END_VAR
+]]></Declaration>
         <Implementation>
-          <ST><![CDATA[LogModeChanges := _LogModeChanges;]]></ST>
+          <ST><![CDATA[LogModeChanges := OurModeManager.LogModeChanges;]]></ST>
         </Implementation>
       </Get>
-      <Set Name="Set" Id="{f46d3f1b-f363-4efb-8060-ae4e55813e7e}">
+      <Set Name="Set" Id="{8f7224fa-f948-4526-8508-df1aa032238d}">
         <Declaration><![CDATA[VAR
-END_VAR]]></Declaration>
+END_VAR
+]]></Declaration>
         <Implementation>
-          <ST><![CDATA[_LogModeChanges := LogModeChanges;]]></ST>
+          <ST><![CDATA[OurModeManager.LogModeChanges := LogModeChanges;]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -1000,7 +1007,7 @@ PROPERTY ModeCommand : DINT]]></Declaration>
         <Declaration><![CDATA[VAR
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[ModeCommand := _CommandedMode;]]></ST>
+          <ST><![CDATA[ModeCommand := OurModeManager.CommandedMode;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{428042c2-2a29-4c07-9a8f-eebad7e0d1dc}">
@@ -1008,7 +1015,8 @@ END_VAR]]></Declaration>
 	i : UDINT;
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[IF ModeCommand <> _CommandedMode THEN
+          <ST><![CDATA[(*
+IF ModeCommand <> _CommandedMode THEN
     _CommandedMode                    := ModeCommand;
     PackMLBaseModule_HMI.Command.Mode := ModeCommand;
 	
@@ -1020,7 +1028,8 @@ END_VAR]]></Declaration>
     END_FOR
     
     //ModeChangeRequested := TRUE;
-END_IF]]></ST>
+END_IF
+*)]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -1034,6 +1043,7 @@ END_VAR
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
         <ST><![CDATA[//On startup, Mode is invalid, set it to production
+(*
 IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
     ModeChangeRequested := TRUE;
     _CommandedMode      := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
@@ -1046,6 +1056,7 @@ IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
     END_FOR
 
     LastModeCommand := _CommandedMode;
+    
 
     //If mode is valid and the command has changed, attempt to change modes
 ELSIF _CommandedMode <> LastModeCommand THEN
@@ -1105,7 +1116,8 @@ IF ModeChangeRequested THEN
         ModeManager(bExecute := FALSE);
         ModeChangeRequested := FALSE;
     END_IF
-END_IF]]></ST>
+END_IF
+*)]]></ST>
       </Implementation>
     </Method>
     <Property Name="Name" Id="{eaa28a82-9f48-4672-adf0-02d762f98fa4}" FolderPath="I_PackML_BaseModule\Properties\">
@@ -1330,7 +1342,7 @@ END_VAR]]></Declaration>
 	i : UDINT;
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[IF _CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid AND _CurrentState <> E_PMLState.ePMLState_Undefined THEN
+          <ST><![CDATA[IF OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid AND _CurrentState <> E_PMLState.ePMLState_Undefined THEN
 
     _CommandedState                    := StateCommand;
     PackMLBaseModule_HMI.Command.State := StateCommand;	
@@ -1372,12 +1384,12 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[//On startup, state is invalid, set it to default
-IF _CurrentState = E_PMLState.ePMLState_Undefined AND _CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+IF _CurrentState = E_PMLState.ePMLState_Undefined AND OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
     _CommandedState := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
 END_IF
 
 //Call PackML state machine	
-StateMachine(eMode            := _CurrentMode,
+StateMachine(eMode            := OurModeManager.CurrentMode,
              eCommand         := _CommandedState,
              stSubUnitInfoRef :=,
              stOptions        :=,
@@ -1900,6 +1912,8 @@ END_IF]]></ST>
     <LineIds Name="FB_PackML_BaseModule.ChangeMode">
       <LineId Id="3" Count="1" />
       <LineId Id="2" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
       <LineId Id="11" Count="0" />
       <LineId Id="10" Count="0" />
       <LineId Id="9" Count="0" />
@@ -1939,7 +1953,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.CyclicLogic">
-      <LineId Id="3" Count="49" />
+      <LineId Id="3" Count="36" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="40" Count="12" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Execute">
@@ -1992,14 +2008,21 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeCommand.Set">
+      <LineId Id="20" Count="0" />
       <LineId Id="3" Count="9" />
       <LineId Id="17" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="2" Count="0" />
+      <LineId Id="21" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeControl">
-      <LineId Id="3" Count="71" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="4" Count="11" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="16" Count="58" />
       <LineId Id="2" Count="0" />
+      <LineId Id="83" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Name.Get">
       <LineId Id="2" Count="0" />

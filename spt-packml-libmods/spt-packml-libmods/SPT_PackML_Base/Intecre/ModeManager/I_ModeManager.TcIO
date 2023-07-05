@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ModeManager" Id="{43f4dfa9-aee4-40ad-83ad-b4f8b760fd6a}">
+    <Declaration><![CDATA[INTERFACE I_ModeManager
+]]></Declaration>
+    <Folder Name="Properties" Id="{bf5fc7df-2960-4dc8-b341-f3e0c472a979}" />
+    <Folder Name="Public" Id="{ecae9b5b-a7d7-4888-b825-b1ed99b3e70f}" />
+    <Method Name="AddCustomPackMode" Id="{9bdf90f7-a39c-4a84-904e-d7ee32768723}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD AddCustomPackMode : BOOL
+VAR_INPUT
+  index : UINT;
+  newPackMode : I_PackMode;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="AddPackModes" Id="{b5ed3537-a540-4df6-aa09-1c86491aefd3}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD AddPackModes : BOOL
+VAR_INPUT
+  prodMode : I_PackMode;
+  maintMode : I_PackMode;
+  manMode : I_PackMode;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="AddStateModule" Id="{73dd2db3-ea8a-4c53-a2cb-51cd0facaf63}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC AddStateModule
+VAR_INPUT
+  stateModule : I_StateModule;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ChangeMode" Id="{341d4751-712a-4607-9d66-147759d82e06}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC ChangeMode
+VAR_INPUT
+  Mode : E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="CommandedMode" Id="{533c7242-61a5-4641-9c71-744c83e164ae}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Get Name="Get" Id="{c94a2607-4f3d-4750-9311-512034603189}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Property Name="CurrentMode" Id="{a9806cdd-9a75-41f3-8d95-823cb649c948}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Get Name="Get" Id="{07bfa944-506d-4241-973c-68128961a3d2}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{d6747437-05f6-4ad7-9c36-359e1d42e79b}" FolderPath="Public\">
+      <Declaration><![CDATA[METHOD PUBLIC CyclicLogic
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="LogModeChanges" Id="{a4016744-9cd6-40e1-87b9-41eff92c47c6}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC LogModeChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{b1d41291-8a9e-4993-982a-980db0d5409f}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+      <Set Name="Set" Id="{1e3d322e-6260-4d5a-853d-6dc59abbdc95}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
+    </Property>
+    <Property Name="ModeNames" Id="{46040903-c3d9-465c-9405-a19d3141468c}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC  ModeNames : REFERENCE TO ARRAY[0..31] OF STRING]]></Declaration>
+      <Get Name="Get" Id="{b2b22703-b975-4696-8b83-2e5313ce89c4}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

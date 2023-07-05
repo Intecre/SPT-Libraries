@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_ModeManager" Id="{ea4887d2-59b6-4466-9a73-4e1ef78db5cc}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ModeManager
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModeManager IMPLEMENTS I_ModeManager
 VAR
   _state : I_StateModule;
   _LogModeChanges : BOOL := TRUE;
@@ -13,7 +13,7 @@ VAR
   LastModeCommand : E_PMLUnitMode;
   PMLModeLogger : FB_PackML_ModeLogger;
   LastMode : DINT;
-  ModeNames : ARRAY[0..31] OF STRING; // ('Production','Maintenance', 'Manual');
+  _ModeNames : ARRAY[0..31] OF STRING; // ('Production','Maintenance', 'Manual');
   ModeChangeRequested : BOOL;
 
   CurrentStrategy : I_PackMode := ProductionMode;
@@ -79,6 +79,17 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="CommandedMode" Id="{e92ac6e2-3b07-41c3-9cac-aa4e0b94fdb1}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Get Name="Get" Id="{c3433c3b-dcb6-45e1-b15a-0ce485f7e416}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[CommandedMode := _CommandedMode;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Property Name="CurrentMode" Id="{bb96f9bc-1fcf-4ca4-92d4-7395e019defd}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLProtectedUnitMode]]></Declaration>
       <Get Name="Get" Id="{91c66e1f-6a18-49bb-b03e-42a8637455f2}">
@@ -132,6 +143,25 @@ ELSIF _CommandedMode <> LastModeCommand THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Property Name="LogModeChanges" Id="{b31cab9f-6f34-4e52-aa0b-dc94d5e9dd9a}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC LogModeChanges : BOOL]]></Declaration>
+      <Get Name="Get" Id="{7374b8d1-413d-4a11-b76e-8f1b8b163e74}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[LogModeChanges := _LogModeChanges;]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{27a04a66-2e65-4601-ad71-d45eda7902f4}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_LogModeChanges := LogModeChanges;]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
     <Method Name="ModeChange" Id="{d05f0be5-01e9-43f5-8ab0-a0bdd61d255d}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD PRIVATE ModeChange
 VAR_INPUT
@@ -192,6 +222,17 @@ END_IF
 ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="ModeNames" Id="{e39c07a9-4860-45a1-a437-95f8bf6a1204}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY PUBLIC  ModeNames : REFERENCE TO ARRAY[0..31] OF STRING]]></Declaration>
+      <Get Name="Get" Id="{873d49e1-5c7c-48b4-a0a7-fef2bd7819e8}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ModeNames REF= _ModeNames;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <LineIds Name="T_ModeManager">
       <LineId Id="9" Count="0" />
     </LineIds>
@@ -210,6 +251,9 @@ END_IF
       <LineId Id="6" Count="3" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="T_ModeManager.CommandedMode.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="T_ModeManager.CurrentMode.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -223,6 +267,12 @@ END_IF
       <LineId Id="6" Count="11" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="T_ModeManager.LogModeChanges.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.LogModeChanges.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="T_ModeManager.ModeChange">
       <LineId Id="6" Count="21" />
       <LineId Id="42" Count="0" />
@@ -234,6 +284,9 @@ END_IF
       <LineId Id="129" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="131" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.ModeNames.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

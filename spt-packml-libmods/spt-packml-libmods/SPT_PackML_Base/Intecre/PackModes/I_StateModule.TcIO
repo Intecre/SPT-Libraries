@@ -4,7 +4,7 @@
     <Declaration><![CDATA[INTERFACE I_StateModule
 ]]></Declaration>
     <Property Name="CurrentState" Id="{9a7bc82b-aa93-4f43-ac51-36077389bf74}">
-      <Declaration><![CDATA[PROPERTY CurrentState : UINT]]></Declaration>
+      <Declaration><![CDATA[PROPERTY CurrentState : Tc3_PackML_V2.E_PMLState]]></Declaration>
       <Get Name="Get" Id="{ab125612-6645-4579-acaa-9dcdfbe7bbc3}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>

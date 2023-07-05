@@ -10,8 +10,7 @@ END_VAR
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Property Name="CurrentState" Id="{42c943d7-3807-4dad-aa79-0e2eaba5dc8a}">
-      <Declaration><![CDATA[{warning 'add property implementation'}
-PROPERTY CurrentState : UINT
+      <Declaration><![CDATA[PROPERTY CurrentState : Tc3_PackML_V2.E_PMLState
 ]]></Declaration>
       <Get Name="Get" Id="{55a7497a-587c-405e-812f-a54ec1698e9c}">
         <Declaration><![CDATA[VAR

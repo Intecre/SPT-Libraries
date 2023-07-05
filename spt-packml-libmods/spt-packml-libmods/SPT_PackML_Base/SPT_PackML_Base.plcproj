@@ -184,6 +184,7 @@
   <ItemGroup>
     <Folder Include="DUT" />
     <Folder Include="DUT\HMI" />
+    <Folder Include="Intecre\ModeManager" />
     <Folder Include="Intecre\PackModes" />
     <Folder Include="Interfaces" />
     <Folder Include="Intecre" />
@@ -208,6 +209,12 @@
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeManager\T_ModeManager.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intecre\PackModes\I_PackMode.TcIO">
       <SubType>Code</SubType>
     </Compile>
@@ -215,9 +222,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\PackModes\T_BaseMode.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Intecre\PackModes\T_ModeManager.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />

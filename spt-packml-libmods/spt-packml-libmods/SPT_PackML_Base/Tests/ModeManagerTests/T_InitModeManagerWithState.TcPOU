@@ -15,7 +15,7 @@ stateModule._currentState := 5;
 
 //act
 
-actual := modeManager._state.CurrentState;
+actual := TO_UINT(modeManager._state.CurrentState);
 expected := 5;
 //assert
 assertion.AssertEquals_UDINT(actual, expected , 'actual := modeManager._state');
