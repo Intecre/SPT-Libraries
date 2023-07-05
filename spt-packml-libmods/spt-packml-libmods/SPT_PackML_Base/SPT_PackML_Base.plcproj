@@ -260,16 +260,13 @@
     <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ContainsComponentCompareResultTrue.TcPOU">
+    <Compile Include="Tests\CollectionsTests\T_CountReturnsCorrect.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_RemoveComponentAtIndexRemovesItem.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\CollectionsTests\T_RemoveComponentRemovesItem.TcPOU">
+    <Compile Include="Tests\CollectionsTests\T_ClearGroupCountEqualsZeroCompareEqualsFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">

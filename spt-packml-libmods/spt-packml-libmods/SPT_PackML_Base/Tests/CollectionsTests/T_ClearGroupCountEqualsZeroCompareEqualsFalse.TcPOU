@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ClearGroupCountEqualsZeroCompareEqualsFalse" Id="{a5ac6aae-d815-4031-8abd-dd6bd35c8542}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ClearGroupCountEqualsZeroCompareEqualsFalse EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent : ARRAY [1..5] OF T_Component;
+  afterCountActual, afterCountExpected : UINT;
+  beforeCountActual, beforeCountExpected : UINT;
+  beforeActual, beforeExpected : I_ComponentBase;
+  afterActual, afterExpected : I_ComponentBase;
+ beforeResult, afterResult : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddComponent(newComponent[1]);
+list.AddComponent(newComponent[2]);
+list.AddComponent(newComponent[3]);
+list.AddComponent(newComponent[4]);
+
+// first test before running clear
+beforeExpected := newComponent[1];
+beforeActual := list._components[0];
+beforeResult := beforeExpected = beforeActual;
+
+Assertion.AssertEquals_BOOL(TRUE, beforeResult, 'item 0 = list.AddComponent()');
+Assertion.AssertEquals_UDINT(4, list.Count, 'list.Count = 4');
+
+//Act
+list.ClearGroup();
+
+//Assert 
+afterExpected := newComponent[1];
+afterActual := list._components[0];
+afterResult := afterExpected <> afterActual;
+Assertion.AssertEquals_BOOL(TRUE, beforeResult, 'afterResult := afterExpected <> afterActual;');
+
+afterCountActual := list.Count;
+afterCountExpected := 0;
+Assertion.AssertEquals_UDINT(afterCountExpected, afterCountActual, 'afterCountActul = 0');
+
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ClearGroupCountEqualsZeroCompareEqualsFalse">
+      <LineId Id="58" Count="0" />
+      <LineId Id="31" Count="2" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="51" Count="3" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="65" Count="1" />
+      <LineId Id="64" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

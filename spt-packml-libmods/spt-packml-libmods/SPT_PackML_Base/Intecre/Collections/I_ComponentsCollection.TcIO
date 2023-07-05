@@ -10,27 +10,21 @@ VAR_INPUT
 END_VAR]]></Declaration>
     </Method>
     <Method Name="ClearGroup" Id="{30c5e818-c08a-4a94-ac95-84b75d2e73f2}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
-VAR
-	i : UINT;
-END_VAR]]></Declaration>
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
     </Method>
     <Property Name="Count" Id="{f752922b-6353-4131-8750-9a3e8e8d1bbe}">
       <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
       <Get Name="Get" Id="{1b30b130-d217-410c-88e5-76568ebec665}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
-      <Set Name="Set" Id="{a77e6f7b-5ee3-4f70-8542-316c50d9fe0d}">
-        <Declaration><![CDATA[]]></Declaration>
-      </Set>
     </Property>
-    <Method Name="GetDrive" Id="{2a2cc843-d9df-49a9-8c8f-1a2bab38fbf2}">
-      <Declaration><![CDATA[METHOD GetComponent: I_ComponentBase
+    <Method Name="TryGetComponent" Id="{eef8026a-b285-4e9b-a877-dfdaee85e8f6}">
+      <Declaration><![CDATA[METHOD TryGetComponent: BOOL
 VAR_INPUT
 	index : UINT;
 END_VAR
 VAR_OUTPUT
-	success : BOOl;
+	component : I_ComponentBase;
 END_VAR
 ]]></Declaration>
     </Method>

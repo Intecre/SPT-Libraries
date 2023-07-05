@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_CountReturnsCorrect" Id="{e60208ed-9066-4494-9717-1e67b98003a8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_CountReturnsCorrect EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent : ARRAY [1..5] OF T_Component;
+  expected, actual : UINT;
+  result : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[list.AddComponent(newComponent[1]);
+list.AddComponent(newComponent[2]);
+list.AddComponent(newComponent[3]);
+list.AddComponent(newComponent[4]);
+
+expected := 4;
+actual := list.Count;
+
+assertion.AssertEquals_UINT(expected, actual, 'actual := list.Count');
+TestFinished();
+]]></ST>
+    </Implementation>
+    <LineIds Name="T_CountReturnsCorrect">
+      <LineId Id="20" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="21" Count="1" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="26" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -2,17 +2,30 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_GetComponentCompareResultsTrue" Id="{e9a4bf6b-918e-4c6c-8f6a-5af5f3d4eba8}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_GetComponentCompareResultsTrue EXTENDS T_UnitTestBase
-VAR_INPUT
-END_VAR
-VAR_OUTPUT
-END_VAR
 VAR
+  list : T_ComponentsCollection(10);
+  newComponent : T_Component;
+  actual : I_ComponentBase;
+  expected : I_ComponentBase;
+  result, tryGetResult : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[TestFinished();]]></ST>
+      <ST><![CDATA[list.AddComponent(newComponent);
+
+expected := newComponent;
+tryGetResult := list.TryGetComponent(0, component => actual);
+
+result := expected = actual;
+assertion.AssertEquals_BOOL(TRUE, result, 'result := expected = actual');
+assertion.AssertEquals_BOOL(TRUE, tryGetResult, 'tryGetResult');
+TestFinished();
+]]></ST>
     </Implementation>
     <LineIds Name="T_GetComponentCompareResultsTrue">
+      <LineId Id="27" Count="3" />
+      <LineId Id="32" Count="3" />
+      <LineId Id="26" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

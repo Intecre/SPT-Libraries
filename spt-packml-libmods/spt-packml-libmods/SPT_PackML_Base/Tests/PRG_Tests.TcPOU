@@ -22,10 +22,10 @@ VAR
     //collections tests
   componentCollectionTestSuite : T_TestSuite;
   AddComponentCompareResultTrue : T_AddComponentCompareResultTrue(componentCollectionTestSuite);
-  ContainsComponentCompareResultTrue : T_ContainsComponentCompareResultTrue(componentCollectionTestSuite);
+  CountReturnsCorrect : T_CountReturnsCorrect(componentCollectionTestSuite);
   GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(componentCollectionTestSuite);
-  RemoveComponentAtIndexRemovesItem : T_RemoveComponentAtIndexRemovesItem(componentCollectionTestSuite);
-  RemoveComponentRemovesItem : T_RemoveComponentRemovesItem(componentCollectionTestSuite);
+  ClearGroupCountEqualsZeroCompareEqualsFalse : T_ClearGroupCountEqualsZeroCompareEqualsFalse(componentCollectionTestSuite);
+
   
 END_VAR
 ]]></Declaration>
