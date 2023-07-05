@@ -19,17 +19,17 @@ VAR_INPUT
   newComponent : I_ComponentBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF newComponent = 0 THEN
-//	LogError( 'Cannot AddComponent invalid ref' );
-//	RETURN;
-//END_IF
+        <ST><![CDATA[IF newComponent = 0 THEN
+	LogError( 'Cannot AddComponent invalid ref' );
+	RETURN;
+END_IF
 
-//IF HasComponent( component := newComponent ) THEN
-//	LogWarning( 'Component already in collection.' );
-//	RETURN;
-//END_IF
+IF HasComponent( component := newComponent ) THEN
+	LogWarning( 'Component already in collection.' );
+	RETURN;
+END_IF
 
-//AddComponent := addInSpareSlot( Component := newComponent );]]></ST>
+AddComponent := addInSpareSlot( Component := newComponent );]]></ST>
       </Implementation>
     </Method>
     <Method Name="addInSpareSlot" Id="{fa90a5a6-a7d6-0fad-179b-cd65f7dfc1c1}" FolderPath="Private\">
@@ -55,14 +55,14 @@ VAR
 	i : UINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[////MEMSET(ADR(_components), 0 , SIZEOF(_components));
+        <ST><![CDATA[//MEMSET(ADR(_components), 0 , SIZEOF(_components));
 
-//FOR i := 0 TO collectionMaxSize - 1 DO
-//	_components[i] := 0;
-//END_FOR
+FOR i := 0 TO collectionMaxSize - 1 DO
+	_components[i] := 0;
+END_FOR
 
-//_cnt := 0;
-//LogDebug('ClearGroup() called.');]]></ST>
+_cnt := 0;
+LogDebug('ClearGroup() called.');]]></ST>
       </Implementation>
     </Method>
     <Property Name="Count" Id="{c3e24338-c204-0fb2-122b-2d8bd0174c7a}">
@@ -72,7 +72,7 @@ END_VAR]]></Declaration>
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[//Count := _cnt;
+          <ST><![CDATA[Count := _cnt;
 ]]></ST>
         </Implementation>
       </Get>
@@ -143,18 +143,18 @@ VAR_OUTPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF index > collectionMaxSize THEN
-//	LogError( 'cannot GetDrive, index out of bounds' );
-//	RETURN;
-//END_IF
+        <ST><![CDATA[IF index > collectionMaxSize THEN
+	LogError( 'cannot GetDrive, index out of bounds' );
+	RETURN;
+END_IF
 
-//IF index > (Count - 1) THEN
-//	LogError( 'cannot GetDrive, index > (Count - 1) ' );
-//	RETURN;
-//END_IF
+IF index > (Count - 1) THEN
+	LogError( 'cannot GetDrive, index > (Count - 1) ' );
+	RETURN;
+END_IF
 
-//GetComponent := _components[index];
-//success := GetComponent <> 0;]]></ST>
+component := _components[index];
+TryGetComponent := component <> 0;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="T_ComponentsCollection">

@@ -19,14 +19,12 @@ tryGetResult := list.TryGetComponent(0, component => actual);
 result := expected = actual;
 assertion.AssertEquals_BOOL(TRUE, result, 'result := expected = actual');
 assertion.AssertEquals_BOOL(TRUE, tryGetResult, 'tryGetResult');
-TestFinished();
-]]></ST>
+TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_GetComponentCompareResultsTrue">
       <LineId Id="27" Count="3" />
       <LineId Id="32" Count="3" />
       <LineId Id="26" Count="0" />
-      <LineId Id="9" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
