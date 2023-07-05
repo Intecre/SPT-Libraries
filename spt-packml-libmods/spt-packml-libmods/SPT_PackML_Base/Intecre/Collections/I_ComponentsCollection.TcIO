@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ComponentsCollection" Id="{cd9c2909-80e7-4016-b04d-a23c195a6ce8}">
+    <Declaration><![CDATA[INTERFACE I_ComponentsCollection
+]]></Declaration>
+    <Method Name="AddComponent" Id="{83e1e1b6-7c85-4e2a-abd1-4d9b2ad23b80}">
+      <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
+VAR_INPUT
+    newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="ContainsComponent" Id="{a0cf17a4-8017-483f-9a01-73fbb07c1228}">
+      <Declaration><![CDATA[METHOD PUBLIC ContainsComponent : BOOL
+VAR_INPUT
+    newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Count" Id="{fe986b55-8778-4207-bff0-0f1653e15d28}">
+      <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
+      <Get Name="Get" Id="{4ed50cef-02d5-42d1-b4fd-b0619b4c958b}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{9a5a3925-2d2b-42a3-a404-328faeabd89d}">
+      <Declaration><![CDATA[METHOD PUBLIC CyclicLogic
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="GetComponent" Id="{ba6631e6-fe35-42d5-b7b5-60e13f7db048}">
+      <Declaration><![CDATA[METHOD PUBLIC GetComponent : BOOL
+VAR_INPUT
+    index : UDINT;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="Initialize" Id="{aeb5ced7-24f3-46b2-b410-ed376d31c453}">
+      <Declaration><![CDATA[METHOD PUBLIC Initialize
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="RemoveComponent" Id="{4f7f742f-42b2-49be-8427-666df7448bab}">
+      <Declaration><![CDATA[METHOD PUBLIC RemoveComponent : BOOL
+VAR_INPUT
+    newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="RemoveComponentAt" Id="{4ed8bee8-b38f-44ef-be81-4672323043ad}">
+      <Declaration><![CDATA[METHOD PUBLIC RemoveComponentAt : BOOL
+VAR_INPUT
+    index : UDINT;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

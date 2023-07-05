@@ -19,11 +19,20 @@ VAR
   ModeInitialisedFromInvalidToProduction : T_ModeInitialisedFromInvalidToProduction(modeTestSuite);
   AddCustomPackModeSetsCorrectly : T_AddCustomPackModeSetsCorrectly(modeTestSuite);
   
+    //collections tests
+  componentCollectionTestSuite : T_TestSuite;
+  AddComponentCompareResultTrue : T_AddComponentCompareResultTrue(componentCollectionTestSuite);
+  ContainsComponentCompareResultTrue : T_ContainsComponentCompareResultTrue(componentCollectionTestSuite);
+  GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(componentCollectionTestSuite);
+  RemoveComponentAtIndexRemovesItem : T_RemoveComponentAtIndexRemovesItem(componentCollectionTestSuite);
+  RemoveComponentRemovesItem : T_RemoveComponentRemovesItem(componentCollectionTestSuite);
+  
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF testRunner.ReloadTests THEN
     testRunner.AddTestSuite(modeTestSuite);
+    testRunner.AddTestSuite(componentCollectionTestSuite);
     testRunner.ReloadTests := FALSE;
 END_IF
 
@@ -31,7 +40,9 @@ testRunner();]]></ST>
     </Implementation>
     <LineIds Name="PRG_Tests">
       <LineId Id="19" Count="0" />
-      <LineId Id="23" Count="3" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="24" Count="2" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>
