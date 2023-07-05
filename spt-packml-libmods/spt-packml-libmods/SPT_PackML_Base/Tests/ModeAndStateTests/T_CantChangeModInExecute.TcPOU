@@ -4,8 +4,8 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_CantChangeModInExecute EXTENDS T_UnitTestBase
 VAR
   em : EquipmentModule;
-  cmdTriggered : BOOL;
   actual, expected : E_PMLUnitMode;
+  actualState, expectedState : E_PMLState;
   scanCounter : INT;
   myTestState : (ARRANGE, ACT, ASSERT);
 END_VAR
@@ -15,35 +15,35 @@ END_VAR
 
   ARRANGE:
     em.CyclicLogic();
-    
+
     IF em.InitComplete THEN
       myTestState := ACT;
       em.ChangeState(E_PMLCommand.ePMLCommand_Clear);
     END_IF
 
-    CycleModuleLogicToAllowChangesToFilterThrough(); 
+    CycleModuleLogicToAllowChangesToFilterThrough();
     em.ChangeState(E_PMLCommand.ePMLCommand_Reset);
-
 
     CycleModuleLogicToAllowChangesToFilterThrough();
     em.ChangeState(E_PMLCommand.ePMLCommand_Start);
+    CycleModuleLogicToAllowChangesToFilterThrough();
 
   ACT:
+      
+    em.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Maintenance);
+    CycleModuleLogicToAllowChangesToFilterThrough();
 
-    IF NOT cmdTriggered THEN
-      em.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Maintenance);  
-      cmdTriggered := TRUE;   
-      CycleModuleLogicToAllowChangesToFilterThrough();
-    END_IF
-
-    IF cmdTriggered THEN
-      actual := em.CurrentMode;
-      expected := E_PMLUnitMode.ePMLUnitMode_Production;
-      myTestState := ASSERT;
-    END_IF
+    actual := em.CurrentMode;
+    expected := E_PMLUnitMode.ePMLUnitMode_Production;
+    myTestState := ASSERT;
+    
+    actualState := em.CurrentState;
+    expectedState := E_PMLState.ePMLState_Execute;
 
   ASSERT:
+    assertion.AssertEquals_UINT(TO_UINT(expected), TO_UINT(actual), 'actualState := em.CurrentState;');
     assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(expected), 'actual := em.CurrentMode');
+    myTestState := ARRANGE;
     TestFinished();
 
 END_CASE
@@ -68,11 +68,9 @@ END_FOR
       </Implementation>
     </Method>
     <LineIds Name="T_CantChangeModInExecute">
-      <LineId Id="102" Count="15" />
-      <LineId Id="119" Count="4" />
-      <LineId Id="146" Count="1" />
-      <LineId Id="126" Count="0" />
-      <LineId Id="129" Count="11" />
+      <LineId Id="230" Count="24" />
+      <LineId Id="265" Count="2" />
+      <LineId Id="255" Count="7" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="T_CantChangeModInExecute.CycleModuleLogicToAllowChangesToFilterThrough">

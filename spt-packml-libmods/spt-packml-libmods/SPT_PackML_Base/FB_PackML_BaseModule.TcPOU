@@ -20,7 +20,6 @@ END_VAR
 
 VAR
     //cs classes
-    OurModeManager : T_ModeManager(THIS^);
     (* These have been put inside T_ModeManager
     ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
     CustomModes                       : PML_UnitModeConfig;         //Used to define custom machine modes if desired
@@ -34,13 +33,14 @@ VAR
     ModeNames                         : ARRAY[0..31] OF STRING;
     *)
     
-    //spt classes
-    
+    OurModeManager : T_ModeManager(THIS^);
+    InitialiseStates     : (init, CountSubModules, CountComponents, SetSizeOfArrays, AssignArrays);
+    //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
     PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
     PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
-    LastState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
+    PrevState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
     StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
     NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
     PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
@@ -52,8 +52,8 @@ VAR
     NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
     ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
     ReachedInitialDefaultStateAndMode : BOOL;
-    SequenceState                     : UDINT;
-    DescendantSequenceState           : UDINT;
+
+
     HMICommand_RT                     : R_TRIG;
     HMICommandActive_Base             : BOOL;
     HMICommandActive_Descendant       : BOOL;
@@ -907,59 +907,66 @@ END_VAR
         <ST><![CDATA[//This method may get called several times while waiting for subunits/components to init
 
 //so it makes sense to break it up into a state machine
-CASE SequenceState OF
-    0:
-        CreateEvents();
-        SequenceState := SequenceState + 10;
-    10:
-        // Figure out how many Submodules were instantiated - they should be from 1 to X and not skip any indices.
-        NumberOfSubModules := 0;
-        FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-            IF ipSubModules[i] <> 0 THEN
-                NumberOfSubModules         := NumberOfSubModules + 1;
-                PMLSubModuleInfo[i].Active := TRUE; // Follows Main State Machine
-            END_IF
-        END_FOR
 
-        SequenceState := SequenceState + 10;
-    20:
-        NumberOfComponents := 0;
-        FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-            IF ipComponents[i] <> 0 THEN
-                NumberOfComponents   := NumberOfComponents + 1;
-                ipComponents[i].Name := CONCAT(CONCAT(_Name, ' '), ipComponents[i].Name); //Add the name of the module as a prefix to the name given in the declaration initialization
-            END_IF
-        END_FOR
+CASE InitialiseStates OF
+  init:
+    CreateEvents();
+    InitialiseStates := CountSubModules;
 
-        SequenceState := SequenceState + 10;
-    30:
-        // Initialize subunit overview used by state machine
-        PMLSubModuleInfoRef.ArraySize    := SIZEOF(PMLSubModuleInfo);
-        PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
-        PMLSubModuleInfoRef.pArray       := ADR(PMLSubModuleInfo);
-        SequenceState                    := SequenceState + 10;
-    40:
-        // Initialization for this module is not complete until all subunits/components are finished
+  CountSubModules:
+    // Figure out how many Submodules were instantiated - they should be from 1 to X and not skip any indices.
+    NumberOfSubModules := 0;
 
-        // with their own Initialize().  This is called from CyclicLogic() so call from here until they are initialized.
-        FOR i := 1 TO NumberOfSubModules DO
-            IF ipSubModules[i] <> 0 AND_THEN NOT ipSubModules[i].InitComplete THEN
-                AllSubUnitsInitialized := FALSE;
-                ipSubModules[i].CyclicLogic();
-            END_IF
-        END_FOR
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
+      IF ipSubModules[i] <> 0 THEN
+        NumberOfSubModules := NumberOfSubModules + 1;
+        PMLSubModuleInfo[i].Active := TRUE; // Follows Main State Machine
+      END_IF
+    END_FOR
 
-        FOR i := 1 TO NumberOfComponents DO
-            IF ipComponents[i] <> 0 AND_THEN NOT ipComponents[i].InitComplete THEN
-                AllComponentsInitialized := FALSE;
-                ipComponents[i].CyclicLogic();
-            END_IF
-        END_FOR
+    InitialiseStates := CountComponents;
+  CountComponents:
+    NumberOfComponents := 0;
 
-        IF AllSubUnitsInitialized AND AllComponentsInitialized THEN
-            SequenceState := 0;
-            Initialize    := TRUE;
-        END_IF
+    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
+      IF ipComponents[i] <> 0 THEN
+        NumberOfComponents := NumberOfComponents + 1;
+        ipComponents[i].Name := CONCAT(
+          CONCAT(_Name, ' '),
+          ipComponents[i].Name
+        ); //Add the name of the module as a prefix to the name given in the declaration initialization
+      END_IF
+    END_FOR
+
+    InitialiseStates := SetSizeOfArrays;
+  SetSizeOfArrays:
+    // Initialize subunit overview used by state machine
+    PMLSubModuleInfoRef.ArraySize := SIZEOF(PMLSubModuleInfo);
+    PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
+    PMLSubModuleInfoRef.pArray := ADR(PMLSubModuleInfo);
+    InitialiseStates := AssignArrays;
+  AssignArrays:
+    // Initialization for this module is not complete until all subunits/components are finished
+
+    // with their own Initialize().  This is called from CyclicLogic() so call from here until they are initialized.
+    FOR i := 1 TO NumberOfSubModules DO
+      IF ipSubModules[i] <> 0 AND_THEN NOT ipSubModules[i].InitComplete THEN
+        AllSubUnitsInitialized := FALSE;
+        ipSubModules[i].CyclicLogic();
+      END_IF
+    END_FOR
+
+    FOR i := 1 TO NumberOfComponents DO
+      IF ipComponents[i] <> 0 AND_THEN NOT ipComponents[i].InitComplete THEN
+        AllComponentsInitialized := FALSE;
+        ipComponents[i].CyclicLogic();
+      END_IF
+    END_FOR
+
+    IF AllSubUnitsInitialized AND AllComponentsInitialized THEN
+      InitialiseStates := init;
+      Initialize := TRUE;
+    END_IF
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -1328,6 +1335,17 @@ IF SubModulesReady AND (StateTasksComplete OR NoStateTasksToComplete) THEN
 END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="StartUpStateTransition" Id="{f79f2254-7e82-4de0-9cc2-ae09a61f7371}" FolderPath="Methods\Private Methods\">
+      <Declaration><![CDATA[METHOD PRIVATE StartUpStateTransition
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//On startup, state is invalid, set it to default
+IF _CurrentState = E_PMLState.ePMLState_Undefined AND OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+    _CommandedState := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
+END_IF
+]]></ST>
+      </Implementation>
+    </Method>
     <Property Name="StateCommand" Id="{8c083f47-18a1-4a12-9399-91d5f5b4de80}" FolderPath="I_PackML_Control\Properties\">
       <Declaration><![CDATA[//! @summary Sets the requested PackML state
 PROPERTY StateCommand : Tc3_PackML_V2.E_PMLCommand]]></Declaration>
@@ -1384,84 +1402,79 @@ VAR
     i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//On startup, state is invalid, set it to default
-IF _CurrentState = E_PMLState.ePMLState_Undefined AND OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
-    _CommandedState := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
-END_IF
+        <ST><![CDATA[StartUpStateTransition();
 
 //Call PackML state machine	
-StateMachine(eMode            := OurModeManager.CurrentMode,
-             eCommand         := _CommandedState,
-             stSubUnitInfoRef :=,
-             stOptions        :=,
-             eState           => _CurrentState,
-             sState           =>,
-             bError           =>,
-             nErrorID         =>);
+StateMachine(
+  eMode := OurModeManager.CurrentMode,
+  eCommand := _CommandedState,
+  eState => _CurrentState
+);
 
 //If PackML state has changed
-IF _CurrentState <> LastState THEN
-    LastState                          := _CurrentState;
-    PackMLBaseModule_HMI.Command.State := _CommandedState;
+IF _CurrentState <> PrevState THEN
+  PrevState := _CurrentState;
+  PackMLBaseModule_HMI.Command.State := _CommandedState;
 
-    //Notify external controllers that state has changed
-    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
-        IF ipExternalControllers[i] <> 0 THEN
-            ipExternalControllers[i].StateChanged(_CommandedState);
-        END_IF
-    END_FOR
+  //Notify external controllers that state has changed
+  FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+    IF ipExternalControllers[i] <> 0 THEN
+      ipExternalControllers[i].StateChanged(_CommandedState);
+    END_IF
+  END_FOR
 
-    SequenceState           := 0;
-    DescendantSequenceState := 0;
-    NoStateTasksToComplete  := TRUE;
+  InitialiseStates := init;
+  NoStateTasksToComplete := TRUE;
 END_IF
 
 IF ReachedInitialDefaultStateAndMode THEN
-    //Log appropriate state changes
-    PMLStateLogger(Alarms        := PackMLAlarms,
-                   ModulePrefix  := _Name,
-                   State         := _CurrentState,
-                   LogAllChanges := _LogStateChanges);
+  //Log appropriate state changes
+  PMLStateLogger(
+    Alarms := PackMLAlarms,
+    ModulePrefix := _Name,
+    State := _CurrentState,
+    LogAllChanges := _LogStateChanges
+  );
 END_IF
 
 // Call appropriate method depending on current PackML state
 CASE _CurrentState OF
-    E_PMLState.ePMLState_Undefined:
-        Undefined();
-    E_PMLState.ePMLState_Clearing:
-        Clearing();
-    E_PMLState.ePMLState_Stopped:
-        Stopped();
-    E_PMLState.ePMLState_Starting:
-        Starting();
-    E_PMLState.ePMLState_Idle:
-        Idle();
-    E_PMLState.ePMLState_Suspended:
-        Suspended();
-    E_PMLState.ePMLState_Execute:
-        Execute();
-    E_PMLState.ePMLState_Stopping:
-        Stopping();
-    E_PMLState.ePMLState_Aborting:
-        Aborting();
-    E_PMLState.ePMLState_Aborted:
-        Aborted();
-    E_PMLState.ePMLState_Holding:
-        Holding();
-    E_PMLState.ePMLState_Held:
-        Held();
-    E_PMLState.ePMLState_Unholding:
-        Unholding();
-    E_PMLState.ePMLState_Suspending:
-        Suspending();
-    E_PMLState.ePMLState_Unsuspending:
-        Unsuspending();
-    E_PMLState.ePMLState_Resetting:
-        Resetting();
-    E_PMLState.ePMLState_Completing:
-        Completing();
-    E_PMLState.ePMLState_Complete:
-        Complete();
+  E_PMLState.ePMLState_Undefined:
+    Undefined();
+  E_PMLState.ePMLState_Clearing:
+    Clearing();
+  E_PMLState.ePMLState_Stopped:
+    Stopped();
+  E_PMLState.ePMLState_Starting:
+    Starting();
+  E_PMLState.ePMLState_Idle:
+    Idle();
+  E_PMLState.ePMLState_Suspended:
+    Suspended();
+  E_PMLState.ePMLState_Execute:
+    Execute();
+  E_PMLState.ePMLState_Stopping:
+    Stopping();
+  E_PMLState.ePMLState_Aborting:
+    Aborting();
+  E_PMLState.ePMLState_Aborted:
+    Aborted();
+  E_PMLState.ePMLState_Holding:
+    Holding();
+  E_PMLState.ePMLState_Held:
+    Held();
+  E_PMLState.ePMLState_Unholding:
+    Unholding();
+  E_PMLState.ePMLState_Suspending:
+    Suspending();
+  E_PMLState.ePMLState_Unsuspending:
+    Unsuspending();
+  E_PMLState.ePMLState_Resetting:
+    Resetting();
+  E_PMLState.ePMLState_Completing:
+    Completing();
+  E_PMLState.ePMLState_Complete:
+    Complete();
 END_CASE]]></ST>
       </Implementation>
     </Method>
@@ -1990,7 +2003,7 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Initialize">
-      <LineId Id="3" Count="55" />
+      <LineId Id="70" Count="62" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.LogModeChanges.Get">
@@ -2056,6 +2069,10 @@ END_IF]]></ST>
       <LineId Id="3" Count="24" />
       <LineId Id="2" Count="0" />
     </LineIds>
+    <LineIds Name="FB_PackML_BaseModule.StartUpStateTransition">
+      <LineId Id="6" Count="3" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateCommand.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -2068,7 +2085,7 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateControl">
-      <LineId Id="3" Count="77" />
+      <LineId Id="87" Count="72" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StopControlled">
