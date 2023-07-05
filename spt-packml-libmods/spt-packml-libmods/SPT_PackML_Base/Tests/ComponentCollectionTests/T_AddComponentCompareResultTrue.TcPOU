@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AddComponentCompareResultTrue" Id="{55b1b71c-5978-4695-ad7c-604fe3c44b7e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AddComponentCompareResultTrue EXTENDS T_UnitTestBase
+VAR
+  component1 : I_ComponentBase;
+  list : T_ComponentsCollection;
+  expected, actual : I_ComponentBase;
+  result : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[list.AddComponent(component1);
+
+result := expected = actual;
+assertion.AssertEquals_BOOL(TRUE, result, 'result := expected = actual');
+TestFinished();
+]]></ST>
+    </Implementation>
+    <LineIds Name="T_AddComponentCompareResultTrue">
+      <LineId Id="9" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="12" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

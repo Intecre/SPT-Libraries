@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_RemoveComponentRemovesItem" Id="{88702719-d147-4af0-9c08-57e5b9e9e8fd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_RemoveComponentRemovesItem EXTENDS T_UnitTestBase
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_RemoveComponentRemovesItem">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

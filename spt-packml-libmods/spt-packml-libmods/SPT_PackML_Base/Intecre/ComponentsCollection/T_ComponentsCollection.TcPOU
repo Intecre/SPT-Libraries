@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ComponentsCollection" Id="{1907c29b-927e-4ee6-99fd-d1c9ebb9baa8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection IMPLEMENTS I_ComponentsCollection
+VAR
+  _list : ARRAY[1.._collectionSize] OF I_ComponentBase;
+  _collectionSize : UINT;
+  _count : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddComponent" Id="{2212367a-2ccb-4213-b9ad-535f23d61e86}">
+      <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
+VAR_INPUT
+  newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ContainsComponent" Id="{693bb628-e29c-4167-afa4-8c80dd6c1511}">
+      <Declaration><![CDATA[METHOD PUBLIC ContainsComponent : BOOL
+VAR_INPUT
+  newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Count" Id="{55e1477c-3136-4a7e-a3e4-3fe63d7e7de9}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Count : UINT
+]]></Declaration>
+      <Get Name="Get" Id="{57426790-7eeb-497a-9a8c-3e3f26980ab3}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Count := _count;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{6b022d9a-6f0b-44a5-a44b-47a525b5b262}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD CyclicLogic
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{caf98cd9-019c-48a6-b62d-54994e1f37d3}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+  size : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_collectionSize := size;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="GetComponent" Id="{b70b2547-53b4-4a2a-86a8-7473df8a8e2e}">
+      <Declaration><![CDATA[METHOD PUBLIC GetComponent : BOOL
+VAR_INPUT
+  index : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Initialize" Id="{ff827305-8660-41df-b0d9-35cc9dea669b}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Initialize
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RemoveComponent" Id="{3faecaff-22aa-4629-864d-72a7739e9361}">
+      <Declaration><![CDATA[METHOD PUBLIC RemoveComponent : BOOL
+VAR_INPUT
+  newComponent : I_ComponentBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RemoveComponentAt" Id="{8292d648-1fe8-42e8-89ed-12855c33efd2}">
+      <Declaration><![CDATA[METHOD PUBLIC RemoveComponentAt : BOOL
+VAR_INPUT
+  index : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ComponentsCollection">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.AddComponent">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.ContainsComponent">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Count.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.CyclicLogic">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.FB_init">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.GetComponent">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Initialize">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.RemoveComponent">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.RemoveComponentAt">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
