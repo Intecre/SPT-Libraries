@@ -185,6 +185,7 @@
     <Folder Include="DUT" />
     <Folder Include="DUT\HMI" />
     <Folder Include="Intecre\ModeManager" />
+    <Folder Include="Intecre\Collections" />
     <Folder Include="Intecre\PackModes" />
     <Folder Include="Interfaces" />
     <Folder Include="Intecre" />
@@ -193,6 +194,7 @@
     <Folder Include="Tests\ModeAndStateTests" />
     <Folder Include="Tests\ModeManagerTests" />
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
+    <Folder Include="Tests\CollectionsTests" />
     <Folder Include="Version" />
     <Folder Include="VISUs" />
   </ItemGroup>
@@ -207,6 +209,15 @@
     <Compile Include="FB_PackML_ModeLogger.TcPOU" />
     <Compile Include="FB_PackML_StateLogger.TcPOU" />
     <Compile Include="GlobalTextList.TcGTLO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Collections\I_ComponentsCollection.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Collections\T_ComponentsCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Collections\T_DrivesCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -240,6 +251,21 @@
       <SystemCall>true</SystemCall>
     </Compile>
     <Compile Include="Task_3.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_ContainsComponentCompareResultTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_RemoveComponentAtIndexRemovesItem.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_RemoveComponentRemovesItem.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">
