@@ -5,16 +5,14 @@
 VAR
   _state : I_StateModule;
   _LogModeChanges : BOOL := TRUE;
-  _CurrentMode : E_PMLUnitMode; //Current UnitMode of the module	
-  _CommandedMode : E_PMLUnitMode; //Current Commanded UnitMode of the module
+  _CurrentMode, PrevCurrentMode : E_PMLUnitMode; //Current UnitMode of the module	
+  _CommandedMode, PrevCommandedMode : E_PMLUnitMode; //Current Commanded UnitMode of the module
 
   PackModeManager : PML_UnitModeManager;
   CustomModes : PML_UnitModeConfig;
-  LastModeCommand : E_PMLUnitMode;
   PMLModeLogger : FB_PackML_ModeLogger;
-  LastMode : DINT;
+
   _ModeNames : ARRAY[0..31] OF STRING; // ('Production','Maintenance', 'Manual');
-  ModeChangeRequested : BOOL;
 
   CurrentStrategy : I_PackMode := ProductionMode;
   ProductionMode : I_PackMode;
@@ -122,27 +120,6 @@ END_VAR
         <ST><![CDATA[_state := stateModule;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ListenForModeChange" Id="{e0d2514d-fec9-45cd-834c-1067f21c9d10}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE ListenForModeChange
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-//On startup, Mode is invalid, set it to production
-IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
-    ModeChangeRequested := TRUE;
-    _CommandedMode      := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
-    LastModeCommand := _CommandedMode;
-
-    //If mode is valid and the command has changed, attempt to change modes
-ELSIF _CommandedMode <> LastModeCommand THEN
-    ModeChangeRequested               := TRUE;
-
-    LastModeCommand := _CommandedMode;
-END_IF]]></ST>
-      </Implementation>
-    </Method>
     <Property Name="LogModeChanges" Id="{b31cab9f-6f34-4e52-aa0b-dc94d5e9dd9a}" FolderPath="Properties\">
       <Declaration><![CDATA[PROPERTY PUBLIC LogModeChanges : BOOL]]></Declaration>
       <Get Name="Get" Id="{7374b8d1-413d-4a11-b76e-8f1b8b163e74}">
@@ -163,62 +140,46 @@ END_VAR
       </Set>
     </Property>
     <Method Name="ModeChange" Id="{d05f0be5-01e9-43f5-8ab0-a0bdd61d255d}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE ModeChange
-VAR_INPUT
-END_VAR
-
-VAR
-  SequenceState, DescendantSequenceState : UINT;
-END_VAR
-]]></Declaration>
+      <Declaration><![CDATA[METHOD PRIVATE ModeChange]]></Declaration>
       <Implementation>
-        <ST><![CDATA[    //Handles mode changes based on ModeCommand and the state transition rules defined in the pre-defined protected modes or custom modes
-    PackModeManager(bExecute     := TRUE,
-                eModeCommand := _CommandedMode,
-                eState       := _state.CurrentState,
-                eModeStatus  => _CurrentMode);
+        <ST><![CDATA[//Handles mode changes based on ModeCommand and the state transition rules defined in the pre-defined protected modes or custom modes
+PackModeManager(
+  bExecute := ModeChangeRequested,
+  eModeCommand := _CommandedMode,
+  eState := _state.CurrentState,
+  eModeStatus => _CurrentMode
+);
 
-        //If PackML mode has changed
-        IF PackModeManager.eModeStatus <> LastMode THEN
-            LastMode                := PackModeManager.eModeStatus;
-            SequenceState           := 0;
-            DescendantSequenceState := 0;
+IF PackModeManager.bError THEN
+  _CommandedMode := PrevCommandedMode;
 
-            //If state change logging is not suppressed
-            IF _LogModeChanges THEN
-                //PMLModeLogger(Alarms := PackMLAlarms, ModulePrefix := _Name, Mode := ModeManager.eModeStatus);
-            END_IF
+ELSIF PackModeManager.bDone THEN
+  PrevCurrentMode := _CurrentMode;
+  PrevCommandedMode := _CommandedMode;
 
-        END_IF
+END_IF
 
-        // Reset mode control command
-        PackModeManager(bExecute := FALSE);
-        ModeChangeRequested := FALSE;
-        
-    IF PackModeManager.bError THEN
-        //IF ReachedInitialDefaultStateAndMode THEN
-        //    IF NOT PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].bRaised THEN
-        //        PackMLAlarms[E_PackMLBase_Alarms.ModeCommandInvalid].Raise(0);
-        //    END_IF
-        //END_IF
-
-        // Reset mode control command
-        PackModeManager(bExecute := FALSE);
-        ModeChangeRequested := FALSE;
-     END_IF]]></ST>
+//TODO how to get loggin and alarms out from here? ]]></ST>
       </Implementation>
     </Method>
+    <Property Name="ModeChangeRequested" Id="{4578d275-304e-4d48-bd82-2a155ae934de}" FolderPath="Properties\">
+      <Declaration><![CDATA[PROPERTY ModeChangeRequested : BOOL]]></Declaration>
+      <Get Name="Get" Id="{2d50b3f5-6b60-49de-ae71-a3e3b6edbbeb}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[ModeChangeRequested := _CommandedMode <> PrevCommandedMode;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="ModeControl" Id="{b6127da8-0de3-408d-a711-2f3c4fe9482b}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD PRIVATE ModeControl //Final ?
 VAR
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[ListenForModeChange();
+        <ST><![CDATA[StartUpModeChange();
+ModeChange();
 
-IF ModeChangeRequested THEN
-    ModeChange();
-END_IF
 ]]></ST>
       </Implementation>
     </Method>
@@ -233,6 +194,15 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="StartUpModeChange" Id="{e0d2514d-fec9-45cd-834c-1067f21c9d10}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE StartUpModeChange]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//On startup, Mode is invalid, set it to production
+IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+  _CommandedMode := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
+END_IF]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="T_ModeManager">
       <LineId Id="9" Count="0" />
     </LineIds>
@@ -263,10 +233,6 @@ END_VAR
     <LineIds Name="T_ModeManager.FB_init">
       <LineId Id="7" Count="0" />
     </LineIds>
-    <LineIds Name="T_ModeManager.ListenForModeChange">
-      <LineId Id="6" Count="11" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
     <LineIds Name="T_ModeManager.LogModeChanges.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -274,19 +240,25 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.ModeChange">
-      <LineId Id="6" Count="21" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="28" Count="9" />
+      <LineId Id="185" Count="11" />
+      <LineId Id="198" Count="4" />
       <LineId Id="43" Count="0" />
     </LineIds>
+    <LineIds Name="T_ModeManager.ModeChangeRequested.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="T_ModeManager.ModeControl">
-      <LineId Id="94" Count="2" />
-      <LineId Id="129" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="135" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="131" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.ModeNames.Get">
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.StartUpModeChange">
+      <LineId Id="26" Count="2" />
+      <LineId Id="5" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

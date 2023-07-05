@@ -18,25 +18,23 @@ END_VAR
 
     IF em.InitComplete THEN
       myTestState := ACT;
+      CycleModuleLogicToAllowChangesToFilterThrough();
     END_IF
 
   ACT:
-    IF NOT cmdTriggered THEN
-      em.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Maintenance);
-      myTestState := ACT;
-      cmdTriggered := TRUE;
-    END_IF
 
-    em.CyclicLogic();
-
-    IF CycleModuleLogicToAllowChangesToFilterThrough() THEN
-      actual := em.CurrentMode;
-      expected := E_PMLUnitMode.ePMLUnitMode_Maintenance;
-      myTestState := ASSERT;
-    END_IF
+    CycleModuleLogicToAllowChangesToFilterThrough();
+    em.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Maintenance);
+     CycleModuleLogicToAllowChangesToFilterThrough();
+    actual := em.CurrentMode;
+    expected := E_PMLUnitMode.ePMLUnitMode_Maintenance;
+    myTestState := ASSERT;
 
   ASSERT:
+
     assertion.AssertEquals_UINT(TO_UINT(actual), TO_UINT(expected), 'actual := equipmentModule.CurrentMode');
+    myTestState := ARRANGE;
+    cmdTriggered := FALSE;
     TestFinished();
 
 END_CASE
@@ -57,7 +55,14 @@ i := SEL(i >= 10, i + 1, 0);
       </Implementation>
     </Method>
     <LineIds Name="T_ProductionToMaintenaceInAbort">
-      <LineId Id="259" Count="28" />
+      <LineId Id="328" Count="10" />
+      <LineId Id="343" Count="2" />
+      <LineId Id="358" Count="0" />
+      <LineId Id="346" Count="4" />
+      <LineId Id="357" Count="0" />
+      <LineId Id="351" Count="1" />
+      <LineId Id="356" Count="0" />
+      <LineId Id="353" Count="2" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="T_ProductionToMaintenaceInAbort.CycleModuleLogicToAllowChangesToFilterThrough">

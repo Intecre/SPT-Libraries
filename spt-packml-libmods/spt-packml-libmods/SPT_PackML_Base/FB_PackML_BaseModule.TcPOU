@@ -600,7 +600,7 @@ END_FOR
 HMICommunication();
 
 // Mode control loop of the module
-OurModeManager();
+OurModeManager.CyclicLogic();
 //ModeControl();
 
 // State control loop of the module
@@ -1042,8 +1042,9 @@ END_VAR
 
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//On startup, Mode is invalid, set it to production
-(*
+        <ST><![CDATA[(*
+//On startup, Mode is invalid, set it to production
+
 IF _CurrentMode = E_PMLUnitMode.ePMLUnitMode_Invalid THEN
     ModeChangeRequested := TRUE;
     _CommandedMode      := Parameters_PackML_Base.UNIT_MODE_DEFAULT;
@@ -2016,6 +2017,7 @@ END_IF]]></ST>
       <LineId Id="21" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeControl">
+      <LineId Id="84" Count="0" />
       <LineId Id="3" Count="0" />
       <LineId Id="81" Count="0" />
       <LineId Id="4" Count="11" />
