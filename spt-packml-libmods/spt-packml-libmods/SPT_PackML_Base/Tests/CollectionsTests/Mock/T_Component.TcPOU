@@ -5,6 +5,7 @@
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
+  cyclicHasBeenCalled : BOOL;
 END_VAR
 VAR
 END_VAR
@@ -59,7 +60,7 @@ END_VAR
 METHOD CyclicLogic
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[cyclicHasBeenCalled := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Error" Id="{f15a09fd-98c4-432d-aaab-573cadd21664}">

@@ -269,6 +269,9 @@
     <Compile Include="Tests\CollectionsTests\T_AddMoreThanSizeOfCollectionFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\CollectionsTests\T_CyclicLogicHasBeenCalledTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>

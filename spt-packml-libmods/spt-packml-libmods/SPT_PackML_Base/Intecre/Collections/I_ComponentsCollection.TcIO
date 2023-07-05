@@ -18,6 +18,12 @@ END_VAR]]></Declaration>
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
+    <Method Name="CyclicLogic" Id="{6214a232-4468-4a76-baec-42afe9a800f8}">
+      <Declaration><![CDATA[METHOD CyclicLogic
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
     <Method Name="TryGetComponent" Id="{eef8026a-b285-4e9b-a877-dfdaee85e8f6}">
       <Declaration><![CDATA[METHOD TryGetComponent: BOOL
 VAR_INPUT

@@ -83,6 +83,13 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
+    <Method Name="CyclicLogic" Id="{91fecff3-afbd-4edb-b80e-debfd3f550ae}">
+      <Declaration><![CDATA[METHOD CyclicLogic
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="FB_exit" Id="{1b669e6e-7e3c-07a1-095a-4917f16379ef}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD FB_exit : BOOL
 VAR_INPUT
@@ -178,6 +185,9 @@ TryGetComponent := component <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_ComponentsCollection.Count.Set">
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.CyclicLogic">
+      <LineId Id="4" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.FB_exit">
       <LineId Id="3" Count="1" />

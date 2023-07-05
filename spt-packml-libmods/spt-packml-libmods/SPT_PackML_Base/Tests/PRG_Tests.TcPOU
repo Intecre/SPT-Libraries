@@ -28,6 +28,7 @@ VAR
   AddSameComponentTwiceShouldntAdd : T_AddSameComponentTwiceShouldntAdd(componentCollectionTestSuite);
   GetComponentIndexOutOfBoundaryResultsFalse : T_GetComponentIndexOutOfBoundaryResultsFalse(componentCollectionTestSuite);
   AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(componentCollectionTestSuite);
+  CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(componentCollectionTestSuite);
   
 END_VAR
 ]]></Declaration>
