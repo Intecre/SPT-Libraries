@@ -3,56 +3,34 @@
   <Itf Name="I_ComponentsCollection" Id="{cd9c2909-80e7-4016-b04d-a23c195a6ce8}">
     <Declaration><![CDATA[INTERFACE I_ComponentsCollection
 ]]></Declaration>
-    <Method Name="AddComponent" Id="{83e1e1b6-7c85-4e2a-abd1-4d9b2ad23b80}">
+    <Method Name="AddComponent" Id="{6b55140b-de5f-44c0-9e20-b94a2e006ace}">
       <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
 VAR_INPUT
-    newComponent : I_ComponentBase;
-END_VAR
-]]></Declaration>
+  newComponent : I_ComponentBase;
+END_VAR]]></Declaration>
     </Method>
-    <Method Name="ContainsComponent" Id="{a0cf17a4-8017-483f-9a01-73fbb07c1228}">
-      <Declaration><![CDATA[METHOD PUBLIC ContainsComponent : BOOL
-VAR_INPUT
-    newComponent : I_ComponentBase;
-END_VAR
-]]></Declaration>
+    <Method Name="ClearGroup" Id="{30c5e818-c08a-4a94-ac95-84b75d2e73f2}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
+VAR
+	i : UINT;
+END_VAR]]></Declaration>
     </Method>
-    <Property Name="Count" Id="{fe986b55-8778-4207-bff0-0f1653e15d28}">
+    <Property Name="Count" Id="{f752922b-6353-4131-8750-9a3e8e8d1bbe}">
       <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
-      <Get Name="Get" Id="{4ed50cef-02d5-42d1-b4fd-b0619b4c958b}">
+      <Get Name="Get" Id="{1b30b130-d217-410c-88e5-76568ebec665}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
+      <Set Name="Set" Id="{a77e6f7b-5ee3-4f70-8542-316c50d9fe0d}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Set>
     </Property>
-    <Method Name="CyclicLogic" Id="{9a5a3925-2d2b-42a3-a404-328faeabd89d}">
-      <Declaration><![CDATA[METHOD PUBLIC CyclicLogic
+    <Method Name="GetDrive" Id="{2a2cc843-d9df-49a9-8c8f-1a2bab38fbf2}">
+      <Declaration><![CDATA[METHOD GetComponent: I_ComponentBase
 VAR_INPUT
+	index : UINT;
 END_VAR
-]]></Declaration>
-    </Method>
-    <Method Name="GetComponent" Id="{ba6631e6-fe35-42d5-b7b5-60e13f7db048}">
-      <Declaration><![CDATA[METHOD PUBLIC GetComponent : BOOL
-VAR_INPUT
-    index : UDINT;
-END_VAR
-]]></Declaration>
-    </Method>
-    <Method Name="Initialize" Id="{aeb5ced7-24f3-46b2-b410-ed376d31c453}">
-      <Declaration><![CDATA[METHOD PUBLIC Initialize
-VAR_INPUT
-END_VAR
-]]></Declaration>
-    </Method>
-    <Method Name="RemoveComponent" Id="{4f7f742f-42b2-49be-8427-666df7448bab}">
-      <Declaration><![CDATA[METHOD PUBLIC RemoveComponent : BOOL
-VAR_INPUT
-    newComponent : I_ComponentBase;
-END_VAR
-]]></Declaration>
-    </Method>
-    <Method Name="RemoveComponentAt" Id="{4ed8bee8-b38f-44ef-be81-4672323043ad}">
-      <Declaration><![CDATA[METHOD PUBLIC RemoveComponentAt : BOOL
-VAR_INPUT
-    index : UDINT;
+VAR_OUTPUT
+	success : BOOl;
 END_VAR
 ]]></Declaration>
     </Method>

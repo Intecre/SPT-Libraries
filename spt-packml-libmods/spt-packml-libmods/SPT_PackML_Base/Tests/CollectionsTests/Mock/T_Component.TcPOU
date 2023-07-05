@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_Component" Id="{c7b763d2-479b-4eeb-b056-8f1b232acf16}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_Component IMPLEMENTS I_ComponentBase
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AllowHMIControl" Id="{440b7c12-74d8-4c1f-80b6-6055cb9b75b5}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD AllowHMIControl
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="BlockHMIControl" Id="{3b1d15e4-91d2-4db6-b5c9-544e1a719f2b}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD BlockHMIControl
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Busy" Id="{d1120e8c-6787-4787-bb5a-b66052e3c8d1}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Busy : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{de8fbf50-9990-48b4-a777-1f1c825c6915}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentAlarmSeverity" Id="{c26108aa-a81e-4cc7-a96d-f3905d21cf5e}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY CurrentAlarmSeverity : SPT_ComponentBase.TcEventSeverity
+]]></Declaration>
+      <Get Name="Get" Id="{638c9adb-eaab-4c18-b5e0-b14067704007}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{c9f0f5a8-65f7-4b48-88ed-40c726561a8f}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD CyclicLogic
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Error" Id="{f15a09fd-98c4-432d-aaab-573cadd21664}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Error : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{2db65671-741f-4cb6-a339-59119ab0036c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{b64b0a4e-970c-4fa0-ac1f-7caa6679befb}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY ErrorID : UDINT
+]]></Declaration>
+      <Get Name="Get" Id="{6155fec3-4b57-4a64-b318-85991eeba79c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="InitComplete" Id="{6e86e7e5-1e01-42f4-a96e-f867179c72ca}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY InitComplete : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{9c5f5422-d2c5-4ee5-81e8-f38a46d214ac}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="InSimulation" Id="{84719161-bd9b-493f-ae59-33b22157a6dd}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY InSimulation : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{9191e7d9-e70f-43bf-ae15-6c9c7c994dc5}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{bfd629d4-2cc5-4db9-a070-4cee1a153290}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Name" Id="{8916e33a-859a-4876-9fda-0b23b631b5d8}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Name : STRING
+]]></Declaration>
+      <Get Name="Get" Id="{3b0643e1-9251-4ef4-b5a1-d098e69d832b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{d9b4e9be-9004-41a9-a067-3ca892785c76}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{1d6bc212-e38b-40b4-840d-69a885d1c670}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY ParentResponseDefinitions : ARRAY [0..4] OF SPT_ComponentBase.E_AlarmResponse
+]]></Declaration>
+      <Get Name="Get" Id="{7aedec1e-e7a5-427c-a45c-70c8283e2f3a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{2b14af91-8689-41f5-98b4-8742ee5ff6c2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="Reset" Id="{d5c3250d-29ab-4b54-9b1a-722c18322a56}">
+      <Declaration><![CDATA[{warning 'add method implementation '}
+METHOD Reset : BOOL
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_Component">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.AllowHMIControl">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.BlockHMIControl">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.CurrentAlarmSeverity.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.CyclicLogic">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.ErrorID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.InitComplete.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.InSimulation.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.InSimulation.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.ParentResponseDefinitions.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.ParentResponseDefinitions.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_Component.Reset">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

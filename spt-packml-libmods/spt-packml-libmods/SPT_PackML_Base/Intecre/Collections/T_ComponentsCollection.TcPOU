@@ -1,138 +1,198 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_ComponentsCollection" Id="{1907c29b-927e-4ee6-99fd-d1c9ebb9baa8}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection IMPLEMENTS I_ComponentsCollection
+  <POU Name="T_ComponentsCollection" Id="{d0fd4ea2-8a96-0365-36ba-9fa85df78835}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection EXTENDS T_NamedBase IMPLEMENTS I_ComponentsCollection
 VAR
-  _list : ARRAY[1.._collectionSize] OF I_ComponentBase;
-  _collectionSize : UINT;
-  _count : UINT;
+	_backingStore : POINTER TO PVOID;
+	_components : POINTER TO I_ComponentBase := ADR(_backingStore);// ARRAY[ 0.. Constants.MaxNumOfComponents - 1] OF I_ComponentBase;
+	_cnt : UINT;
+	collectionMaxSize : UINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="AddComponent" Id="{2212367a-2ccb-4213-b9ad-535f23d61e86}">
+    <Method Name="AddComponent" Id="{fb6c4003-1a4c-0530-3ee6-4677519bc680}">
       <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
 VAR_INPUT
   newComponent : I_ComponentBase;
-END_VAR
-]]></Declaration>
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[
+        <ST><![CDATA[IF newComponent = 0 THEN
+	LogError( 'Cannot AddComponent invalid ref' );
+	RETURN;
+END_IF
+
+IF HasComponent( component := newComponent ) THEN
+	LogWarning( 'Component already in collection.' );
+	RETURN;
+END_IF
+
+AddComponent := addInSpareSlot( Component := newComponent );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addInSpareSlot" Id="{fa90a5a6-a7d6-0fad-179b-cd65f7dfc1c1}">
+      <Declaration><![CDATA[METHOD PRIVATE addInSpareSlot : BOOL
+VAR_INPUT
+	Component : I_ComponentBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Count >= collectionMaxSize THEN
+	LogError('cannot addInSpareSlot : no space.');
+	RETURN;
+END_IF
+	
+_components[Count] := Component;
+Count := Count + 1;
+addInSpareSlot := TRUE;
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ContainsComponent" Id="{693bb628-e29c-4167-afa4-8c80dd6c1511}">
-      <Declaration><![CDATA[METHOD PUBLIC ContainsComponent : BOOL
-VAR_INPUT
-  newComponent : I_ComponentBase;
-END_VAR
-]]></Declaration>
+    <Method Name="ClearGroup" Id="{9c85cafe-036b-0343-3a19-4d28e743b430}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
+VAR
+	i : UINT;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[MEMSET(ADR(_components), 0 , SIZEOF(_components));
+
+//FOR i := 0 TO collectionMaxSize - 1 DO
+//	_components[i] := 0;
+//END_FOR
+
+_cnt := 0;
+LogDebug('ClearGroup() called.');]]></ST>
       </Implementation>
     </Method>
-    <Property Name="Count" Id="{55e1477c-3136-4a7e-a3e4-3fe63d7e7de9}">
-      <Declaration><![CDATA[{warning 'add property implementation'}
-PROPERTY Count : UINT
-]]></Declaration>
-      <Get Name="Get" Id="{57426790-7eeb-497a-9a8c-3e3f26980ab3}">
+    <Property Name="Count" Id="{c3e24338-c204-0fb2-122b-2d8bd0174c7a}">
+      <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
+      <Get Name="Get" Id="{db351648-7a88-412e-902b-1ec924ca47e0}">
         <Declaration><![CDATA[VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Count := _count;]]></ST>
+          <ST><![CDATA[Count := _cnt;
+]]></ST>
         </Implementation>
       </Get>
+      <Set Name="Set" Id="{5ded8cd6-0317-4cd8-a05b-26ebc2397268}">
+        <Declaration><![CDATA[PRIVATE]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[_cnt := Count;]]></ST>
+        </Implementation>
+      </Set>
     </Property>
-    <Method Name="CyclicLogic" Id="{6b022d9a-6f0b-44a5-a44b-47a525b5b262}">
-      <Declaration><![CDATA[{warning 'add method implementation '}
-METHOD CyclicLogic
+    <Method Name="FB_exit" Id="{1b669e6e-7e3c-07a1-095a-4917f16379ef}">
+      <Declaration><![CDATA[METHOD FB_exit : BOOL
+VAR_INPUT
+	bInCopyCode : BOOL; // if TRUE, the exit method is called for exiting an instance that is copied afterwards (online change).
+END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[__DELETE(_backingStore);
+collectionMaxSize := 0;
+Count := 0;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="FB_init" Id="{caf98cd9-019c-48a6-b62d-54994e1f37d3}">
+    <Method Name="FB_init" Id="{1e66faf9-fc3f-084d-3448-ee798e76106f}">
       <Declaration><![CDATA[METHOD FB_init : BOOL
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-  size : UINT;
+	NumberOfComponentsInCollection : UINT;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_collectionSize := size;]]></ST>
+        <ST><![CDATA[collectionMaxSize := NumberOfComponentsInCollection;
+_backingStore := __NEW(PVOID, collectionMaxSize);
+_components := _backingStore;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="GetComponent" Id="{b70b2547-53b4-4a2a-86a8-7473df8a8e2e}">
-      <Declaration><![CDATA[METHOD PUBLIC GetComponent : BOOL
+    <Method Name="GetComponent" Id="{2d1e8721-47b6-026d-04e2-daccf35cf2e5}">
+      <Declaration><![CDATA[METHOD GetComponent: I_ComponentBase
 VAR_INPUT
-  index : UDINT;
+	index : UINT;
+END_VAR
+VAR_OUTPUT
+	success : BOOl;
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[IF index > collectionMaxSize THEN
+	LogError( 'cannot GetDrive, index out of bounds' );
+	RETURN;
+END_IF
+
+IF index > (Count - 1) THEN
+	LogError( 'cannot GetDrive, index > (Count - 1) ' );
+	RETURN;
+END_IF
+
+GetComponent := _components[index];
+success := GetComponent <> 0;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="Initialize" Id="{ff827305-8660-41df-b0d9-35cc9dea669b}">
-      <Declaration><![CDATA[{warning 'add method implementation '}
-METHOD Initialize
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="RemoveComponent" Id="{3faecaff-22aa-4629-864d-72a7739e9361}">
-      <Declaration><![CDATA[METHOD PUBLIC RemoveComponent : BOOL
+    <Method Name="HasComponent" Id="{6a5f6459-2a32-07da-2da1-24304153ca63}">
+      <Declaration><![CDATA[METHOD PRIVATE HasComponent : BOOL
 VAR_INPUT
-  newComponent : I_ComponentBase;
+	Component : I_ComponentBase;
 END_VAR
-]]></Declaration>
+VAR 
+	i : UINT;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="RemoveComponentAt" Id="{8292d648-1fe8-42e8-89ed-12855c33efd2}">
-      <Declaration><![CDATA[METHOD PUBLIC RemoveComponentAt : BOOL
-VAR_INPUT
-  index : UDINT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[FOR i := 0 TO Count - 1 DO
+	
+	IF _components[i] = 0 THEN
+		EXIT; // exit for loop
+	END_IF
+	
+	IF _components[i] = Component THEN
+		HasComponent := TRUE;
+		RETURN;
+		
+	END_IF
+	
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="T_ComponentsCollection">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.AddComponent">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.ContainsComponent">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.Count.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_ComponentsCollection.CyclicLogic">
-      <LineId Id="4" Count="0" />
+    <LineIds Name="T_ComponentsCollection.AddComponent">
+      <LineId Id="3" Count="9" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.addInSpareSlot">
+      <LineId Id="3" Count="8" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.ClearGroup">
+      <LineId Id="11" Count="1" />
+      <LineId Id="3" Count="4" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Count.Get">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Count.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.FB_exit">
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.FB_init">
-      <LineId Id="7" Count="0" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.GetComponent">
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="10" />
+      <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_ComponentsCollection.Initialize">
-      <LineId Id="4" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.RemoveComponent">
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.RemoveComponentAt">
-      <LineId Id="5" Count="0" />
+    <LineIds Name="T_ComponentsCollection.HasComponent">
+      <LineId Id="3" Count="11" />
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>

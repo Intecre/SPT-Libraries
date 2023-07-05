@@ -110,6 +110,9 @@
     </PlaceholderResolution>
   </ItemGroup>
   <ItemGroup>
+    <PlaceholderReference Include="Intecre.Utilities">
+      <DefaultResolution>Intecre.Utilities, * (Intecre Ltd)</DefaultResolution>
+    </PlaceholderReference>
     <PlaceholderReference Include="SPT Event Logger">
       <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_EventLogger</Namespace>
@@ -191,6 +194,7 @@
     <Folder Include="Intecre" />
     <Folder Include="Tests" />
     <Folder Include="Project Information" />
+    <Folder Include="Tests\CollectionsTests\Mock" />
     <Folder Include="Tests\ModeAndStateTests" />
     <Folder Include="Tests\ModeManagerTests" />
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
@@ -215,9 +219,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\T_ComponentsCollection.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Intecre\Collections\T_DrivesCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -251,6 +252,9 @@
       <SystemCall>true</SystemCall>
     </Compile>
     <Compile Include="Task_3.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Mock\T_Component.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">

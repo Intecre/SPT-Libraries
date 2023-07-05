@@ -3,14 +3,19 @@
   <POU Name="T_AddComponentCompareResultTrue" Id="{55b1b71c-5978-4695-ad7c-604fe3c44b7e}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_AddComponentCompareResultTrue EXTENDS T_UnitTestBase
 VAR
-  component1 : I_ComponentBase;
-  list : T_ComponentsCollection;
-  expected, actual : I_ComponentBase;
+  list : T_ComponentsCollection(10);
+  newComponent : T_Component;
+  actual : I_ComponentBase;
+  expected : I_ComponentBase;
   result : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[list.AddComponent(component1);
+      <ST><![CDATA[list.AddComponent(newComponent);
+
+expected := newComponent;
+//actual := list.GetComponent(0);
+actual := list._components[0];
 
 result := expected = actual;
 assertion.AssertEquals_BOOL(TRUE, result, 'result := expected = actual');
@@ -19,6 +24,9 @@ TestFinished();
     </Implementation>
     <LineIds Name="T_AddComponentCompareResultTrue">
       <LineId Id="9" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="32" Count="1" />
       <LineId Id="19" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="15" Count="0" />
