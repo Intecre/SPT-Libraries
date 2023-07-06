@@ -44,9 +44,29 @@ AddController := addInSpareSlot( item := item );]]></ST>
 VAR_INPUT
 	CommandedState : Tc3_PackML_V2.E_PMLCommand;
 END_VAR
-]]></Declaration>
+VAR
+	i : UDINT;
+	Controller : I_PackML_ExternalController;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, Controller) THEN
+		RETURN;
+	END_IF
+		
+	Controller.StateChanged(CommandedState);
+		
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetController" Id="{799866d3-5fcb-43cf-b544-809f9053e66f}">
@@ -90,6 +110,7 @@ TryGetController := Controller <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyStateChanged">
+      <LineId Id="7" Count="15" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.TryGetController">
