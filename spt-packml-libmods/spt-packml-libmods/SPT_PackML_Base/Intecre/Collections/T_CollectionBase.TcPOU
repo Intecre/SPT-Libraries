@@ -5,8 +5,8 @@
 VAR
 	_backingStore : POINTER TO PVOID;
 	_items : POINTER TO I_BaseFB := ADR(_backingStore);
-	_cnt : UINT;
-	collectionMaxSize : UINT;
+	_cnt : UDINT;
+	collectionMaxSize : UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -52,7 +52,7 @@ AddItem := addInSpareSlot( Item := newItem );]]></ST>
     <Method Name="ClearGroup" Id="{33765d55-9a26-4942-8a3f-e0d7968dad36}">
       <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
 VAR
-	i : UINT;
+	i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[//MEMSET(ADR(_components), 0 , SIZEOF(_components));
@@ -66,7 +66,7 @@ LogDebug('ClearGroup() called.');]]></ST>
       </Implementation>
     </Method>
     <Property Name="Count" Id="{8e6ae03a-8f5c-414d-ab3f-cfcd3d9da8a8}">
-      <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
       <Get Name="Get" Id="{6eadc8ba-599e-4f96-a78c-8d7470a97016}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -100,7 +100,7 @@ Count := 0;]]></ST>
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-	NumberOfItemsInCollection : UINT;
+	NumberOfItemsInCollection : UDINT;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -115,7 +115,7 @@ VAR_INPUT
 	Item : I_BaseFb;;
 END_VAR
 VAR 
-	i : UINT;
+	i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[FOR i := 0 TO Count - 1 DO
@@ -136,7 +136,7 @@ END_FOR]]></ST>
     <Method Name="TryGetItem" Id="{4079f152-eedc-41b9-985e-004de6f818fa}">
       <Declaration><![CDATA[METHOD TryGetItem: BOOL
 VAR_INPUT
-	index : UINT;
+	index : UDINT;
 END_VAR
 VAR_OUTPUT
 	item : I_BaseFb;

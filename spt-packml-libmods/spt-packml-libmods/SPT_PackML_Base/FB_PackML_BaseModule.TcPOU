@@ -32,10 +32,10 @@ VAR
     ModeChangeRequested               : BOOL;
     ModeNames                         : ARRAY[0..31] OF STRING;
     *)
-    
-    OurModeManager : T_ModeManager(THIS^);
-    InitialiseStates     : (init, CountSubModules, CountComponents, SetSizeOfArrays, AssignArrays);
-	componentsCollection : I_ComponentsCollection;
+
+    ModeManager 		 : T_ModeManager(THIS^);
+    InitialiseStates     : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
+	componentsCollection : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
@@ -50,7 +50,7 @@ VAR
     ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
     PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
-    ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
+    //ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
     NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
     ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
     ReachedInitialDefaultStateAndMode : BOOL;
@@ -235,13 +235,9 @@ END_VAR
       <Implementation>
         <ST><![CDATA[PackMLBaseModule_HMI.Status.HMIControlAvailable := TRUE;
 IF ThisModuleOnly THEN
-    FOR i := 1 TO NumberOfComponents DO
-        ipComponents[i].BlockHMIControl();
-    END_FOR
+	componentsCollection.BlockHmiControl();	
 ELSE
-    FOR i := 1 TO NumberOfComponents DO
-        ipComponents[i].AllowHMIControl();
-    END_FOR
+	componentsCollection.AllowHMIControl();
 END_IF]]></ST>
       </Implementation>
     </Method>
@@ -255,9 +251,7 @@ END_VAR
 //! @description This method is called as required by the <c>HMIPermissions()</c> method]]></Declaration>
       <Implementation>
         <ST><![CDATA[PackMLBaseModule_HMI.Status.HMIControlAvailable := FALSE;
-FOR i := 1 TO NumberOfComponents DO
-    ipComponents[i].BlockHMIControl();
-END_FOR]]></ST>
+componentsCollection.BlockHMIControl();]]></ST>
       </Implementation>
     </Method>
     <Method Name="ChangeMode" Id="{c864a7d9-0c25-46cb-bf4e-9fd3b8b39657}" FolderPath="I_PackML_Control\Methods\">
@@ -270,7 +264,7 @@ END_VAR]]></Declaration>
 //    ModeCommand := Mode;
 //END_IF
 
-OurModeManager.ChangeMode(Mode);
+ModeManager.ChangeMode(Mode);
 
 
 
@@ -341,15 +335,9 @@ IF BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
     BaseAlarms[E_BaseAlarms.SubModuleError].Clear(0, 0);
 END_IF;
 
-FOR i := 1 TO NumberOfComponents DO
-    IF ipComponents[i].Error THEN
-        ipComponents[i].Reset();
-    END_IF
-END_FOR
+componentsCollection.Reset();
+SubModulesReady := SubModulesReady AND NOT componentsCollection.AnyError;
 
-FOR i := 1 TO NumberOfComponents DO
-    SubModulesReady := SubModulesReady AND NOT ipComponents[i].Error;
-END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Stopped);
@@ -462,49 +450,51 @@ END_VAR
 
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 1 TO NumberOfComponents DO
-    IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
-       _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
-        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
-        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
-            E_AlarmResponse.Abort_ImmediateError:
-                AbortImmediateError(ipComponents[i].Name, FALSE);
+        <ST><![CDATA[//TODO handle this with collection 
 
-            E_AlarmResponse.Abort_Immediate:
-                AbortImmediate();
+//FOR i := 1 TO NumberOfComponents DO
+//    IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
+//       _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
+//        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
+//        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
+//            E_AlarmResponse.Abort_ImmediateError:
+//                AbortImmediateError(ipComponents[i].Name, FALSE);
 
-            E_AlarmResponse.Stop_Immediate:
-                StopImmediate();
+//            E_AlarmResponse.Abort_Immediate:
+//                AbortImmediate();
 
-            E_AlarmResponse.Stop_Controlled:
-                StopControlled();
+//            E_AlarmResponse.Stop_Immediate:
+//                StopImmediate();
 
-            E_AlarmResponse.Hold_Immediate:
-                HoldImmediate();
+//            E_AlarmResponse.Stop_Controlled:
+//                StopControlled();
 
-            E_AlarmResponse.Suspend_Immediate:
-                SuspendImmediate();
+//            E_AlarmResponse.Hold_Immediate:
+//                HoldImmediate();
 
-            E_AlarmResponse.Suspend_Controlled:
-                SuspendControlled();
+//            E_AlarmResponse.Suspend_Immediate:
+//                SuspendImmediate();
 
-            E_AlarmResponse.NoResponse:
-                ;
-        END_CASE
-    ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState.ePMLState_Stopping THEN
-        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
-        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
-            E_AlarmResponse.Abort_ImmediateError:
-                AbortImmediateError(ipComponents[i].Name, FALSE);
+//            E_AlarmResponse.Suspend_Controlled:
+//                SuspendControlled();
 
-            E_AlarmResponse.Abort_Immediate:
-                AbortImmediate();
+//            E_AlarmResponse.NoResponse:
+//                ;
+//        END_CASE
+//    ELSIF _CurrentState = E_PMLState.ePMLState_Stopped OR _CurrentState = E_PMLState.ePMLState_Stopping THEN
+//        AlarmResponses := ipComponents[i].ParentResponseDefinitions;
+//        CASE AlarmResponses[ipComponents[i].CurrentAlarmSeverity] OF
+//            E_AlarmResponse.Abort_ImmediateError:
+//                AbortImmediateError(ipComponents[i].Name, FALSE);
 
-            E_AlarmResponse.NoResponse:
-                ;
-        END_CASE
-    END_IF
-END_FOR]]></ST>
+//            E_AlarmResponse.Abort_Immediate:
+//                AbortImmediate();
+
+//            E_AlarmResponse.NoResponse:
+//                ;
+//        END_CASE
+//    END_IF
+//END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="CreateEvents" Id="{6bbb8cab-407d-45ac-8da1-6eb5ce7199bf}" FolderPath="Methods\">
@@ -542,7 +532,7 @@ END_VAR]]></Declaration>
         <Declaration><![CDATA[VAR
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[CurrentMode := OurModeManager.CurrentMode;]]></ST>
+          <ST><![CDATA[CurrentMode := ModeManager.CurrentMode;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -580,7 +570,7 @@ IF NOT _InitComplete THEN
 END_IF
 
 // Inhibit mode & state errors until startup is complete
-IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLState_Aborted AND OurModeManager.CurrentMode = Parameters_PackML_Base.UNIT_MODE_DEFAULT THEN
+IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLState_Aborted AND ModeManager.CurrentMode = Parameters_PackML_Base.UNIT_MODE_DEFAULT THEN
     ReachedInitialDefaultStateAndMode := TRUE;
 END_IF
 
@@ -592,17 +582,13 @@ FOR i := 1 TO NumberOfSubModules DO
     END_IF
 END_FOR
 
-FOR i := 1 TO NumberOfComponents DO
-    IF ipComponents[i] <> 0 THEN
-        ipComponents[i].CyclicLogic();
-    END_IF
-END_FOR
+componentsCollection.CyclicLogic();
 
 //Handle HMI communications--this must happen before state control!!
 HMICommunication();
 
 // Mode control loop of the module
-OurModeManager.CyclicLogic();
+ModeManager.CyclicLogic();
 //ModeControl();
 
 // State control loop of the module
@@ -702,20 +688,20 @@ METHOD PROTECTED HMICommunication
 //Process HMI requests
 HMICommand_RT(CLK := (PackMLBaseModule_HMI.Status.HMIControlAvailable AND NOT HMICommandActive_Descendant) AND
                      (PackMLBaseModule_HMI.Command.ActivateModeLog XOR PackMLBaseModule_HMI.Command.DeactivatModeLog XOR PackMLBaseModule_HMI.Command.ActivateStateLog XOR
-                     PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState));
+                     PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> ModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState));
 
 //Desendant components should observe this to interlock HMI commands
 HMICommandActive_Base := PackMLBaseModule_HMI.Status.HMIControlAvailable AND
                          (PackMLBaseModule_HMI.Command.ActivateModeLog OR PackMLBaseModule_HMI.Command.DeactivatModeLog OR PackMLBaseModule_HMI.Command.ActivateStateLog OR
-                         PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState);
+                         PackMLBaseModule_HMI.Command.DeactivateStateLog XOR PackMLBaseModule_HMI.Command.Mode <> ModeManager.CommandedMode XOR PackMLBaseModule_HMI.Command.State <> _CommandedState);
 
 IF HMICommand_RT.Q THEN
     IF PackMLBaseModule_HMI.Command.ActivateModeLog THEN
-        OurModeManager.LogModeChanges := TRUE;
+        ModeManager.LogModeChanges := TRUE;
     END_IF
 
     IF PackMLBaseModule_HMI.Command.DeactivatModeLog THEN
-        OurModeManager.LogModeChanges := FALSE;
+        ModeManager.LogModeChanges := FALSE;
     END_IF
 
     IF PackMLBaseModule_HMI.Command.ActivateStateLog THEN
@@ -726,7 +712,7 @@ IF HMICommand_RT.Q THEN
         _LogStateChanges := FALSE;
     END_IF
 
-    IF PackMLBaseModule_HMI.Command.Mode <> OurModeManager.CommandedMode THEN
+    IF PackMLBaseModule_HMI.Command.Mode <> ModeManager.CommandedMode THEN
         ModeCommand := PackMLBaseModule_HMI.Command.Mode;
     END_IF
 
@@ -736,10 +722,10 @@ IF HMICommand_RT.Q THEN
 END_IF
 
 PackMLBaseModule_HMI.Config.Name            := _Name;
-PackMLBaseModule_HMI.Config.LogModeChanges  := OurModeManager.LogModeChanges;
+PackMLBaseModule_HMI.Config.LogModeChanges  := ModeManager.LogModeChanges;
 PackMLBaseModule_HMI.Config.LogStateChanges := _LogStateChanges;
-PackMLBaseModule_HMI.Config.ModeNames       := OurModeManager.ModeNames;
-PackMLBaseModule_HMI.Status.Mode            := OurModeManager.CurrentMode;
+PackMLBaseModule_HMI.Config.ModeNames       := ModeManager.ModeNames;
+PackMLBaseModule_HMI.Status.Mode            := ModeManager.CurrentMode;
 PackMLBaseModule_HMI.Status.State           := _CurrentState;
 PackMLBaseModule_HMI.Status.Busy            := _Busy;
 PackMLBaseModule_HMI.Status.Error           := _Error;
@@ -753,7 +739,7 @@ METHOD PROTECTED HMIPermissions
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
         <ST><![CDATA[//General Mode Based Monitoring and handling of HMI control
-CASE OurModeManager.CurrentMode OF
+CASE ModeManager.CurrentMode OF
     E_PMLUnitMode.ePMLUnitMode_Production:
         CASE _CurrentState OF
             E_PMLState.ePMLState_Stopped:
@@ -926,22 +912,8 @@ CASE InitialiseStates OF
       END_IF
     END_FOR
 
-    InitialiseStates := CountComponents;
-	
-  CountComponents:
-    NumberOfComponents := 0;
-
-    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_COMPONENTS DO
-      IF ipComponents[i] <> 0 THEN
-        NumberOfComponents := NumberOfComponents + 1;
-        ipComponents[i].Name := CONCAT(
-          CONCAT(_Name, ' '),
-          ipComponents[i].Name
-        ); //Add the name of the module as a prefix to the name given in the declaration initialization
-      END_IF
-    END_FOR
-
     InitialiseStates := SetSizeOfArrays;
+	
   SetSizeOfArrays:
     // Initialize subunit overview used by state machine
     PMLSubModuleInfoRef.ArraySize := SIZEOF(PMLSubModuleInfo);
@@ -959,14 +931,9 @@ CASE InitialiseStates OF
       END_IF
     END_FOR
 
-    FOR i := 1 TO NumberOfComponents DO
-      IF ipComponents[i] <> 0 AND_THEN NOT ipComponents[i].InitComplete THEN
-        AllComponentsInitialized := FALSE;
-        ipComponents[i].CyclicLogic();
-      END_IF
-    END_FOR
+	componentsCollection.CyclicLogic();
 
-    IF AllSubUnitsInitialized AND AllComponentsInitialized THEN
+    IF AllSubUnitsInitialized AND componentsCollection.AllInitialised() THEN
       InitialiseStates := init;
       Initialize := TRUE;
     END_IF
@@ -980,7 +947,7 @@ END_CASE]]></ST>
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[LogModeChanges := OurModeManager.LogModeChanges;]]></ST>
+          <ST><![CDATA[LogModeChanges := ModeManager.LogModeChanges;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{8f7224fa-f948-4526-8508-df1aa032238d}">
@@ -988,7 +955,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[OurModeManager.LogModeChanges := LogModeChanges;]]></ST>
+          <ST><![CDATA[ModeManager.LogModeChanges := LogModeChanges;]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -1017,7 +984,7 @@ PROPERTY ModeCommand : DINT]]></Declaration>
         <Declaration><![CDATA[VAR
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[ModeCommand := OurModeManager.CommandedMode;]]></ST>
+          <ST><![CDATA[ModeCommand := ModeManager.CommandedMode;]]></ST>
         </Implementation>
       </Get>
       <Set Name="Set" Id="{428042c2-2a29-4c07-9a8f-eebad7e0d1dc}">
@@ -1343,7 +1310,7 @@ END_IF]]></ST>
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[//On startup, state is invalid, set it to default
-IF _CurrentState = E_PMLState.ePMLState_Undefined AND OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
+IF _CurrentState = E_PMLState.ePMLState_Undefined AND ModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid THEN
     _CommandedState := Parameters_PackML_Base.UNIT_STATE_DEFAULT;
 END_IF
 ]]></ST>
@@ -1364,7 +1331,7 @@ END_VAR]]></Declaration>
 	i : UDINT;
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[IF OurModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid AND _CurrentState <> E_PMLState.ePMLState_Undefined THEN
+          <ST><![CDATA[IF ModeManager.CurrentMode <> E_PMLUnitMode.ePMLUnitMode_Invalid AND _CurrentState <> E_PMLState.ePMLState_Undefined THEN
 
     _CommandedState                    := StateCommand;
     PackMLBaseModule_HMI.Command.State := StateCommand;	
@@ -1409,7 +1376,7 @@ END_VAR]]></Declaration>
 
 //Call PackML state machine	
 StateMachine(
-  eMode := OurModeManager.CurrentMode,
+  eMode := ModeManager.CurrentMode,
   eCommand := _CommandedState,
   eState => _CurrentState
 );
@@ -1919,21 +1886,18 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.AllowHMIControl">
-      <LineId Id="3" Count="8" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="11" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.BlockHMIControl">
-      <LineId Id="3" Count="2" />
+      <LineId Id="3" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ChangeMode">
-      <LineId Id="3" Count="1" />
-      <LineId Id="2" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="9" Count="0" />
+      <LineId Id="20" Count="7" />
       <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ChangeState">
@@ -1941,7 +1905,10 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Clearing">
-      <LineId Id="3" Count="42" />
+      <LineId Id="3" Count="23" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="35" Count="10" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Complete">
@@ -1953,6 +1920,8 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ComponentMonitor">
+      <LineId Id="95" Count="0" />
+      <LineId Id="94" Count="0" />
       <LineId Id="45" Count="41" />
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -1970,9 +1939,7 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.CyclicLogic">
-      <LineId Id="3" Count="36" />
-      <LineId Id="59" Count="0" />
-      <LineId Id="40" Count="12" />
+      <LineId Id="66" Count="46" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Execute">
@@ -1984,11 +1951,11 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.HMICommunication">
-      <LineId Id="3" Count="45" />
+      <LineId Id="52" Count="45" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.HMIPermissions">
-      <LineId Id="3" Count="22" />
+      <LineId Id="29" Count="22" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.HoldControlled">
@@ -2006,9 +1973,14 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Initialize">
-      <LineId Id="70" Count="20" />
-      <LineId Id="142" Count="0" />
-      <LineId Id="91" Count="41" />
+      <LineId Id="70" Count="18" />
+      <LineId Id="103" Count="1" />
+      <LineId Id="152" Count="0" />
+      <LineId Id="105" Count="15" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="153" Count="0" />
+      <LineId Id="127" Count="0" />
+      <LineId Id="129" Count="3" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.LogModeChanges.Get">
@@ -2075,14 +2047,14 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StartUpStateTransition">
-      <LineId Id="6" Count="3" />
+      <LineId Id="11" Count="3" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateCommand.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateCommand.Set">
-      <LineId Id="3" Count="10" />
+      <LineId Id="16" Count="10" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateComplete">
@@ -2090,7 +2062,7 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateControl">
-      <LineId Id="87" Count="72" />
+      <LineId Id="165" Count="72" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StopControlled">

@@ -29,6 +29,7 @@ VAR
   GetComponentIndexOutOfBoundaryResultsFalse : T_GetComponentIndexOutOfBoundaryResultsFalse(componentCollectionTestSuite);
   AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(componentCollectionTestSuite);
   CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(componentCollectionTestSuite);
+  ComponentsInitialisedSuccess : T_ComponentsInitialisedSuccess (componentCollectionTestSuite);
   
 END_VAR
 ]]></Declaration>

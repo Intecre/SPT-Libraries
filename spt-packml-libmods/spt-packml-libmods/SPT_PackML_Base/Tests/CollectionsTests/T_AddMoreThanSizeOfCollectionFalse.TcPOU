@@ -4,8 +4,8 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_AddMoreThanSizeOfCollectionFalse EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection(3);
-  newComponent : ARRAY [1..5] OF T_Component;
-  expected, actual : UINT;
+  newComponent : ARRAY [1..5] OF T_ComponentMock;
+  expected, actual : UDINT;
   result, resultAddOutOfBoundary : BOOL;
 END_VAR
 ]]></Declaration>
@@ -19,7 +19,7 @@ resultAddOutOfBoundary := NOT list.AddComponent(newComponent[4]);
 expected := 3;
 actual := list.Count;
 
-assertion.AssertEquals_UINT(expected, actual, 'actual := list.Count');
+assertion.AssertEquals_UDINT(expected, actual, 'actual := list.Count');
 assertion.AssertEquals_BOOL(TRUE, resultAddOutOfBoundary, 'resultAddOutOfBoundary');
 TestFinished();
 ]]></ST>

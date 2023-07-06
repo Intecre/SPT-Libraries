@@ -94,10 +94,6 @@
       <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc3_Module</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="Tc3_System">
-      <DefaultResolution>Tc3_System, * (Beckhoff Automation GmbH)</DefaultResolution>
-      <Namespace>Tc3_System</Namespace>
-    </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DUT" />

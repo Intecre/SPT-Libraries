@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_CyclicLogicHasBeenCalledTrue" Id="{8d4fac65-8965-408a-b985-1027762b7472}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_CyclicLogicHasBeenCalledTrue EXTENDS T_UnitTestBase
+  <POU Name="T_ComponentsInitialisedSuccess" Id="{94c45123-908a-477f-9d80-ff0f93786fcc}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsInitialisedSuccess EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection(10);
   newComponent, newComponent2 : T_ComponentMock; 
@@ -17,14 +17,14 @@ list.AddComponent(newComponent2);
 list.CyclicLogic();
 
 //Assert
-actual1 := newComponent.cyclicHasBeenCalled;
-actual2 := newComponent2.cyclicHasBeenCalled;
+actual1 := newComponent.InitComplete;
+actual2 := newComponent2.InitComplete;
 
 assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := newComponent.cyclicHasBeenCalled;');
 assertion.AssertEquals_BOOL(TRUE, actual2, 'actual2 := newComponent2.cyclicHasBeenCalled');
 TestFinished();]]></ST>
     </Implementation>
-    <LineIds Name="T_CyclicLogicHasBeenCalledTrue">
+    <LineIds Name="T_ComponentsInitialisedSuccess">
       <LineId Id="38" Count="0" />
       <LineId Id="23" Count="0" />
       <LineId Id="31" Count="0" />

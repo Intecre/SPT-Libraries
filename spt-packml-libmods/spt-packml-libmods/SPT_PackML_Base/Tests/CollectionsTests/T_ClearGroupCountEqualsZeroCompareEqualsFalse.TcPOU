@@ -4,9 +4,9 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_ClearGroupCountEqualsZeroCompareEqualsFalse EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection(10);
-  newComponent : ARRAY [1..5] OF T_Component;
-  afterCountActual, afterCountExpected : UINT;
-  beforeCountActual, beforeCountExpected : UINT;
+  newComponent : ARRAY [1..5] OF T_ComponentMock;
+  afterCountActual, afterCountExpected : UDINT;
+  beforeCountActual, beforeCountExpected : UDINT;
   beforeActual, beforeExpected : I_ComponentBase;
   afterActual, afterExpected : I_ComponentBase;
  beforeResult, afterResult : BOOL;

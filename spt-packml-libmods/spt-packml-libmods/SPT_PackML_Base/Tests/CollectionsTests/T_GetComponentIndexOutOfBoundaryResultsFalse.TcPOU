@@ -4,7 +4,7 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_GetComponentIndexOutOfBoundaryResultsFalse EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection(10);
-  newComponent : T_Component;
+  newComponent : T_ComponentMock;
   actual : I_ComponentBase;
   expected : I_ComponentBase;
   result, tryGetResultWithinMax, tryGetResultAboveMax : BOOL;

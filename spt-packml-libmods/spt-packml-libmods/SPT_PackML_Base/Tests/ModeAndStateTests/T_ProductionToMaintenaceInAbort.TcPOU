@@ -5,7 +5,7 @@
 VAR
   em : EquipmentModule; 
   actual, expected : E_PMLUnitMode;
-	scanCounter: INT;
+  scanCounter: INT;
   cmdTriggered : BOOL;
   myTestState : (ARRANGE, ACT, ASSERT);
 END_VAR

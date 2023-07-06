@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_Component" Id="{c7b763d2-479b-4eeb-b056-8f1b232acf16}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_Component IMPLEMENTS I_ComponentBase
+  <POU Name="T_ComponentMock" Id="{c7b763d2-479b-4eeb-b056-8f1b232acf16}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentMock IMPLEMENTS I_ComponentBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
   cyclicHasBeenCalled : BOOL;
 END_VAR
 VAR
+	_initComplete : BOOL;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -60,7 +61,8 @@ END_VAR
 METHOD CyclicLogic
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[cyclicHasBeenCalled := TRUE;]]></ST>
+        <ST><![CDATA[cyclicHasBeenCalled := TRUE;
+_initComplete := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Error" Id="{f15a09fd-98c4-432d-aaab-573cadd21664}">
@@ -98,7 +100,7 @@ PROPERTY InitComplete : BOOL
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[]]></ST>
+          <ST><![CDATA[//InitComplete := _initComplete;]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -173,52 +175,53 @@ METHOD Reset : BOOL
         <ST><![CDATA[]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="T_Component">
+    <LineIds Name="T_ComponentMock">
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.AllowHMIControl">
+    <LineIds Name="T_ComponentMock.AllowHMIControl">
       <LineId Id="4" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.BlockHMIControl">
+    <LineIds Name="T_ComponentMock.BlockHMIControl">
       <LineId Id="4" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.Busy.Get">
+    <LineIds Name="T_ComponentMock.Busy.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.CurrentAlarmSeverity.Get">
+    <LineIds Name="T_ComponentMock.CurrentAlarmSeverity.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.CyclicLogic">
+    <LineIds Name="T_ComponentMock.CyclicLogic">
       <LineId Id="4" Count="0" />
+      <LineId Id="7" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.Error.Get">
+    <LineIds Name="T_ComponentMock.Error.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.ErrorID.Get">
+    <LineIds Name="T_ComponentMock.ErrorID.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.InitComplete.Get">
+    <LineIds Name="T_ComponentMock.InitComplete.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.InSimulation.Get">
+    <LineIds Name="T_ComponentMock.InSimulation.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.InSimulation.Set">
+    <LineIds Name="T_ComponentMock.InSimulation.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.Name.Get">
+    <LineIds Name="T_ComponentMock.Name.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.Name.Set">
+    <LineIds Name="T_ComponentMock.Name.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.ParentResponseDefinitions.Get">
+    <LineIds Name="T_ComponentMock.ParentResponseDefinitions.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.ParentResponseDefinitions.Set">
+    <LineIds Name="T_ComponentMock.ParentResponseDefinitions.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_Component.Reset">
+    <LineIds Name="T_ComponentMock.Reset">
       <LineId Id="4" Count="0" />
     </LineIds>
   </POU>

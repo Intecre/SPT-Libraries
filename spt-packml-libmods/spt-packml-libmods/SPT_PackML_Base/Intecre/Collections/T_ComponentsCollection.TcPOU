@@ -7,7 +7,6 @@
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Folder Name="Private" Id="{89468443-a97e-4a2a-9a02-94698d7f733f}" />
     <Method Name="AddComponent" Id="{fb6c4003-1a4c-0530-3ee6-4677519bc680}">
       <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
 VAR_INPUT
@@ -35,6 +34,67 @@ END_IF
 AddComponent := addInSpareSlot( item := item );]]></ST>
       </Implementation>
     </Method>
+    <Method Name="AllInitialised" Id="{9fc719b1-fe55-41b0-b6f2-cfbb5083d7ba}">
+      <Declaration><![CDATA[METHOD PUBLIC AllInitialised : BOOL
+VAR
+  i : UDINT;
+  Component : I_ComponentBase;
+  item : I_BaseFb;
+ END_VAR ]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//IF Count = 0 THEN
+//  RETURN;
+//END_IF
+
+//FOR i := 0 TO Count -1 DO
+
+//	IF NOT 	TryGetItem(i, item => item) THEN
+//		RETURN;
+//	END_IF
+	
+//	IF NOT __QUERYINTERFACE(item, component) THEN
+//		RETURN;
+//	END_IF
+		
+//	IF NOT Component.InitComplete THEN
+//		RETURN;
+//	END_IF
+		
+
+//END_FOR
+
+//AllInitialised := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AllowHMIControl" Id="{a3a8d4ad-9d48-4f3f-ba31-3be39f8e4d90}">
+      <Declaration><![CDATA[//! @summary Sets permissive bit to allow HMI control of component functions
+METHOD PUBLIC AllowHMIControl
+
+//! @description This method is called as required by the parent module of this component]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//ComponentBase_HMI.Status.HMIControlAvailable := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="AnyError" Id="{9034e9d6-c017-4e85-8fb5-b86ce3eee340}">
+      <Declaration><![CDATA[PROPERTY PUBLIC AnyError : BOOL]]></Declaration>
+      <Get Name="Get" Id="{9bb5938c-c9cb-4e41-99b0-44351b5c2d05}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="BlockHMIControl" Id="{6f9e39dd-3470-4035-afab-a0932af02961}">
+      <Declaration><![CDATA[//! @summary Clears permissive bit to allow HMI control of component functions
+METHOD PUBLIC BlockHMIControl
+
+//! @description This method is called as required by the parent module of this component]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//ComponentBase_HMI.Status.HMIControlAvailable := FALSE;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="ClearGroup" Id="{9c85cafe-036b-0343-3a19-4d28e743b430}">
       <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
       <Implementation>
@@ -44,7 +104,7 @@ AddComponent := addInSpareSlot( item := item );]]></ST>
     <Method Name="CyclicLogic" Id="{91fecff3-afbd-4edb-b80e-debfd3f550ae}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
-  i : UINT;
+  i : UDINT;
   Component : I_ComponentBase;
   item : I_BaseFb;
 END_VAR]]></Declaration>
@@ -62,10 +122,19 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
+    <Method Name="Reset" Id="{a96c8941-de5e-4d1c-bfc5-4f208123d152}">
+      <Declaration><![CDATA[METHOD PUBLIC Reset
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="TryGetComponent" Id="{2d1e8721-47b6-026d-04e2-daccf35cf2e5}">
       <Declaration><![CDATA[METHOD TryGetComponent: BOOL
 VAR_INPUT
-	index : UINT;
+	index : UDINT;
 END_VAR
 VAR_OUTPUT
 	component : I_ComponentBase;
@@ -99,6 +168,30 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="7" Count="5" />
       <LineId Id="2" Count="0" />
     </LineIds>
+    <LineIds Name="T_ComponentsCollection.AllInitialised">
+      <LineId Id="6" Count="4" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="20" Count="2" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.AllowHMIControl">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.AnyError.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.BlockHMIControl">
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="T_ComponentsCollection.ClearGroup">
       <LineId Id="2" Count="0" />
     </LineIds>
@@ -113,6 +206,9 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="7" Count="0" />
       <LineId Id="21" Count="0" />
       <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Reset">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.TryGetComponent">
       <LineId Id="30" Count="0" />

@@ -13,7 +13,7 @@ END_VAR]]></Declaration>
       <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
     </Method>
     <Property Name="Count" Id="{f752922b-6353-4131-8750-9a3e8e8d1bbe}">
-      <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
       <Get Name="Get" Id="{1b30b130-d217-410c-88e5-76568ebec665}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
@@ -27,7 +27,7 @@ END_VAR
     <Method Name="TryGetComponent" Id="{eef8026a-b285-4e9b-a877-dfdaee85e8f6}">
       <Declaration><![CDATA[METHOD TryGetComponent: BOOL
 VAR_INPUT
-	index : UINT;
+	index : UDINT;
 END_VAR
 VAR_OUTPUT
 	component : I_ComponentBase;

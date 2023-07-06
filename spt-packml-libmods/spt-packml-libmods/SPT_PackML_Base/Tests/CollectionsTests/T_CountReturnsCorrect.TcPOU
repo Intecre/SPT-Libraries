@@ -4,8 +4,8 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_CountReturnsCorrect EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection(10);
-  newComponent : ARRAY [1..5] OF T_Component;
-  expected, actual : UINT;
+  newComponent : ARRAY [1..5] OF T_ComponentMock;
+  expected, actual : UDINT;
   result : BOOL;
 END_VAR
 ]]></Declaration>
@@ -18,7 +18,7 @@ list.AddComponent(newComponent[4]);
 expected := 4;
 actual := list.Count;
 
-assertion.AssertEquals_UINT(expected, actual, 'actual := list.Count');
+assertion.AssertEquals_UDINT(expected, actual, 'actual := list.Count');
 TestFinished();
 ]]></ST>
     </Implementation>

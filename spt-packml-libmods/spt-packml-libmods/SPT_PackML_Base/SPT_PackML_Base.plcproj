@@ -257,7 +257,7 @@
     <Compile Include="Task_3.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\Mock\T_Component.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Mock\T_ComponentMock.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">
@@ -273,6 +273,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_CyclicLogicHasBeenCalledTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_ComponentsInitialisedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
