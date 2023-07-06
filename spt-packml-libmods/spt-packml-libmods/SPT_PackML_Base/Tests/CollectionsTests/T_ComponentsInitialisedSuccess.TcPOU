@@ -19,8 +19,7 @@ list.CyclicLogic();
 //Assert
 actual1 := list.AllInitialised();
 
-assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := newComponent.cyclicHasBeenCalled;');
-assertion.AssertEquals_BOOL(TRUE, actual2, 'actual2 := newComponent2.cyclicHasBeenCalled');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.AllInitialised();');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ComponentsInitialisedSuccess">
@@ -34,7 +33,6 @@ TestFinished();]]></ST>
       <LineId Id="40" Count="0" />
       <LineId Id="33" Count="0" />
       <LineId Id="29" Count="1" />
-      <LineId Id="37" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>
