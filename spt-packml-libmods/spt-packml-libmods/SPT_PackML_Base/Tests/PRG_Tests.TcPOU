@@ -33,6 +33,7 @@ VAR
   ComponentsIfAnyErrorReturnsErrorTrue : T_ComponentsIfAnyErrorReturnsErrorTrue (componentCollectionTestSuite);
   ComponentsAllowHmiAllowed : T_ComponentsAllowHmiAllowed (componentCollectionTestSuite);
   ComponentsBlockHmiBlocked : T_ComponentsBlockHmiBlocked (componentCollectionTestSuite);
+  ComponentsResetClearsErrors : T_ComponentsResetClearsErrors (componentCollectionTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

@@ -275,6 +275,9 @@
     <Compile Include="Tests\CollectionsTests\T_ComponentsAllowHmiAllowed.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\CollectionsTests\T_ComponentsResetClearsErrors.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\CollectionsTests\T_CountReturnsCorrect.TcPOU">
       <SubType>Code</SubType>
     </Compile>
