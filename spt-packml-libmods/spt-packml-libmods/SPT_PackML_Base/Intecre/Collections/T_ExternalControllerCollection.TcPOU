@@ -44,9 +44,29 @@ AddController := addInSpareSlot( item := item );]]></ST>
 VAR_INPUT
     Mode : E_PMLUnitMode;
 END_VAR
-]]></Declaration>
+VAR
+	i : UDINT;
+	Controller : I_PackML_ExternalController;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, Controller) THEN
+		RETURN;
+	END_IF
+		
+	Controller.ModeChanged(Mode);
+		
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="NotifyStateChanged" Id="{eea1ad95-9606-42e7-93a3-3c98612b2ba8}">
@@ -120,6 +140,7 @@ TryGetController := Controller <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyModeChanged">
+      <LineId Id="8" Count="15" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyStateChanged">
