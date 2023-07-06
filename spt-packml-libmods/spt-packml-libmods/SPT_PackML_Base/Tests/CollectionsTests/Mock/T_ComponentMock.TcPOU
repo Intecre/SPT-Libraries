@@ -17,19 +17,17 @@ END_VAR
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="AllowHMIControl" Id="{440b7c12-74d8-4c1f-80b6-6055cb9b75b5}">
-      <Declaration><![CDATA[{warning 'add method implementation '}
-METHOD AllowHMIControl
+      <Declaration><![CDATA[METHOD AllowHMIControl
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[_hmiAllowed := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="BlockHMIControl" Id="{3b1d15e4-91d2-4db6-b5c9-544e1a719f2b}">
-      <Declaration><![CDATA[{warning 'add method implementation '}
-METHOD BlockHMIControl
+      <Declaration><![CDATA[METHOD BlockHMIControl
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[_hmiBlocked := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Property Name="Busy" Id="{d1120e8c-6787-4787-bb5a-b66052e3c8d1}">
