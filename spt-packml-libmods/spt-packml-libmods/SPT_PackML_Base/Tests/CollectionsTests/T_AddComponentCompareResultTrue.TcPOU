@@ -15,7 +15,7 @@ END_VAR
 
 expected := newComponent;
 //actual := list.GetComponent(0);
-actual := list._components[0];
+__QUERYINTERFACE(list._items[0], actual);
 
 result := expected = actual;
 assertion.AssertEquals_BOOL(TRUE, result, 'result := expected = actual');

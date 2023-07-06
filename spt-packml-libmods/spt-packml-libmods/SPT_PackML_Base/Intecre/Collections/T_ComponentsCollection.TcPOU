@@ -1,13 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_ComponentsCollection" Id="{d0fd4ea2-8a96-0365-36ba-9fa85df78835}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection EXTENDS T_NamedBase IMPLEMENTS I_ComponentsCollection
-VAR
-	_backingStore : POINTER TO PVOID;
-	_components : POINTER TO I_ComponentBase := ADR(_backingStore);// ARRAY[ 0.. Constants.MaxNumOfComponents - 1] OF I_ComponentBase;
-	_cnt : UINT;
-	collectionMaxSize : UINT;
-END_VAR
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection EXTENDS T_CollectionBase IMPLEMENTS I_ComponentsCollection
+
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -17,6 +12,9 @@ END_VAR
       <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
 VAR_INPUT
   newComponent : I_ComponentBase;
+END_VAR
+VAR
+	item : I_BaseFb;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newComponent = 0 THEN
@@ -24,69 +22,31 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-IF HasComponent( component := newComponent ) THEN
+IF NOT __QUERYINTERFACE(newComponent, item) THEN
+	LogError( 'Cannot AddComponent  NOT __QUERYINTERFACE(newComponent, item)' );
+	RETURN;
+END_IF
+
+IF HasItem( item := item ) THEN
 	LogWarning( 'Component already in collection.' );
 	RETURN;
 END_IF
 
-AddComponent := addInSpareSlot( Component := newComponent );]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="addInSpareSlot" Id="{fa90a5a6-a7d6-0fad-179b-cd65f7dfc1c1}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE addInSpareSlot : BOOL
-VAR_INPUT
-	Component : I_ComponentBase;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[IF Count >= collectionMaxSize THEN
-	LogError('cannot addInSpareSlot : no space.');
-	RETURN;
-END_IF
-	
-_components[Count] := Component;
-Count := Count + 1;
-addInSpareSlot := TRUE;
-]]></ST>
+AddComponent := addInSpareSlot( item := item );]]></ST>
       </Implementation>
     </Method>
     <Method Name="ClearGroup" Id="{9c85cafe-036b-0343-3a19-4d28e743b430}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
-VAR
-	i : UINT;
-END_VAR]]></Declaration>
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//MEMSET(ADR(_components), 0 , SIZEOF(_components));
-
-FOR i := 0 TO collectionMaxSize - 1 DO
-	_components[i] := 0;
-END_FOR
-
-_cnt := 0;
-LogDebug('ClearGroup() called.');]]></ST>
+        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
       </Implementation>
     </Method>
-    <Property Name="Count" Id="{c3e24338-c204-0fb2-122b-2d8bd0174c7a}">
-      <Declaration><![CDATA[PROPERTY Count : UINT]]></Declaration>
-      <Get Name="Get" Id="{db351648-7a88-412e-902b-1ec924ca47e0}">
-        <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[Count := _cnt;
-]]></ST>
-        </Implementation>
-      </Get>
-      <Set Name="Set" Id="{5ded8cd6-0317-4cd8-a05b-26ebc2397268}">
-        <Declaration><![CDATA[PRIVATE]]></Declaration>
-        <Implementation>
-          <ST><![CDATA[_cnt := Count;]]></ST>
-        </Implementation>
-      </Set>
-    </Property>
     <Method Name="CyclicLogic" Id="{91fecff3-afbd-4edb-b80e-debfd3f550ae}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
   i : UINT;
+  Component : I_ComponentBase;
+  item : I_BaseFb;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
@@ -94,57 +54,11 @@ END_VAR]]></Declaration>
 END_IF
 
 FOR i := 0 TO Count -1 DO
-  _components[i].CyclicLogic();
-END_FOR]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="FB_exit" Id="{1b669e6e-7e3c-07a1-095a-4917f16379ef}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD FB_exit : BOOL
-VAR_INPUT
-	bInCopyCode : BOOL; // if TRUE, the exit method is called for exiting an instance that is copied afterwards (online change).
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[__DELETE(_backingStore);
-collectionMaxSize := 0;
-Count := 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="FB_init" Id="{1e66faf9-fc3f-084d-3448-ee798e76106f}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
-VAR_INPUT
-	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
-	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-	NumberOfComponentsInCollection : UINT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[collectionMaxSize := NumberOfComponentsInCollection;
-_backingStore := __NEW(PVOID, collectionMaxSize);
-_components := _backingStore;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="HasComponent" Id="{6a5f6459-2a32-07da-2da1-24304153ca63}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PRIVATE HasComponent : BOOL
-VAR_INPUT
-	Component : I_ComponentBase;
-END_VAR
-VAR 
-	i : UINT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[FOR i := 0 TO Count - 1 DO
-	
-	IF _components[i] = 0 THEN
-		EXIT; // exit for loop
-	END_IF
-	
-	IF _components[i] = Component THEN
-		HasComponent := TRUE;
-		RETURN;
-		
-	END_IF
-	
+	TryGetItem(i, item => item);
+	__QUERYINTERFACE(item, component);
+	IF component <> 0 THEN
+  		Component.CyclicLogic();
+	END_IF	
 END_FOR]]></ST>
       </Implementation>
     </Method>
@@ -156,19 +70,20 @@ END_VAR
 VAR_OUTPUT
 	component : I_ComponentBase;
 END_VAR
-]]></Declaration>
+VAR
+	item : I_BaseFb;
+END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF index > collectionMaxSize THEN
-	LogError( 'cannot GetDrive, index out of bounds' );
+        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
+	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
 	RETURN;
 END_IF
 
-IF index > (Count - 1) THEN
-	LogError( 'cannot GetDrive, index > (Count - 1) ' );
+IF NOT __QUERYINTERFACE(item, component) THEN
+	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, component) ' );
 	RETURN;
 END_IF
 
-component := _components[index];
 TryGetComponent := component <> 0;]]></ST>
       </Implementation>
     </Method>
@@ -176,22 +91,15 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AddComponent">
-      <LineId Id="3" Count="9" />
+      <LineId Id="3" Count="3" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="7" Count="5" />
       <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.addInSpareSlot">
-      <LineId Id="3" Count="8" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.ClearGroup">
-      <LineId Id="11" Count="1" />
-      <LineId Id="3" Count="4" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.Count.Get">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.Count.Set">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.CyclicLogic">
@@ -199,22 +107,19 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="11" Count="1" />
       <LineId Id="10" Count="0" />
       <LineId Id="4" Count="0" />
-      <LineId Id="7" Count="1" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.FB_exit">
-      <LineId Id="3" Count="1" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.FB_init">
-      <LineId Id="3" Count="1" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.HasComponent">
-      <LineId Id="3" Count="11" />
-      <LineId Id="2" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.TryGetComponent">
-      <LineId Id="3" Count="10" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="23" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

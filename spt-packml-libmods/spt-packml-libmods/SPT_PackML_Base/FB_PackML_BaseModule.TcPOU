@@ -35,6 +35,8 @@ VAR
     
     OurModeManager : T_ModeManager(THIS^);
     InitialiseStates     : (init, CountSubModules, CountComponents, SetSizeOfArrays, AssignArrays);
+	componentsCollection : I_ComponentsCollection;
+	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
@@ -925,6 +927,7 @@ CASE InitialiseStates OF
     END_FOR
 
     InitialiseStates := CountComponents;
+	
   CountComponents:
     NumberOfComponents := 0;
 
@@ -2003,7 +2006,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Initialize">
-      <LineId Id="70" Count="62" />
+      <LineId Id="70" Count="20" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="91" Count="41" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.LogModeChanges.Get">

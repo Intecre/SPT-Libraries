@@ -113,7 +113,7 @@ END_VAR
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-  stateModule : I_StateModule;
+  	stateModule : I_StateModule;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -156,7 +156,7 @@ IF PackModeManager.bError THEN
 ELSIF PackModeManager.bDone THEN
   PrevCurrentMode := _CurrentMode;
   PrevCommandedMode := _CommandedMode;
-
+  SetCurrentStrategy(_CurrentMode);
 END_IF
 
 //TODO how to get loggin and alarms out from here? ]]></ST>
@@ -194,6 +194,25 @@ END_VAR
         </Implementation>
       </Get>
     </Property>
+    <Method Name="SetCurrentStrategy" Id="{dd043792-3ab7-420e-b108-7fee0c3bf95c}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE SetCurrentStrategy
+VAR_INPUT
+	CurrentMode : E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE CurrentMode OF
+	E_PMLUnitMode.ePMLUnitMode_Maintenance :
+		CurrentStrategy := MaintenanceMode;
+	E_PMLUnitMode.ePMLUnitMode_Manual :
+		CurrentStrategy := ManualMode;	
+	E_PMLUnitMode.ePMLUnitMode_Production :
+		CurrentStrategy := ProductionMode;
+	ELSE
+		;//?
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="StartUpModeChange" Id="{e0d2514d-fec9-45cd-834c-1067f21c9d10}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD PRIVATE StartUpModeChange]]></Declaration>
       <Implementation>
@@ -255,6 +274,12 @@ END_IF]]></ST>
     </LineIds>
     <LineIds Name="T_ModeManager.ModeNames.Get">
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ModeManager.SetCurrentStrategy">
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="9" Count="6" />
+      <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="T_ModeManager.StartUpModeChange">
       <LineId Id="26" Count="2" />
