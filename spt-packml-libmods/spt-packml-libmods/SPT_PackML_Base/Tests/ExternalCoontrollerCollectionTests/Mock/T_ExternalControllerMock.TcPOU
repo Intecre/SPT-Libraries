@@ -6,6 +6,7 @@ VAR_INPUT
 END_VAR
 VAR_OUTPUT
 	_newState	: Tc3_PackML_V2.E_PMLCommand;
+	_newMode : E_PMLUnitMode;
 END_VAR
 VAR
 
@@ -34,7 +35,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[_newMode := NewMode;]]></ST>
       </Implementation>
     </Method>
     <Method Name="StateChanged" Id="{99b3c0a7-a033-4b9e-84ef-400e8952a4d2}">

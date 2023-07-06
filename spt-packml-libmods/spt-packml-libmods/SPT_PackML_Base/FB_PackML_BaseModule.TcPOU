@@ -37,6 +37,7 @@ VAR
     InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
 	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
 	ExternalControllersCollection	  : T_ExternalControllerCollection(Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS);
+	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
@@ -260,12 +261,9 @@ VAR_INPUT
     Mode : E_PMLUnitMode;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF Mode <> _CommandedMode THEN
-//    ModeCommand := Mode;
-//END_IF
-
-ModeManager.ChangeMode(Mode);
-
+        <ST><![CDATA[ModeManager.ChangeMode(Mode);
+PackMLBaseModule_HMI.Command.Mode := Mode;
+ExternalControllersCollection.NotifyModeChanged(Mode);
 
 
 ]]></ST>
@@ -995,21 +993,20 @@ END_VAR]]></Declaration>
 	i : UDINT;
 END_VAR]]></Declaration>
         <Implementation>
-          <ST><![CDATA[(*
-IF ModeCommand <> _CommandedMode THEN
-    _CommandedMode                    := ModeCommand;
-    PackMLBaseModule_HMI.Command.Mode := ModeCommand;
+          <ST><![CDATA[//IF ModeCommand <> _CommandedMode THEN
+//    _CommandedMode                    := ModeCommand;
+//    PackMLBaseModule_HMI.Command.Mode := ModeCommand;
 	
-    //Notify external controllers that state has changed	
-    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
-        IF ipExternalControllers[i] <> 0 THEN
-            ipExternalControllers[i].ModeChanged(_CommandedMode);
-        END_IF
-    END_FOR
+//    //Notify external controllers that state has changed	
+//    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
+//        IF ipExternalControllers[i] <> 0 THEN
+//            ipExternalControllers[i].ModeChanged(_CommandedMode);
+//        END_IF
+//    END_FOR
     
-    //ModeChangeRequested := TRUE;
-END_IF
-*)]]></ST>
+//    //ModeChangeRequested := TRUE;
+//END_IF
+]]></ST>
         </Implementation>
       </Set>
     </Property>
@@ -1886,7 +1883,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ChangeMode">
-      <LineId Id="20" Count="7" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="26" Count="1" />
       <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ChangeState">
@@ -1990,7 +1989,6 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ModeCommand.Set">
-      <LineId Id="20" Count="0" />
       <LineId Id="3" Count="9" />
       <LineId Id="17" Count="0" />
       <LineId Id="14" Count="0" />

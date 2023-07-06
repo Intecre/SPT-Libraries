@@ -39,6 +39,16 @@ AddController := addInSpareSlot( item := item );]]></ST>
         <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
       </Implementation>
     </Method>
+    <Method Name="NotifyModeChanged" Id="{17f6e3c4-7a01-4c8b-b055-d636340e3bb7}">
+      <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
+VAR_INPUT
+    Mode : E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="NotifyStateChanged" Id="{eea1ad95-9606-42e7-93a3-3c98612b2ba8}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyStateChanged
 VAR_INPUT
@@ -108,6 +118,9 @@ TryGetController := Controller <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.ClearGroup">
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.NotifyModeChanged">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyStateChanged">
       <LineId Id="7" Count="15" />

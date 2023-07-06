@@ -310,6 +310,9 @@
     <Compile Include="Tests\ExternalCoontrollerCollectionTests\T_ExternalControllersCollectionNotifyStateChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ExternalCoontrollerCollectionTests\T_ExternalControllersCollectionNotifyModeChangedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">
       <SubType>Code</SubType>
     </Compile>
