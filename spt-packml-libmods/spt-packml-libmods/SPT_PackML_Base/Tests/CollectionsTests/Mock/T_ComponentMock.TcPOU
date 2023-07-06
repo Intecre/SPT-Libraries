@@ -100,7 +100,7 @@ PROPERTY InitComplete : BOOL
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[//InitComplete := _initComplete;]]></ST>
+          <ST><![CDATA[InitComplete := _initComplete;]]></ST>
         </Implementation>
       </Get>
     </Property>

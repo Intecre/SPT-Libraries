@@ -43,6 +43,7 @@ VAR
  END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[//IF Count = 0 THEN
+//	AllInitialised := TRUE;
 //  RETURN;
 //END_IF
 
@@ -63,7 +64,7 @@ VAR
 
 //END_FOR
 
-//AllInitialised := TRUE;]]></ST>
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="AllowHMIControl" Id="{a3a8d4ad-9d48-4f3f-ba31-3be39f8e4d90}">
@@ -169,7 +170,9 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AllInitialised">
-      <LineId Id="6" Count="4" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="7" Count="3" />
       <LineId Id="28" Count="0" />
       <LineId Id="26" Count="0" />
       <LineId Id="29" Count="1" />
