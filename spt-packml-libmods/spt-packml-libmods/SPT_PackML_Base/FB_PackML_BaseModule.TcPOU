@@ -933,7 +933,7 @@ CASE InitialiseStates OF
 
 	componentsCollection.CyclicLogic();
 
-    IF AllSubUnitsInitialized AND componentsCollection.AllInitialised() THEN
+    IF AllSubUnitsInitialized AND componentsCollection.InitialisedAll THEN
       InitialiseStates := init;
       Initialize := TRUE;
     END_IF

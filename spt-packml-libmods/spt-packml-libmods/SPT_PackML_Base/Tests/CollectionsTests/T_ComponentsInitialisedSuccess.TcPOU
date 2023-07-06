@@ -17,9 +17,9 @@ list.AddComponent(newComponent2);
 list.CyclicLogic();
 
 //Assert
-actual1 := list.AllInitialised();
+actual1 := list.InitialisedAll;
 
-assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.AllInitialised();');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.InitialisedAll');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ComponentsInitialisedSuccess">

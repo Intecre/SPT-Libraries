@@ -15,7 +15,7 @@ list.AddComponent(newComponent2);
 
 //Act
 list.CyclicLogic();
-
+newComponent._error := TRUE;
 //Assert
 actual1 := list.AnyError;
 

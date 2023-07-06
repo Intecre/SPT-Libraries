@@ -3,6 +3,7 @@
   <POU Name="T_ComponentMock" Id="{c7b763d2-479b-4eeb-b056-8f1b232acf16}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentMock IMPLEMENTS I_ComponentBase
 VAR_INPUT
+	_error : BOOL;
 END_VAR
 VAR_OUTPUT
   cyclicHasBeenCalled : BOOL;
@@ -74,7 +75,7 @@ PROPERTY Error : BOOL
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[]]></ST>
+          <ST><![CDATA[Error := _error;]]></ST>
         </Implementation>
       </Get>
     </Property>
