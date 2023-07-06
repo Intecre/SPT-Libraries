@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ExternalControllerMock" Id="{43aa55ca-47db-4640-96c7-f6db5856e5d2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllerMock IMPLEMENTS I_PackML_ExternalController
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	_newState	: Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+VAR
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Control" Id="{c1ab2343-083b-4a20-9bc7-63b337d93079}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Control : I_PackML_Control
+]]></Declaration>
+      <Set Name="Set" Id="{2105b7ce-a4fe-45eb-b906-805c1820e865}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Method Name="ModeChanged" Id="{edcda9d9-d9d0-46c2-8523-9d1e40c4b24d}">
+      <Declaration><![CDATA[METHOD ModeChanged
+VAR_INPUT
+	NewMode	: E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StateChanged" Id="{99b3c0a7-a033-4b9e-84ef-400e8952a4d2}">
+      <Declaration><![CDATA[METHOD StateChanged
+VAR_INPUT
+	NewState	: Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_newState := NewState;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ExternalControllerMock">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerMock.Control.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerMock.ModeChanged">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerMock.StateChanged">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

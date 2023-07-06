@@ -36,7 +36,7 @@ VAR
     ModeManager 		 			  : T_ModeManager(THIS^);
     InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
 	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
-	
+	ExternalControllersCollection	  : T_ExternalControllerCollection(Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS);
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
@@ -52,7 +52,7 @@ VAR
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
     //ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
     NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
-    ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
+    //ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
     ReachedInitialDefaultStateAndMode : BOOL;
 
 
@@ -1173,17 +1173,12 @@ VAR
     i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
-    IF ipExternalControllers[i] = 0 THEN
-        ipExternalControllers[i]   := Controller;
-        Controller.Control         := THIS^;
-        RegisterExternalController := TRUE;
-        RETURN;
-    END_IF
-END_FOR
+        <ST><![CDATA[IF NOT ExternalControllersCollection.AddController(Controller) THEN
+	RETURN;
+END_IF
 
-//If you get this far you have already registered the maximum number of controllers
-RegisterExternalController := FALSE;]]></ST>
+Controller.Control         := THIS^;
+RegisterExternalController := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="Resetting" Id="{3807e2e0-6258-4c91-9f18-5b08f4f71847}" FolderPath="Methods\Transition States\">
@@ -1338,13 +1333,8 @@ END_VAR]]></Declaration>
 
     _CommandedState                    := StateCommand;
     PackMLBaseModule_HMI.Command.State := StateCommand;	
-	
-	    //Notify external controllers that state has changed
-    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
-        IF ipExternalControllers[i] <> 0 THEN
-            ipExternalControllers[i].StateChanged(_CommandedState);
-        END_IF
-    END_FOR
+	ExternalControllersCollection.NotifyStateChanged (_CommandedState);
+
 END_IF]]></ST>
         </Implementation>
       </Set>
@@ -1390,11 +1380,7 @@ IF _CurrentState <> PrevState THEN
   PackMLBaseModule_HMI.Command.State := _CommandedState;
 
   //Notify external controllers that state has changed
-  FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS DO
-    IF ipExternalControllers[i] <> 0 THEN
-      ipExternalControllers[i].StateChanged(_CommandedState);
-    END_IF
-  END_FOR
+  ExternalControllersCollection.NotifyStateChanged (_CommandedState);
 
   InitialiseStates := init;
   NoStateTasksToComplete := TRUE;
@@ -2040,8 +2026,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.RegisterExternalController">
-      <LineId Id="3" Count="9" />
-      <LineId Id="2" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="24" Count="2" />
+      <LineId Id="21" Count="1" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Resetting">
       <LineId Id="3" Count="35" />
@@ -2059,7 +2046,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateCommand.Set">
-      <LineId Id="16" Count="10" />
+      <LineId Id="16" Count="3" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="26" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateComplete">
@@ -2067,7 +2056,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StateControl">
-      <LineId Id="165" Count="72" />
+      <LineId Id="165" Count="14" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="185" Count="52" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StopControlled">

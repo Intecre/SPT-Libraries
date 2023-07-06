@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ExternalControllersCollectionNotifyStateChangedSuccess" Id="{6096ac06-1ab7-4462-928e-01de7f658392}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllersCollectionNotifyStateChangedSuccess EXTENDS T_UnitTestBase
+VAR
+  list : T_ExternalControllerCollection(10);
+  newController, newController2 : T_ExternalControllerMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddController(newController);
+list.AddController(newController2);
+
+//Act
+list.NotifyStateChanged(Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete);
+
+//Assert
+actual1 := newController._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete;
+actual2 := newController2._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'newController._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete');
+assertion.AssertEquals_BOOL(TRUE, actual2, 'newController2._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ExternalControllersCollectionNotifyStateChangedSuccess">
+      <LineId Id="38" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

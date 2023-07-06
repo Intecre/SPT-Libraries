@@ -34,6 +34,7 @@ VAR
   ComponentsAllowHmiAllowed : T_ComponentsAllowHmiAllowed (componentCollectionTestSuite);
   ComponentsBlockHmiBlocked : T_ComponentsBlockHmiBlocked (componentCollectionTestSuite);
   ComponentsResetClearsErrors : T_ComponentsResetClearsErrors (componentCollectionTestSuite);
+  ExternalControllersCollectionNotifyStateChangedSuccess : T_ExternalControllersCollectionNotifyStateChangedSuccess (componentCollectionTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

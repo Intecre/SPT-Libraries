@@ -195,10 +195,12 @@
     <Folder Include="Tests" />
     <Folder Include="Project Information" />
     <Folder Include="Tests\CollectionsTests\Mock" />
+    <Folder Include="Tests\ExternalCoontrollerCollectionTests\Mock" />
     <Folder Include="Tests\ModeAndStateTests" />
     <Folder Include="Tests\ModeManagerTests" />
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
     <Folder Include="Tests\CollectionsTests" />
+    <Folder Include="Tests\ExternalCoontrollerCollectionTests" />
     <Folder Include="Version" />
     <Folder Include="VISUs" />
   </ItemGroup>
@@ -300,6 +302,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_GetComponentIndexOutOfBoundaryResultsFalse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ExternalCoontrollerCollectionTests\Mock\T_ExternalControllerMock.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ExternalCoontrollerCollectionTests\T_ExternalControllersCollectionNotifyStateChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">
