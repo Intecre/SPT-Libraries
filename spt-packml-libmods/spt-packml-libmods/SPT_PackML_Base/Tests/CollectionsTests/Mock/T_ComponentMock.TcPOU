@@ -168,11 +168,10 @@ END_VAR
       </Set>
     </Property>
     <Method Name="Reset" Id="{d5c3250d-29ab-4b54-9b1a-722c18322a56}">
-      <Declaration><![CDATA[{warning 'add method implementation '}
-METHOD Reset : BOOL
+      <Declaration><![CDATA[METHOD Reset : BOOL
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[_error := FALSE;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="T_ComponentMock">

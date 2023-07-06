@@ -192,11 +192,30 @@ InitialisedAll := TRUE;]]></ST>
     </Property>
     <Method Name="Reset" Id="{a96c8941-de5e-4d1c-bfc5-4f208123d152}">
       <Declaration><![CDATA[METHOD PUBLIC Reset
-VAR_INPUT
-END_VAR
+VAR
+	i : UDINT;
+	Component : I_ComponentBase;
+	item : I_BaseFb;
+END_VAR 
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, component) THEN
+		RETURN;
+	END_IF
+		
+	Component.Reset();
+		
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetComponent" Id="{2d1e8721-47b6-026d-04e2-daccf35cf2e5}">
@@ -275,6 +294,7 @@ TryGetComponent := component <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.Reset">
+      <LineId Id="6" Count="15" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.TryGetComponent">
