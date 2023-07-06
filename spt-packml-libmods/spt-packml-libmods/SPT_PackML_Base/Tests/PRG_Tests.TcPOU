@@ -30,7 +30,7 @@ VAR
   AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(componentCollectionTestSuite);
   CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(componentCollectionTestSuite);
   ComponentsInitialisedSuccess : T_ComponentsInitialisedSuccess (componentCollectionTestSuite);
-  
+  ComponentsIfAnyErrorReturnsErrorTrue : T_ComponentsIfAnyErrorReturnsErrorTrue (componentCollectionTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

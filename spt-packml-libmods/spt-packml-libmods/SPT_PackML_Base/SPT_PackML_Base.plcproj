@@ -266,6 +266,9 @@
     <Compile Include="Tests\CollectionsTests\T_AddSameComponentTwiceShouldntAdd.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\CollectionsTests\T_ComponentsIfAnyErrorReturnsErrorTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\CollectionsTests\T_CountReturnsCorrect.TcPOU">
       <SubType>Code</SubType>
     </Compile>

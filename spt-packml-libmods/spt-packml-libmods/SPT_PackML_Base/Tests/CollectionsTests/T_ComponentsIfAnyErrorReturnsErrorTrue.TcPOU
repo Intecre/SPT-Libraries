@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ComponentsIfAnyErrorReturnsErrorTrue" Id="{da088fea-86d3-43fc-b325-f56f229f2fde}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsIfAnyErrorReturnsErrorTrue EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent, newComponent2 : T_ComponentMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddComponent(newComponent);
+list.AddComponent(newComponent2);
+
+//Act
+list.CyclicLogic();
+
+//Assert
+actual1 := list.AnyError;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'list.AnyError;');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ComponentsIfAnyErrorReturnsErrorTrue">
+      <LineId Id="38" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
