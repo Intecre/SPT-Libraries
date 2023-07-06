@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ComponentsAllowHmiAllowed" Id="{4733a0bd-a7b5-453e-a105-c2e9cd58008a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsAllowHmiAllowed EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent, newComponent2 : T_ComponentMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddComponent(newComponent);
+list.AddComponent(newComponent2);
+
+//Act
+list.AllowHMIControl();
+
+//Assert
+actual1 := newComponent._hmiAllowed;
+actual2 := newComponent2._hmiAllowed;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := newComponent._hmiAllowed;');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual2 := newComponent2._hmiAllowed;');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ComponentsAllowHmiAllowed">
+      <LineId Id="54" Count="12" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

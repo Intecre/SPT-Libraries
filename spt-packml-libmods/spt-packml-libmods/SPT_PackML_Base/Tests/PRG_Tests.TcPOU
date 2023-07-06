@@ -31,6 +31,8 @@ VAR
   CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(componentCollectionTestSuite);
   ComponentsInitialisedSuccess : T_ComponentsInitialisedSuccess (componentCollectionTestSuite);
   ComponentsIfAnyErrorReturnsErrorTrue : T_ComponentsIfAnyErrorReturnsErrorTrue (componentCollectionTestSuite);
+  ComponentsAllowHmiAllowed : T_ComponentsAllowHmiAllowed (componentCollectionTestSuite);
+  ComponentsBlockHmiBlocked : T_ComponentsBlockHmiBlocked (componentCollectionTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

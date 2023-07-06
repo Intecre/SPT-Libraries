@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ComponentsBlockHmiBlocked" Id="{b83b4f48-2528-42f3-b8f8-21dd09f25019}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsBlockHmiBlocked EXTENDS T_UnitTestBase
+VAR
+  list : T_ComponentsCollection(10);
+  newComponent, newComponent2 : T_ComponentMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddComponent(newComponent);
+list.AddComponent(newComponent2);
+
+//Act
+list.BlockHMIControl();
+
+//Assert
+actual1 := newComponent._hmiBlocked;
+actual2 := newComponent2._hmiBlocked;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := newComponent._hmiBlocked;');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual2 := newComponent2._hmiBlocked;');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ComponentsBlockHmiBlocked">
+      <LineId Id="38" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
