@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Itf Name="I_BaseFB" Id="{6fd981cf-884e-4b66-abf9-487f47b0c4a4}">
-    <Declaration><![CDATA[INTERFACE I_BaseFB EXTENDS __SYSTEM.IQueryInterface
+    <Declaration><![CDATA[INTERFACE I_BaseFB EXTENDS I_InterfaceBase
 ]]></Declaration>
     <Property Name="Busy" Id="{76fc170c-6eb4-4c7e-815c-66e1c0a84bb7}">
       <Declaration><![CDATA[PROPERTY Busy : BOOL]]></Declaration>

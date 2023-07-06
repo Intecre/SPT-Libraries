@@ -13,7 +13,7 @@
     <FileVersion>1.0.0.0</FileVersion>
     <Company>Beckhoff Automation LLC</Company>
     <Title>SPT Component Base</Title>
-    <ProjectVersion>4.0.0.0</ProjectVersion>
+    <ProjectVersion>4.0.0.1</ProjectVersion>
     <DefaultNamespace>SPT_ComponentBase</DefaultNamespace>
     <Placeholder>SPT Component Base</Placeholder>
     <Released>false</Released>
@@ -75,7 +75,8 @@
     <SelectedLibraryCategories>
       <Id xmlns="">{112ed4e3-9bae-4e5d-96f6-e80679f1a619}</Id>
     </SelectedLibraryCategories>
-    <Description>4.0.0.0 - requires SPT Base &gt;= 4.0.0.1</Description>
+    <Description>4.0.0.1 SPT_Base dependency 4.0.0.2
+4.0.0.0 - requires SPT Base &gt;= 4.0.0.1</Description>
   </PropertyGroup>
   <ItemGroup>
     <PlaceholderReference Include="SPT Event Logger">
@@ -132,7 +133,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <LibraryReference Include="SPT Base Types,4.0.0.1,Beckhoff Automation LLC">
+    <LibraryReference Include="SPT Base Types,4.0.0.2,Beckhoff Automation LLC">
       <Namespace>SPT_BaseTypes</Namespace>
     </LibraryReference>
   </ItemGroup>

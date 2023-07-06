@@ -4,7 +4,7 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_CollectionBase EXTENDS T_NamedBase
 VAR
 	_backingStore : POINTER TO PVOID;
-	_items : POINTER TO I_BaseFB := ADR(_backingStore);
+	_items : POINTER TO I_InterfaceBase := ADR(_backingStore);
 	_cnt : UDINT;
 	collectionMaxSize : UDINT;
 END_VAR
@@ -16,7 +16,7 @@ END_VAR
     <Method Name="addInSpareSlot" Id="{8c3d3185-0175-4738-9c73-0037742ace98}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD PROTECTED addInSpareSlot : BOOL
 VAR_INPUT
-	Item : I_BaseFB;
+	Item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count >= collectionMaxSize THEN
@@ -33,7 +33,7 @@ addInSpareSlot := TRUE;
     <Method Name="AddItem" Id="{694024fe-c5ed-4d58-959e-acc65fd5108c}">
       <Declaration><![CDATA[METHOD PUBLIC AddItem : BOOL
 VAR_INPUT
-  newItem : I_BaseFb;
+  newItem : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newItem = 0 THEN
@@ -112,7 +112,7 @@ _items := _backingStore;]]></ST>
     <Method Name="HasItem" Id="{3ce85fba-0a5e-4fa1-9c6a-844b57d80979}" FolderPath="Private\">
       <Declaration><![CDATA[METHOD PROTECTED HasItem : BOOL
 VAR_INPUT
-	Item : I_BaseFb;;
+	Item : I_InterfaceBase;;
 END_VAR
 VAR 
 	i : UDINT;
@@ -139,7 +139,7 @@ VAR_INPUT
 	index : UDINT;
 END_VAR
 VAR_OUTPUT
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR
 ]]></Declaration>
       <Implementation>

@@ -33,9 +33,9 @@ VAR
     ModeNames                         : ARRAY[0..31] OF STRING;
     *)
 
-    ModeManager 		 : T_ModeManager(THIS^);
-    InitialiseStates     : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
-	componentsCollection : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
+    ModeManager 		 			  : T_ModeManager(THIS^);
+    InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
+	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
@@ -446,11 +446,14 @@ METHOD PROTECTED ComponentMonitor : BOOL
 VAR
     AlarmResponses : ARRAY[0..4] OF SPT_ComponentBase.E_AlarmResponse; //Temporary response array
     i              : UDINT;
+	
 END_VAR
 
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
         <ST><![CDATA[//TODO handle this with collection 
+
+
 
 //FOR i := 1 TO NumberOfComponents DO
 //    IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
@@ -1921,6 +1924,8 @@ END_IF]]></ST>
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ComponentMonitor">
       <LineId Id="95" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="96" Count="0" />
       <LineId Id="94" Count="0" />
       <LineId Id="45" Count="41" />
       <LineId Id="2" Count="0" />

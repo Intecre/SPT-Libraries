@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ExternalControllerCollection" Id="{c5e8f026-4eab-44f0-ace5-27f246664882}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllerCollection EXTENDS T_CollectionBase
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddController" Id="{35a6c324-9983-499e-b12d-516396eb1406}">
+      <Declaration><![CDATA[METHOD PUBLIC AddController : BOOL
+VAR_INPUT
+  newController : I_PackML_ExternalController;
+END_VAR
+VAR
+	item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF newController = 0 THEN
+	LogError( 'Cannot AddComponent invalid ref' );
+	RETURN;
+END_IF
+
+IF NOT __QUERYINTERFACE(newController, item) THEN
+	LogError( 'Cannot AddComponent  NOT __QUERYINTERFACE(newComponent, item)' );
+	RETURN;
+END_IF
+
+IF HasItem( item := item ) THEN
+	LogWarning( 'Component already in collection.' );
+	RETURN;
+END_IF
+
+AddController := addInSpareSlot( item := item );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClearGroup" Id="{054439b6-c605-4a05-bfee-f8050dc694af}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TryGetController" Id="{799866d3-5fcb-43cf-b544-809f9053e66f}">
+      <Declaration><![CDATA[METHOD TryGetController: BOOL
+VAR_INPUT
+	index : UDINT;
+END_VAR
+VAR_OUTPUT
+	Controller : I_PackML_ExternalController;
+END_VAR
+VAR
+	item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
+	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
+	RETURN;
+END_IF
+
+IF NOT __QUERYINTERFACE(item, Controller) THEN
+	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, component) ' );
+	RETURN;
+END_IF
+
+TryGetController := Controller <> 0;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ExternalControllerCollection">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.AddController">
+      <LineId Id="3" Count="3" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="7" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.ClearGroup">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.TryGetController">
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Itf Name="I_PackML_Control" Id="{0a595185-78e0-4efa-95fb-0ab72c8c824d}">
-    <Declaration><![CDATA[INTERFACE I_PackML_Control]]></Declaration>
+    <Declaration><![CDATA[INTERFACE I_PackML_Control EXTENDS I_InterfaceBase]]></Declaration>
     <Method Name="ChangeMode" Id="{9d75ea51-0646-4dd0-9361-bbe77d2278f4}">
       <Declaration><![CDATA[METHOD ChangeMode
 VAR_INPUT

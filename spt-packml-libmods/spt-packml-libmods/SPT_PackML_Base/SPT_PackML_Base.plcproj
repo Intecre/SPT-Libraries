@@ -224,6 +224,9 @@
     <Compile Include="Intecre\Collections\T_CollectionBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Intecre\Collections\T_ExternalControllerCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
       <SubType>Code</SubType>
     </Compile>

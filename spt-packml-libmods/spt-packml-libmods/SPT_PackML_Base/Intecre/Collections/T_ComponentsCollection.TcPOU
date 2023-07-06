@@ -13,7 +13,7 @@ VAR_INPUT
   newComponent : I_ComponentBase;
 END_VAR
 VAR
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newComponent = 0 THEN
@@ -41,7 +41,7 @@ METHOD PUBLIC AllowHMIControl
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
@@ -70,7 +70,7 @@ END_FOR
         <Declaration><![CDATA[VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_BaseFb;
+  item : I_InterfaceBase;
 END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
@@ -105,7 +105,7 @@ METHOD PUBLIC BlockHMIControl
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
@@ -138,7 +138,7 @@ END_FOR]]></ST>
 VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_BaseFb;
+  item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
@@ -161,7 +161,7 @@ END_FOR]]></ST>
         <Declaration><![CDATA[VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_BaseFb;
+  item : I_InterfaceBase;
  END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
@@ -195,7 +195,7 @@ InitialisedAll := TRUE;]]></ST>
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR 
 ]]></Declaration>
       <Implementation>
@@ -227,7 +227,7 @@ VAR_OUTPUT
 	component : I_ComponentBase;
 END_VAR
 VAR
-	item : I_BaseFb;
+	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
