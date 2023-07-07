@@ -70,23 +70,23 @@ VAR
 	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF Count = 0 THEN
-//  RETURN;
-//END_IF
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
 
-//FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count -1 DO
 
-//	IF NOT 	TryGetItem(i, item => item) THEN
-//		RETURN;
-//	END_IF
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
 	
-//	IF NOT __QUERYINTERFACE(item, Module) THEN
-//		RETURN;
-//	END_IF
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
 		
-//	Module.ChangeMode(Mode);
+	Module.ChangeMode(Mode);
 		
-//END_FOR]]></ST>
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="NotifyStateChanged" Id="{4a22e1ac-0e21-4315-95e2-0fceb8c44e5e}">
@@ -100,23 +100,23 @@ VAR
 	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF Count = 0 THEN
-//  RETURN;
-//END_IF
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
 
-//FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count -1 DO
 
-//	IF NOT 	TryGetItem(i, item => item) THEN
-//		RETURN;
-//	END_IF
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
 	
-//	IF NOT __QUERYINTERFACE(item, Module) THEN
-//		RETURN;
-//	END_IF
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
 		
-//	Module.ChangeState(CommandedState);
+	Module.ChangeState(CommandedState);
 		
-//END_FOR]]></ST>
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
