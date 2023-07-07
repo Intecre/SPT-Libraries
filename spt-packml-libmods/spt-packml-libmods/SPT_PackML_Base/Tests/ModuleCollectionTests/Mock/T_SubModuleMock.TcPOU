@@ -47,7 +47,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[_newState := State;]]></ST>
+        <ST><![CDATA[StateCommand := _newState := State;]]></ST>
       </Implementation>
     </Method>
     <Property Name="CurrentAlarmSeverity" Id="{60fccc78-73da-44dd-95b6-b09c8fdb361b}">
