@@ -22,10 +22,10 @@ list.SetSubModuleInfoState(PMLSubModuleInfo);
 
 //Assert
 actual1:=  PMLSubModuleInfo[1].eState = Tc3_PackML_V2.E_PMLState.ePMLState_Clearing;
-actual1:=  PMLSubModuleInfo[1].eState = Tc3_PackML_V2.E_PMLState.ePMLState_Held;
+actual2:=  PMLSubModuleInfo[2].eState = Tc3_PackML_V2.E_PMLState.ePMLState_Held;
 
 assertion.AssertEquals_BOOL(TRUE, actual1, 'PMLSubModuleInfo[1].eState = Tc3_PackML_V2.E_PMLState.ePMLState_Clearing');
-assertion.AssertEquals_BOOL(TRUE, actual2, 'Tc3_PackML_V2.E_PMLState.ePMLState_Held');
+assertion.AssertEquals_BOOL(TRUE, actual2, ' PMLSubModuleInfo[2].eState = Tc3_PackML_V2.E_PMLState.ePMLState_Held');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ModuleCollectionSetSubModuleInfoStateSuccess">

@@ -260,33 +260,33 @@ VAR
 	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
-//upperBound := UPPER_BOUND(SubModuleInfoArray,1);
+        <ST><![CDATA[lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
+upperBound := UPPER_BOUND(SubModuleInfoArray,1);
 
-//IF lowerBound <> 1 THEN
-//	RETURN;
-//END_IF
+IF lowerBound <> 1 THEN
+	RETURN;
+END_IF
 
-//IF Count > upperBound THEN
-//	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
-//	RETURN;
-//END_IF 
+IF Count > upperBound THEN
+	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
+	RETURN;
+END_IF 
 
 
 
-//FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count -1 DO
 
-//	IF NOT 	TryGetItem(i, item => item) THEN
-//		RETURN;
-//	END_IF
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
 	
-//	IF NOT __QUERYINTERFACE(item, Module) THEN
-//		RETURN;
-//	END_IF
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
 		
-//	 SubModuleInfoArray[i+1].eState :=  Module.CurrentState;
+	 SubModuleInfoArray[i+1].eState :=  Module.CurrentState;
 		
-//END_FOR]]></ST>
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
