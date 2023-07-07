@@ -59,6 +59,42 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
+    <Property Name="InitialisedAll" Id="{cb8be73b-6402-458a-bffd-aa60da85ce4b}">
+      <Declaration><![CDATA[PROPERTY PUBLIC InitialisedAll : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{5fb1c1d1-cf1d-4536-8532-22fb2763eeb1}">
+        <Declaration><![CDATA[VAR
+  i : UDINT;
+  Module : I_PackML_BaseModule;
+  item : I_InterfaceBase;
+ END_VAR ]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[//IF Count = 0 THEN
+//	InitialisedAll := TRUE;
+//  RETURN;
+//END_IF
+
+//FOR i := 0 TO Count -1 DO
+
+//	IF NOT 	TryGetItem(i, item => item) THEN
+//		RETURN;
+//	END_IF
+	
+//	IF NOT __QUERYINTERFACE(item, Module) THEN
+//		RETURN;
+//	END_IF
+		
+//	IF NOT Module.InitComplete THEN
+//		RETURN;
+//	END_IF
+		
+
+//END_FOR
+
+//InitialisedAll := TRUE;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="NotifyModeChanged" Id="{4b757abb-b5fa-4f69-8c19-ba1cf5b656bd}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
 VAR_INPUT
@@ -170,6 +206,10 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="7" Count="0" />
       <LineId Id="21" Count="0" />
       <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.InitialisedAll.Get">
+      <LineId Id="5" Count="21" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.NotifyModeChanged">
       <LineId Id="8" Count="15" />

@@ -38,6 +38,7 @@ VAR
   ExternalControllersCollectionNotifyModeChangedSuccess : T_ExternalControllersCollectionNotifyModeChangedSuccess (CollectionsTestSuite);
   ModuleCollectionNotifyModeChangedSuccess : T_ModuleCollectionNotifyModeChangedSuccess (CollectionsTestSuite);
   ModuleCollectionNotifyStateChangedSuccess : T_ModuleCollectionNotifyStateChangedSuccess (CollectionsTestSuite);
+  ModuleCollectionInitialisedSuccess : T_ModuleCollectionInitialisedSuccess (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>
