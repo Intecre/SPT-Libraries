@@ -42,6 +42,7 @@ VAR
   ModuleCollectionOneNotInitialisedAllNotInitialised : T_ModuleCollectionOneNotInitialisedAllNotInitialised (CollectionsTestSuite);
   ModuleCollectionAnyErrorReturnErrorTrue : T_ModuleCollectionAnyErrorReturnErrorTrue (CollectionsTestSuite);
   ModuleCollectionIsInAskedStateReturnsCorrectResponse : T_ModuleCollectionIsInAskedStateReturnsCorrectResponse (CollectionsTestSuite);
+  ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse : T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

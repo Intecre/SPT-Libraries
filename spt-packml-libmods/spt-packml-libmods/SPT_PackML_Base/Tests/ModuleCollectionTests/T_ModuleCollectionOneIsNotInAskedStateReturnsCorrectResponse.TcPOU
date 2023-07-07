@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_ModuleCollectionIsInAskedStateReturnsCorrectResponse" Id="{4d3bed85-2a38-44a7-b6fa-f503b71f4f97}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionIsInAskedStateReturnsCorrectResponse EXTENDS T_UnitTestBase
+  <POU Name="T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse" Id="{8cc68880-e557-4213-8827-55e98921a759}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse EXTENDS T_UnitTestBase
 VAR
   list : T_SubModuleCollection(10);
   newModule, newModule2 : T_SubModuleMock; 
@@ -15,15 +15,15 @@ list.AddModule(newModule2);
 
 //Act
 newModule._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Completing;
-newModule2._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Completing;
+newModule2._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Clearing;
 
 //Assert
-actual1 := list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
+actual1 := NOT list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
 
-assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := NOT list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing');
 TestFinished();]]></ST>
     </Implementation>
-    <LineIds Name="T_ModuleCollectionIsInAskedStateReturnsCorrectResponse">
+    <LineIds Name="T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse">
       <LineId Id="15" Count="4" />
       <LineId Id="27" Count="1" />
       <LineId Id="21" Count="4" />

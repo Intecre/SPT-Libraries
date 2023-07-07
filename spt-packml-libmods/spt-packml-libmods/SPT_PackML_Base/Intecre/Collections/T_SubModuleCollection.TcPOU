@@ -131,11 +131,35 @@ InitialisedAll := TRUE;]]></ST>
     <Method Name="IsInAskedState" Id="{c5525ce9-7897-4cf9-8030-5bde5f91a91f}">
       <Declaration><![CDATA[METHOD PUBLIC IsInAskedState : BOOL
 VAR_INPUT
-	State : Tc3_PackML_V2.E_PMLCommand;
+	State : Tc3_PackML_V2.E_PMLState;
 END_VAR
-]]></Declaration>
+VAR
+	i : UDINT;
+	Module : I_PackML_BaseModule;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
+		
+	IF Module.CurrentState <> State THEN
+		RETURN;
+	END_IF
+		
+END_FOR
+
+IsInAskedState := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="NotifyModeChanged" Id="{4b757abb-b5fa-4f69-8c19-ba1cf5b656bd}">
@@ -259,7 +283,12 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.IsInAskedState">
+      <LineId Id="15" Count="14" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="30" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="33" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.NotifyModeChanged">
       <LineId Id="8" Count="15" />

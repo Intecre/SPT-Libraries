@@ -363,6 +363,9 @@
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionIsInAskedStateReturnsCorrectResponse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneNotInitialisedAllNotInitialised.TcPOU">
       <SubType>Code</SubType>
     </Compile>
