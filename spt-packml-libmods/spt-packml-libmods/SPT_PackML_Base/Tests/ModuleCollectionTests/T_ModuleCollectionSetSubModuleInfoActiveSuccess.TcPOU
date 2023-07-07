@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModuleCollectionSetSubModuleInfoActiveSuccess" Id="{a7baad53-ced4-4e4e-b17f-06e0652e042c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionSetSubModuleInfoActiveSuccess EXTENDS T_UnitTestBase
+VAR
+  list : T_SubModuleCollection(10);
+  newModule, newModule2 : T_SubModuleMock; 
+  actual1, actual2 : BOOL;
+  
+  PMLSubModuleInfo  : ARRAY[1..10] OF ST_PMLSubUnitInfo;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddModule(newModule);
+list.AddModule(newModule2);
+
+//Act
+list.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
+
+//Assert
+actual1:=  PMLSubModuleInfo[1].Active;
+actual2:=  PMLSubModuleInfo[2].Active;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1:=  PMLSubModuleInfo[1].Active;');
+assertion.AssertEquals_BOOL(TRUE, actual2, 'actual1:=  PMLSubModuleInfo[1].Active;');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ModuleCollectionSetSubModuleInfoActiveSuccess">
+      <LineId Id="14" Count="2" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="25" Count="3" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

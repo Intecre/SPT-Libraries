@@ -375,6 +375,12 @@
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyStateChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoActiveSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\PRG_Tests.TcPOU">
       <SubType>Code</SubType>
     </Compile>

@@ -222,6 +222,31 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
+    <Method Name="SetPMLSubModuleInfoActive" Id="{d86cc83d-fd36-40fc-bc91-98090402b698}">
+      <Declaration><![CDATA[METHOD PUBLIC SetPMLSubModuleInfoActive : BOOL
+VAR_IN_OUT
+	SubModuleInfoArray : ARRAY[*] OF ST_PMLSubUnitInfo;
+END_VAR
+VAR
+	i : DINT;
+	lowerBound, upperBound : DINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
+//upperBound := UPPER_BOUND(SubModuleInfoArray,1);
+
+//IF Count > upperBound THEN
+//	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
+//	RETURN;
+//END_IF 
+
+//FOR i := lowerBound TO Count DO
+//    SubModuleInfoArray[i].Active := TRUE;
+//END_FOR;
+
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
       <Declaration><![CDATA[METHOD TryGetModule: BOOL
 VAR_INPUT
@@ -297,6 +322,18 @@ TryGetModule := Module <> 0;]]></ST>
     <LineIds Name="T_SubModuleCollection.NotifyStateChanged">
       <LineId Id="7" Count="15" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.SetPMLSubModuleInfoActive">
+      <LineId Id="12" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.TryGetModule">
       <LineId Id="30" Count="0" />

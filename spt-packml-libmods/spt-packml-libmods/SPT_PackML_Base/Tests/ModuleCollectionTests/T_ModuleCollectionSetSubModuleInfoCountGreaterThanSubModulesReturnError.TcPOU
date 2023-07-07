@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError" Id="{51ab96ba-1931-4a81-b02d-30462115a89b}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError EXTENDS T_UnitTestBase
+VAR
+  list : T_SubModuleCollection(10);
+  newModule, newModule2, newModule3 : T_SubModuleMock; 
+  result : BOOL;
+  
+  PMLSubModuleInfo  : ARRAY[1..2] OF ST_PMLSubUnitInfo;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddModule(newModule);
+list.AddModule(newModule2);
+list.AddModule(newModule3);
+
+//Act
+result := NOT list.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
+
+//Assert
+assertion.AssertEquals_BOOL(FALSE, result, 'NOT list.SetPMLSubModuleInfoActive(PMLSubModuleInfo)');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError">
+      <LineId Id="14" Count="2" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="24" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

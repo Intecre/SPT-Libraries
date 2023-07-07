@@ -43,6 +43,8 @@ VAR
   ModuleCollectionAnyErrorReturnErrorTrue : T_ModuleCollectionAnyErrorReturnErrorTrue (CollectionsTestSuite);
   ModuleCollectionIsInAskedStateReturnsCorrectResponse : T_ModuleCollectionIsInAskedStateReturnsCorrectResponse (CollectionsTestSuite);
   ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse : T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse (CollectionsTestSuite);
+  ModuleCollectionSetSubModuleInfoActiveSuccess : T_ModuleCollectionSetSubModuleInfoActiveSuccess (CollectionsTestSuite);
+  ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError : T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>
