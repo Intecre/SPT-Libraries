@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse" Id="{32f2b335-1696-41a8-b813-3e7bde5e8911}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse EXTENDS T_UnitTestBase
+VAR
+  list : T_SubModuleCollection(10);
+  newModule, newModule2 : T_SubModuleMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddModule(newModule);
+list.AddModule(newModule2);
+
+//Act
+newModule._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Completing;
+newModule2._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Holding;
+
+//Assert
+actual1 := list.AnyInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.AnyInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse">
+      <LineId Id="29" Count="11" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

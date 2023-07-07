@@ -18,15 +18,13 @@ newModule._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Completing;
 newModule2._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Clearing;
 
 //Assert
-actual1 := NOT list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
+actual1 := NOT list.AllInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
 
-assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := NOT list.IsInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := NOT list.AllInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse">
-      <LineId Id="15" Count="4" />
-      <LineId Id="27" Count="1" />
-      <LineId Id="21" Count="4" />
+      <LineId Id="29" Count="11" />
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

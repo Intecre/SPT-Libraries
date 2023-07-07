@@ -354,13 +354,16 @@
     <Compile Include="Tests\ModuleCollectionTests\Mock\T_SubModuleMock.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAnyErrorReturnErrorTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionInitialisedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionIsInAskedStateReturnsCorrectResponse.TcPOU">
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAllInAskedStateReturnsCorrectResponse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse.TcPOU">
