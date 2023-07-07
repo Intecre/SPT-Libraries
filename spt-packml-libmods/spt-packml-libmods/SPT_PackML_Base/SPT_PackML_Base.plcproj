@@ -201,6 +201,8 @@
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
     <Folder Include="Tests\CollectionsTests" />
     <Folder Include="Tests\ExternalCoontrollerCollectionTests" />
+    <Folder Include="Tests\ModuleCollectionTests" />
+    <Folder Include="Tests\ModuleCollectionTests\Mock" />
     <Folder Include="Version" />
     <Folder Include="VISUs" />
   </ItemGroup>
@@ -227,6 +229,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\T_ExternalControllerCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Collections\T_SubModuleCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -344,6 +349,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeManagerTests\T_ModeInitialisedFromInvalidToProduction.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\Mock\T_SubModuleMock.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyModeChangedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyStateChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\PRG_Tests.TcPOU">

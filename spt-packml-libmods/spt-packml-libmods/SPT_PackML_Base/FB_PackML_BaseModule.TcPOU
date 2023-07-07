@@ -36,6 +36,7 @@ VAR
     ModeManager 		 			  : T_ModeManager(THIS^);
     InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
 	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
+	SubModuleColelction				  : T_SubModuleCollection(Parameters_PackML_Base.MAX_NO_OF_SUBMODULES);
 	ExternalControllersCollection	  : T_ExternalControllerCollection(Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS);
 	
     //spt classes    
@@ -52,7 +53,7 @@ VAR
     PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
     //ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
-    NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
+    //NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
     //ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
     ReachedInitialDefaultStateAndMode : BOOL;
 

@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_SubModuleCollection" Id="{e452d146-811c-4c16-9bd5-d9b031d0f126}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleCollection EXTENDS T_CollectionBase]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddModule" Id="{53fec14b-7f0d-4c8d-b489-4f8a2e7a91db}">
+      <Declaration><![CDATA[METHOD PUBLIC AddModule : BOOL
+VAR_INPUT
+  newModule : I_PackML_BaseModule;
+END_VAR
+VAR
+	item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF newModule = 0 THEN
+	LogError( 'Cannot AddModule invalid ref' );
+	RETURN;
+END_IF
+
+IF NOT __QUERYINTERFACE(newModule, item) THEN
+	LogError( 'Cannot AddModule  NOT __QUERYINTERFACE(newComponent, item)' );
+	RETURN;
+END_IF
+
+IF HasItem( item := item ) THEN
+	LogWarning( 'Module already in collection.' );
+	RETURN;
+END_IF
+
+AddModule := addInSpareSlot( item := item );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClearGroup" Id="{e59bb94d-6a92-4886-b69b-9d56ef4adf07}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CyclicLogic" Id="{14da67f3-5fa4-4574-9988-115d51302eb8}">
+      <Declaration><![CDATA[METHOD CyclicLogic
+VAR
+  i : UDINT;
+  Module : I_PackML_BaseModule;
+  item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+	TryGetItem(i, item => item);
+	__QUERYINTERFACE(item, Module);
+	IF Module <> 0 THEN
+  		Module.CyclicLogic();
+	END_IF	
+END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="NotifyModeChanged" Id="{4b757abb-b5fa-4f69-8c19-ba1cf5b656bd}">
+      <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
+VAR_INPUT
+    Mode : E_PMLUnitMode;
+END_VAR
+VAR
+	i : UDINT;
+	Module : I_PackML_BaseModule;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//IF Count = 0 THEN
+//  RETURN;
+//END_IF
+
+//FOR i := 0 TO Count -1 DO
+
+//	IF NOT 	TryGetItem(i, item => item) THEN
+//		RETURN;
+//	END_IF
+	
+//	IF NOT __QUERYINTERFACE(item, Module) THEN
+//		RETURN;
+//	END_IF
+		
+//	Module.ChangeMode(Mode);
+		
+//END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="NotifyStateChanged" Id="{4a22e1ac-0e21-4315-95e2-0fceb8c44e5e}">
+      <Declaration><![CDATA[METHOD PUBLIC NotifyStateChanged
+VAR_INPUT
+	CommandedState : Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+VAR
+	i : UDINT;
+	Module : I_PackML_BaseModule;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//IF Count = 0 THEN
+//  RETURN;
+//END_IF
+
+//FOR i := 0 TO Count -1 DO
+
+//	IF NOT 	TryGetItem(i, item => item) THEN
+//		RETURN;
+//	END_IF
+	
+//	IF NOT __QUERYINTERFACE(item, Module) THEN
+//		RETURN;
+//	END_IF
+		
+//	Module.ChangeState(CommandedState);
+		
+//END_FOR]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
+      <Declaration><![CDATA[METHOD TryGetModule: BOOL
+VAR_INPUT
+	index : UDINT;
+END_VAR
+VAR_OUTPUT
+	Module : I_PackML_BaseModule;
+END_VAR
+VAR
+	item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
+	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
+	RETURN;
+END_IF
+
+IF NOT __QUERYINTERFACE(item, Module) THEN
+	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, Module) ' );
+	RETURN;
+END_IF
+
+TryGetModule := Module <> 0;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_SubModuleCollection">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.AddModule">
+      <LineId Id="3" Count="3" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="7" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.ClearGroup">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.CyclicLogic">
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="4" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.NotifyModeChanged">
+      <LineId Id="8" Count="15" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.NotifyStateChanged">
+      <LineId Id="7" Count="15" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.TryGetModule">
+      <LineId Id="30" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="25" Count="4" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

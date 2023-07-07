@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModuleCollectionNotifyModeChangedSuccess" Id="{2fc17c18-8e96-40d4-9dfb-383b2a6945ae}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionNotifyModeChangedSuccess EXTENDS T_UnitTestBase
+VAR
+  list : T_SubModuleCollection(10);
+  newModule, newModule2 : T_SubModuleMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddModule(newModule);
+list.AddModule(newModule2);
+
+//Act
+list.NotifyModeChanged(E_PMLUnitMode.ePMLUnitMode_Maintenance);
+
+//Assert
+actual1 := newModule._newMode= E_PMLUnitMode.ePMLUnitMode_Maintenance;
+actual2 := newModule2._newMode = E_PMLUnitMode.ePMLUnitMode_Maintenance;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'newModule._newState = E_PMLUnitMode.ePMLUnitMode_Maintenance');
+assertion.AssertEquals_BOOL(TRUE, actual2, 'newModule2._newState = E_PMLUnitMode.ePMLUnitMode_Maintenance');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ModuleCollectionNotifyModeChangedSuccess">
+      <LineId Id="38" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

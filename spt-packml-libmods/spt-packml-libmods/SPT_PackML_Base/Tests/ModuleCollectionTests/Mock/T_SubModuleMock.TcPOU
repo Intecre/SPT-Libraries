@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_SubModuleMock" Id="{8d712bd5-9ca6-48bf-aba8-799ed79c3cc0}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleMock IMPLEMENTS I_PackML_BaseModule
+VAR_OUTPUT
+	_newState	: Tc3_PackML_V2.E_PMLCommand;
+	_newMode : E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Busy" Id="{b9d941b2-8da1-47d1-8afe-bc8e40f0ad87}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Busy : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{de3abd4b-219c-49f0-9bf0-7c70ef2ae43b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ChangeMode" Id="{d3d7d6e2-2a84-480b-8703-08b512640cb7}">
+      <Declaration><![CDATA[METHOD ChangeMode
+VAR_INPUT
+	Mode	: E_PMLUnitMode;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_newMode := Mode;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ChangeState" Id="{06ce365a-f76a-4bcc-adaa-ed5e694bf825}">
+      <Declaration><![CDATA[METHOD ChangeState
+VAR_INPUT
+	State	: Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_newState := State;]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="CurrentAlarmSeverity" Id="{60fccc78-73da-44dd-95b6-b09c8fdb361b}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY CurrentAlarmSeverity : TcEventSeverity
+]]></Declaration>
+      <Get Name="Get" Id="{9ed6efc8-aaff-4d06-b5a9-a02cf1116593}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentMode" Id="{fd19641f-7de6-4733-8b93-5fa00b5c87da}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY CurrentMode : E_PMLUnitMode
+]]></Declaration>
+      <Get Name="Get" Id="{1b7d5d42-6754-4582-9a7e-5d3ad6ec984c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="CurrentState" Id="{3acfc985-6d6a-4792-b605-c86a96b133bc}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY CurrentState : Tc3_PackML_V2.E_PMLState
+]]></Declaration>
+      <Get Name="Get" Id="{37191b55-2a91-4786-b540-345a0eb9c695}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="CyclicLogic" Id="{1ff9707e-f47e-4191-9e00-5dc629f08ee5}">
+      <Declaration><![CDATA[METHOD CyclicLogic
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Error" Id="{d30e9e89-06e8-44c5-a2cd-523b0b18f25b}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Error : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{5fe3d98a-baea-4512-a61c-653ebb65ea6b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="ErrorID" Id="{75594b7f-8773-42c6-b299-82177ed1194a}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY ErrorID : UDINT
+]]></Declaration>
+      <Get Name="Get" Id="{fafdbd10-13dd-4819-8f0b-9a081232bc0a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="InitComplete" Id="{5c79abb6-c428-4925-a1e5-5215cd3d22b7}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY InitComplete : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{d39d9739-65fe-42b1-8638-a88760980564}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Property Name="LogModeChanges" Id="{7fe55808-9cc7-45cb-8b8b-6ba2fa2603c4}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY LogModeChanges : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{608c4487-12f7-42d6-b1b7-a034f683ac2b}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{27e345d4-7804-43d5-8a8e-7435eecb528c}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="LogStateChanges" Id="{4b5768b6-1e11-46a0-a737-e2e0d77b61a5}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY LogStateChanges : BOOL
+]]></Declaration>
+      <Get Name="Get" Id="{39e424f5-b80f-4dbe-92d7-4246e1fed0b6}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{88efdd6f-2018-4cd2-bf0f-92ae1ef201c9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ModeCommand" Id="{af5844a4-da01-4f35-afbf-b9ddffa51189}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY ModeCommand : DINT
+]]></Declaration>
+      <Get Name="Get" Id="{a1f91e73-0966-4624-a67a-5651daaf5846}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{28bde9f9-dbe7-4a05-9d98-531924018830}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="Name" Id="{e4d445f7-28b3-4b48-86e7-392f6dd65e41}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY Name : STRING
+]]></Declaration>
+      <Get Name="Get" Id="{64cc32ec-8aef-4b70-be14-9e375497ce27}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{355975df-7a4d-4afb-be78-989832bf828a}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="ParentResponseDefinitions" Id="{c5e601f0-c85f-4526-b373-83bf80e7ed81}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY ParentResponseDefinitions : ARRAY [0..4] OF SPT_BaseTypes.E_AlarmResponse
+]]></Declaration>
+      <Get Name="Get" Id="{63120bb2-c3aa-4e4d-877a-85d16b227637}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{37948d72-77e3-424b-bd60-c6becbe362c0}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <Property Name="StateCommand" Id="{c883b793-b2a7-4d6e-99da-504e07cd660e}">
+      <Declaration><![CDATA[{warning 'add property implementation'}
+PROPERTY StateCommand : Tc3_PackML_V2.E_PMLCommand
+]]></Declaration>
+      <Get Name="Get" Id="{d00358a3-7c1e-47d1-819c-e885e23b9bd1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+      <Set Name="Set" Id="{5684fb0a-8217-40f6-89ce-02a9947fe3b9}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Set>
+    </Property>
+    <LineIds Name="T_SubModuleMock">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.Busy.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ChangeMode">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ChangeState">
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.CurrentAlarmSeverity.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.CurrentMode.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.CurrentState.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.CyclicLogic">
+      <LineId Id="4" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.Error.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ErrorID.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.InitComplete.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.LogModeChanges.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.LogModeChanges.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.LogStateChanges.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.LogStateChanges.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ModeCommand.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ModeCommand.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.Name.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.Name.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ParentResponseDefinitions.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.ParentResponseDefinitions.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.StateCommand.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleMock.StateCommand.Set">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

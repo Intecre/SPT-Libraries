@@ -16,17 +16,17 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newController = 0 THEN
-	LogError( 'Cannot AddComponent invalid ref' );
+	LogError( 'Cannot AddController invalid ref' );
 	RETURN;
 END_IF
 
 IF NOT __QUERYINTERFACE(newController, item) THEN
-	LogError( 'Cannot AddComponent  NOT __QUERYINTERFACE(newComponent, item)' );
+	LogError( 'Cannot AddController  NOT __QUERYINTERFACE(newController, item)' );
 	RETURN;
 END_IF
 
 IF HasItem( item := item ) THEN
-	LogWarning( 'Component already in collection.' );
+	LogWarning( 'Controller already in collection.' );
 	RETURN;
 END_IF
 
@@ -112,12 +112,12 @@ VAR
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
-	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
+	LogError( 'Cannot TryGetController NOT SUPER^.TryGetItem(index := index, item => item) ' );
 	RETURN;
 END_IF
 
 IF NOT __QUERYINTERFACE(item, Controller) THEN
-	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, component) ' );
+	LogError( 'Cannot TryGetController   NOT __QUERYINTERFACE(item, Controller) ' );
 	RETURN;
 END_IF
 

@@ -20,28 +20,30 @@ VAR
   AddCustomPackModeSetsCorrectly : T_AddCustomPackModeSetsCorrectly(modeTestSuite);
   
     //collections tests
-  componentCollectionTestSuite : T_TestSuite;
-  AddComponentCompareResultTrue : T_AddComponentCompareResultTrue(componentCollectionTestSuite);
-  CountReturnsCorrect : T_CountReturnsCorrect(componentCollectionTestSuite);
-  GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(componentCollectionTestSuite);
-  ClearGroupCountEqualsZeroCompareEqualsFalse : T_ClearGroupCountEqualsZeroCompareEqualsFalse(componentCollectionTestSuite);
-  AddSameComponentTwiceShouldntAdd : T_AddSameComponentTwiceShouldntAdd(componentCollectionTestSuite);
-  GetComponentIndexOutOfBoundaryResultsFalse : T_GetComponentIndexOutOfBoundaryResultsFalse(componentCollectionTestSuite);
-  AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(componentCollectionTestSuite);
-  CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(componentCollectionTestSuite);
-  ComponentsInitialisedSuccess : T_ComponentsInitialisedSuccess (componentCollectionTestSuite);
-  ComponentsIfAnyErrorReturnsErrorTrue : T_ComponentsIfAnyErrorReturnsErrorTrue (componentCollectionTestSuite);
-  ComponentsAllowHmiAllowed : T_ComponentsAllowHmiAllowed (componentCollectionTestSuite);
-  ComponentsBlockHmiBlocked : T_ComponentsBlockHmiBlocked (componentCollectionTestSuite);
-  ComponentsResetClearsErrors : T_ComponentsResetClearsErrors (componentCollectionTestSuite);
-  ExternalControllersCollectionNotifyStateChangedSuccess : T_ExternalControllersCollectionNotifyStateChangedSuccess (componentCollectionTestSuite);
-  ExternalControllersCollectionNotifyModeChangedSuccess : T_ExternalControllersCollectionNotifyModeChangedSuccess (componentCollectionTestSuite);
+  CollectionsTestSuite : T_TestSuite;
+  AddComponentCompareResultTrue : T_AddComponentCompareResultTrue(CollectionsTestSuite);
+  CountReturnsCorrect : T_CountReturnsCorrect(CollectionsTestSuite);
+  GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(CollectionsTestSuite);
+  ClearGroupCountEqualsZeroCompareEqualsFalse : T_ClearGroupCountEqualsZeroCompareEqualsFalse(CollectionsTestSuite);
+  AddSameComponentTwiceShouldntAdd : T_AddSameComponentTwiceShouldntAdd(CollectionsTestSuite);
+  GetComponentIndexOutOfBoundaryResultsFalse : T_GetComponentIndexOutOfBoundaryResultsFalse(CollectionsTestSuite);
+  AddMoreThanSizeOfCollectionFalse : T_AddMoreThanSizeOfCollectionFalse(CollectionsTestSuite);
+  CyclicLogicHasBeenCalledTrue : T_CyclicLogicHasBeenCalledTrue(CollectionsTestSuite);
+  ComponentsInitialisedSuccess : T_ComponentsInitialisedSuccess (CollectionsTestSuite);
+  ComponentsIfAnyErrorReturnsErrorTrue : T_ComponentsIfAnyErrorReturnsErrorTrue (CollectionsTestSuite);
+  ComponentsAllowHmiAllowed : T_ComponentsAllowHmiAllowed (CollectionsTestSuite);
+  ComponentsBlockHmiBlocked : T_ComponentsBlockHmiBlocked (CollectionsTestSuite);
+  ComponentsResetClearsErrors : T_ComponentsResetClearsErrors (CollectionsTestSuite);
+  ExternalControllersCollectionNotifyStateChangedSuccess : T_ExternalControllersCollectionNotifyStateChangedSuccess (CollectionsTestSuite);
+  ExternalControllersCollectionNotifyModeChangedSuccess : T_ExternalControllersCollectionNotifyModeChangedSuccess (CollectionsTestSuite);
+  ModuleCollectionNotifyModeChangedSuccess : T_ModuleCollectionNotifyModeChangedSuccess (CollectionsTestSuite);
+  ModuleCollectionNotifyStateChangedSuccess : T_ModuleCollectionNotifyStateChangedSuccess (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF testRunner.ReloadTests THEN
     testRunner.AddTestSuite(modeTestSuite);
-    testRunner.AddTestSuite(componentCollectionTestSuite);
+    testRunner.AddTestSuite(CollectionsTestSuite);
     testRunner.ReloadTests := FALSE;
 END_IF
 

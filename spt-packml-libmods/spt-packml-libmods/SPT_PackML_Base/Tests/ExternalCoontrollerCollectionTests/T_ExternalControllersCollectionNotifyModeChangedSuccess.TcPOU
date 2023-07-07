@@ -20,8 +20,8 @@ list.NotifyModeChanged(E_PMLUnitMode.ePMLUnitMode_Maintenance);
 actual1 := newController._newMode= E_PMLUnitMode.ePMLUnitMode_Maintenance;
 actual2 := newController2._newMode = E_PMLUnitMode.ePMLUnitMode_Maintenance;
 
-assertion.AssertEquals_BOOL(TRUE, actual1, 'newController._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete');
-assertion.AssertEquals_BOOL(TRUE, actual2, 'newController2._newState = Tc3_PackML_V2.E_PMLCommand.ePMLCommand_Complete');
+assertion.AssertEquals_BOOL(TRUE, actual1, 'newController._newMode= E_PMLUnitMode.ePMLUnitMode_Maintenance');
+assertion.AssertEquals_BOOL(TRUE, actual2, 'newController2._newMode= E_PMLUnitMode.ePMLUnitMode_Maintenance');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ExternalControllersCollectionNotifyModeChangedSuccess">
