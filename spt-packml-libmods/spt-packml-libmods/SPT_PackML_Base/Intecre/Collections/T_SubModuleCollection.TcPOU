@@ -69,29 +69,29 @@ END_FOR]]></ST>
   item : I_InterfaceBase;
  END_VAR ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[//IF Count = 0 THEN
-//	InitialisedAll := TRUE;
-//  RETURN;
-//END_IF
+          <ST><![CDATA[IF Count = 0 THEN
+	InitialisedAll := TRUE;
+  RETURN;
+END_IF
 
-//FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count -1 DO
 
-//	IF NOT 	TryGetItem(i, item => item) THEN
-//		RETURN;
-//	END_IF
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
 	
-//	IF NOT __QUERYINTERFACE(item, Module) THEN
-//		RETURN;
-//	END_IF
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
 		
-//	IF NOT Module.InitComplete THEN
-//		RETURN;
-//	END_IF
+	IF NOT Module.InitComplete THEN
+		RETURN;
+	END_IF
 		
 
-//END_FOR
+END_FOR
 
-//InitialisedAll := TRUE;]]></ST>
+InitialisedAll := TRUE;]]></ST>
         </Implementation>
       </Get>
     </Property>

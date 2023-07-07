@@ -25,7 +25,7 @@
 				</Instance>
 			</Project>
 			<Project GUID="{102E9E24-3E47-4C80-ACE7-0F8C1EAE0001}" Name="SPT_PackML_Base" PrjFilePath="SPT_PackML_Base\SPT_PackML_Base.plcproj" TmcFilePath="SPT_PackML_Base\SPT_PackML_Base.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPT_PackML_Base\SPT_PackML_Base.tmc" TmcHash="{AB8A8E32-E80B-4FE3-5F48-B3BF8D5350BC}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="SPT_PackML_Base\SPT_PackML_Base.tmc" TmcHash="{9C77B47A-0889-7DBF-978D-5CC9E7FF24F5}">
 					<Name>SPT_PackML_Base Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Contexts>

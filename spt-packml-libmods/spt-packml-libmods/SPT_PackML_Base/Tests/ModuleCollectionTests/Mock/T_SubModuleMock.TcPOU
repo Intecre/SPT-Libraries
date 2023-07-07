@@ -2,6 +2,9 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_SubModuleMock" Id="{8d712bd5-9ca6-48bf-aba8-799ed79c3cc0}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleMock IMPLEMENTS I_PackML_BaseModule
+VAR_INPUT
+	dontInitialise : BOOL;
+END_VAR
 VAR_OUTPUT
 	_newState	: Tc3_PackML_V2.E_PMLCommand;
 	_newMode : E_PMLUnitMode;
@@ -88,7 +91,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[cyclicHasBeenCalled := TRUE;
-_initComplete := TRUE;]]></ST>
+
+IF NOT dontInitialise THEN
+	_initComplete := TRUE;
+END_IF]]></ST>
       </Implementation>
     </Method>
     <Property Name="Error" Id="{d30e9e89-06e8-44c5-a2cd-523b0b18f25b}">
@@ -279,7 +285,10 @@ END_VAR
     </LineIds>
     <LineIds Name="T_SubModuleMock.CyclicLogic">
       <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
       <LineId Id="4" Count="0" />
+      <LineId Id="8" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleMock.Error.Get">
       <LineId Id="2" Count="0" />

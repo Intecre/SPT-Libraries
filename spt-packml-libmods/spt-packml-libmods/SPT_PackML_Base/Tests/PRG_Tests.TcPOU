@@ -39,6 +39,7 @@ VAR
   ModuleCollectionNotifyModeChangedSuccess : T_ModuleCollectionNotifyModeChangedSuccess (CollectionsTestSuite);
   ModuleCollectionNotifyStateChangedSuccess : T_ModuleCollectionNotifyStateChangedSuccess (CollectionsTestSuite);
   ModuleCollectionInitialisedSuccess : T_ModuleCollectionInitialisedSuccess (CollectionsTestSuite);
+  ModuleCollectionOneNotInitialisedAllNotInitialised : T_ModuleCollectionOneNotInitialisedAllNotInitialised (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

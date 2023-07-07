@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ModuleCollectionOneNotInitialisedAllNotInitialised" Id="{151a2dae-4c8a-40b5-9770-c992893437ff}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionOneNotInitialisedAllNotInitialised EXTENDS T_UnitTestBase
+VAR
+  list : T_SubModuleCollection(10);
+  newModule, newModule2 : T_SubModuleMock; 
+  actual1, actual2 : BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// Arrange
+list.AddModule(newModule);
+list.AddModule(newModule2);
+
+//Act
+newModule.dontInitialise := TRUE;
+list.CyclicLogic();
+
+//Assert
+actual1 := NOT list.InitialisedAll;
+
+assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := NOT list.InitialisedAll');
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_ModuleCollectionOneNotInitialisedAllNotInitialised">
+      <LineId Id="38" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

@@ -357,6 +357,9 @@
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionInitialisedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneNotInitialisedAllNotInitialised.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyModeChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
