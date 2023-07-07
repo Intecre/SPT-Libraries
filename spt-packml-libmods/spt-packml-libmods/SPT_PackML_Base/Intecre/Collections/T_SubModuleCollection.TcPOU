@@ -232,19 +232,19 @@ VAR
 	lowerBound, upperBound : DINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
-//upperBound := UPPER_BOUND(SubModuleInfoArray,1);
+        <ST><![CDATA[lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
+upperBound := UPPER_BOUND(SubModuleInfoArray,1);
 
-//IF Count > upperBound THEN
-//	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
-//	RETURN;
-//END_IF 
+IF Count > upperBound THEN
+	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
+	RETURN;
+END_IF 
 
-//FOR i := lowerBound TO Count DO
-//    SubModuleInfoArray[i].Active := TRUE;
-//END_FOR;
+FOR i := lowerBound TO Count DO
+    SubModuleInfoArray[i].Active := TRUE;
+END_FOR;
 
-]]></ST>
+SetPMLSubModuleInfoActive := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">

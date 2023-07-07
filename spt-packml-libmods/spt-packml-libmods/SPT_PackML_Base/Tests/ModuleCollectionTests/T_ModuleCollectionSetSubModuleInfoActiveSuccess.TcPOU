@@ -5,8 +5,8 @@
 VAR
   list : T_SubModuleCollection(10);
   newModule, newModule2 : T_SubModuleMock; 
-  actual1, actual2 : BOOL;
-  
+  actual1, actual2, result : BOOL;
+
   PMLSubModuleInfo  : ARRAY[1..10] OF ST_PMLSubUnitInfo;
 END_VAR]]></Declaration>
     <Implementation>
@@ -15,14 +15,15 @@ list.AddModule(newModule);
 list.AddModule(newModule2);
 
 //Act
-list.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
+result := list.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
 
 //Assert
 actual1:=  PMLSubModuleInfo[1].Active;
 actual2:=  PMLSubModuleInfo[2].Active;
 
 assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1:=  PMLSubModuleInfo[1].Active;');
-assertion.AssertEquals_BOOL(TRUE, actual2, 'actual1:=  PMLSubModuleInfo[1].Active;');
+assertion.AssertEquals_BOOL(TRUE, actual2, 'actual2:=  PMLSubModuleInfo[2].Active;');
+assertion.AssertEquals_BOOL(TRUE, result, 'result := list.SetPMLSubModuleInfoActive(PMLSubModuleInfo);');
 TestFinished();]]></ST>
     </Implementation>
     <LineIds Name="T_ModuleCollectionSetSubModuleInfoActiveSuccess">
@@ -33,7 +34,7 @@ TestFinished();]]></ST>
       <LineId Id="21" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="23" Count="0" />
-      <LineId Id="25" Count="3" />
+      <LineId Id="25" Count="4" />
       <LineId Id="24" Count="0" />
     </LineIds>
   </POU>
