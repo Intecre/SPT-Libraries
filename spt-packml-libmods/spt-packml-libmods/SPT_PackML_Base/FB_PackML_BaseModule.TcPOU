@@ -851,13 +851,6 @@ This method is called as required by <c>StateControl()</c>
     <Method Name="Initialize" Id="{ce22347d-434e-4e9b-a860-79a350477497}" FolderPath="Methods\">
       <Declaration><![CDATA[//! @summary Basic module initialization logic
 METHOD PROTECTED Initialize : BOOL;
-VAR
-    i                        : UDINT;
-    varInfo                  : __SYSTEM.VAR_INFO;
-    AllSubUnitsInitialized   : BOOL := TRUE;
-    AllComponentsInitialized : BOOL := TRUE;
-END_VAR
-
 //! @description This method is called by <c>CyclicLogic()</c> as required]]></Declaration>
       <Implementation>
         <ST><![CDATA[//This method may get called several times while waiting for subunits/components to init
@@ -871,15 +864,8 @@ CASE InitialiseStates OF
 
   CountSubModules:
     // Figure out how many Submodules were instantiated - they should be from 1 to X and not skip any indices.
-    NumberOfSubModules := 0;
-
-    FOR i := 1 TO Parameters_PackML_Base.MAX_NO_OF_SUBMODULES DO
-      IF ipSubModules[i] <> 0 THEN
-        NumberOfSubModules := NumberOfSubModules + 1;
-        PMLSubModuleInfo[i].Active := TRUE; // Follows Main State Machine
-      END_IF
-    END_FOR
-
+    NumberOfSubModules := SubModulesCollection.Count;
+	SubModulesCollection.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
     InitialiseStates := SetSizeOfArrays;
 	
   SetSizeOfArrays:
@@ -888,10 +874,8 @@ CASE InitialiseStates OF
     PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
     PMLSubModuleInfoRef.pArray := ADR(PMLSubModuleInfo);
     InitialiseStates := WaitForInitializeComplete;
+	
   WaitForInitializeComplete:
-    // Initialization for this module is not complete until all subunits/components are finished
-
-    // with their own Initialize().  This is called from CyclicLogic() so call from here until they are initialized.
 	SubModulesCollection.CyclicLogic();
 	componentsCollection.CyclicLogic();
 
@@ -1905,10 +1889,12 @@ StateComplete();]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Initialize">
-      <LineId Id="70" Count="18" />
+      <LineId Id="70" Count="11" />
       <LineId Id="103" Count="1" />
       <LineId Id="152" Count="0" />
-      <LineId Id="105" Count="9" />
+      <LineId Id="105" Count="5" />
+      <LineId Id="164" Count="0" />
+      <LineId Id="111" Count="0" />
       <LineId Id="154" Count="0" />
       <LineId Id="153" Count="0" />
       <LineId Id="127" Count="0" />

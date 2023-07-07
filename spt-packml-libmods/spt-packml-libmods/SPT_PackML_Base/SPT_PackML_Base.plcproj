@@ -378,6 +378,9 @@
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoActiveSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoStateSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError.TcPOU">
       <SubType>Code</SubType>
     </Compile>

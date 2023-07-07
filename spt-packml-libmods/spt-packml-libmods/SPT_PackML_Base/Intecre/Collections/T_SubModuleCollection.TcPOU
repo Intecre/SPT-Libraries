@@ -248,6 +248,47 @@ END_FOR;
 SetPMLSubModuleInfoActive := TRUE;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="SetSubModuleInfoState" Id="{b0c8fd84-e58b-4bb0-93a5-199ec32b4722}">
+      <Declaration><![CDATA[METHOD PUBLIC SetSubModuleInfoState
+VAR_IN_OUT
+	SubModuleInfoArray : ARRAY[*] OF ST_PMLSubUnitInfo;
+END_VAR
+VAR
+	i : DINT;
+	lowerBound, upperBound : DINT;
+	Module : I_PackML_BaseModule;
+	item : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[//lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
+//upperBound := UPPER_BOUND(SubModuleInfoArray,1);
+
+//IF lowerBound <> 1 THEN
+//	RETURN;
+//END_IF
+
+//IF Count > upperBound THEN
+//	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
+//	RETURN;
+//END_IF 
+
+
+
+//FOR i := 0 TO Count -1 DO
+
+//	IF NOT 	TryGetItem(i, item => item) THEN
+//		RETURN;
+//	END_IF
+	
+//	IF NOT __QUERYINTERFACE(item, Module) THEN
+//		RETURN;
+//	END_IF
+		
+//	 SubModuleInfoArray[i+1].eState :=  Module.CurrentState;
+		
+//END_FOR]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
       <Declaration><![CDATA[METHOD TryGetModule: BOOL
 VAR_INPUT
@@ -337,6 +378,17 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="5" Count="0" />
       <LineId Id="21" Count="0" />
       <LineId Id="20" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.SetSubModuleInfoState">
+      <LineId Id="12" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="45" Count="1" />
+      <LineId Id="14" Count="5" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="24" Count="0" />
+      <LineId Id="28" Count="11" />
+      <LineId Id="25" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.TryGetModule">
       <LineId Id="30" Count="0" />
