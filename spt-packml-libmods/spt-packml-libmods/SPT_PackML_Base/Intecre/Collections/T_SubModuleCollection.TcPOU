@@ -342,14 +342,14 @@ FOR i := 0 TO Count -1 DO
 	END_IF
 		
 	IF Module.CurrentState = ePMLState_Stopped OR Module.CurrentState = ePMLState_Complete THEN
-		Module.StateCommand := ePMLCommand_Reset;
+		Module.ChangeState (ePMLCommand_Reset);
 	ELSIF Module.CurrentState = ePMLState_Aborted THEN
-		Module.StateCommand := ePMLCommand_Clear;
+		Module.ChangeState (ePMLCommand_Clear);
 	ELSIF Module.CurrentState = ePMLState_Clearing OR Module.CurrentState = ePMLState_Stopping OR Module.CurrentState = ePMLState_Resetting OR
 		 Module.CurrentState = ePMLState_Idle THEN
 		;
 	ELSE
-		Module.StateCommand := ePMLCommand_Abort;
+		Module.ChangeState(ePMLCommand_Abort);
 	END_IF
 		
 END_FOR
