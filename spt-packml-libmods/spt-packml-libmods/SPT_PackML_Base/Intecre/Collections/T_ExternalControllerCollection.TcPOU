@@ -33,12 +33,6 @@ END_IF
 AddController := addInSpareSlot( item := item );]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ClearGroup" Id="{054439b6-c605-4a05-bfee-f8050dc694af}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="NotifyModeChanged" Id="{17f6e3c4-7a01-4c8b-b055-d636340e3bb7}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
 VAR_INPUT
@@ -134,9 +128,6 @@ TryGetController := Controller <> 0;]]></ST>
       <LineId Id="23" Count="0" />
       <LineId Id="18" Count="1" />
       <LineId Id="7" Count="5" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ExternalControllerCollection.ClearGroup">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyModeChanged">

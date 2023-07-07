@@ -47,6 +47,7 @@ VAR
   ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError : T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError (CollectionsTestSuite);
   ModuleCollectionSetSubModuleInfoStateSuccess : T_ModuleCollectionSetSubModuleInfoStateSuccess (CollectionsTestSuite);
   ModuleCollectionAnyInAskedStateReturnsCorrectResponse : T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse (CollectionsTestSuite);
+  ModuleCollectionStateResetReturnsCorrectResponse : T_ModuleCollectionStateResetReturnsCorrectResponse (CollectionsTestSuite);
 END_VAR
 ]]></Declaration>
     <Implementation>

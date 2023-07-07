@@ -136,12 +136,6 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ClearGroup" Id="{e59bb94d-6a92-4886-b69b-9d56ef4adf07}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="CyclicLogic" Id="{14da67f3-5fa4-4574-9988-115d51302eb8}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
@@ -325,6 +319,44 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
+    <Method Name="StateReset" Id="{f3e56b8e-4e67-469f-b002-8fff282ece26}">
+      <Declaration><![CDATA[METHOD PUBLIC StateReset
+VAR
+	i : UDINT;
+	Module : I_PackML_BaseModule;
+	item : I_InterfaceBase;
+END_VAR ]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
+		
+	IF Module.CurrentState = ePMLState_Stopped OR Module.CurrentState = ePMLState_Complete THEN
+		Module.StateCommand := ePMLCommand_Reset;
+	ELSIF Module.CurrentState = ePMLState_Aborted THEN
+		Module.StateCommand := ePMLCommand_Clear;
+	ELSIF Module.CurrentState = ePMLState_Clearing OR Module.CurrentState = ePMLState_Stopping OR Module.CurrentState = ePMLState_Resetting OR
+		 Module.CurrentState = ePMLState_Idle THEN
+		;
+	ELSE
+		Module.StateCommand := ePMLCommand_Abort;
+	END_IF
+		
+END_FOR
+
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="TryGetModule" Id="{6a10edd7-8fc0-4b22-9321-1adf10171732}">
       <Declaration><![CDATA[METHOD TryGetModule: BOOL
 VAR_INPUT
@@ -376,9 +408,6 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="65" Count="0" />
       <LineId Id="60" Count="3" />
     </LineIds>
-    <LineIds Name="T_SubModuleCollection.ClearGroup">
-      <LineId Id="2" Count="0" />
-    </LineIds>
     <LineIds Name="T_SubModuleCollection.CyclicLogic">
       <LineId Id="9" Count="0" />
       <LineId Id="11" Count="1" />
@@ -425,6 +454,19 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="24" Count="0" />
       <LineId Id="28" Count="11" />
       <LineId Id="25" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.StateReset">
+      <LineId Id="21" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="24" Count="10" />
+      <LineId Id="37" Count="2" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="41" Count="3" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.TryGetModule">
       <LineId Id="30" Count="0" />

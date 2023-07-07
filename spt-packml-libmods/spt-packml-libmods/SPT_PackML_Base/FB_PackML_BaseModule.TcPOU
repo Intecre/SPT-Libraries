@@ -1124,6 +1124,7 @@ METHOD PROTECTED Resetting
 VAR
     i               : UDINT;
     SubModulesReady : BOOL := TRUE;
+	Module : I_PackML_BaseModule;
 END_VAR
 
 (*! <description> <b>Note:</b> The <i>Reset</i> command can also be thought of as an <i>enable</i> depite the ambiguity in the naming of the <i>Clearing</i> state.
@@ -1162,19 +1163,21 @@ This method is called as required by <c>StateControl()</c>
 
 //As long as this module is in the "Resetting" state, it will attempt to get all modules to Idle by sending abort, clear, and reset commands as appropriate to its children until they do
 
-FOR i := 1 TO NumberOfSubModules DO
-    IF ipSubModules[i].CurrentState = ePMLState_Stopped OR ipSubModules[i].CurrentState = ePMLState_Complete THEN
-        ipSubModules[i].StateCommand := ePMLCommand_Reset;
-    ELSIF ipSubModules[i].CurrentState = ePMLState_Aborted THEN
-        ipSubModules[i].StateCommand := ePMLCommand_Clear;
-    ELSIF ipSubModules[i].CurrentState = ePMLState_Clearing OR ipSubModules[i].CurrentState = ePMLState_Stopping OR ipSubModules[i].CurrentState = ePMLState_Resetting OR
-          ipSubModules[i].CurrentState = ePMLState_Idle THEN
-        ;
-    ELSE
-        ipSubModules[i].StateCommand := ePMLCommand_Abort;
-    END_IF
-END_FOR
 
+//FOR i := 1 TO NumberOfSubModules DO
+//    IF ipSubModules[i].CurrentState = ePMLState_Stopped OR ipSubModules[i].CurrentState = ePMLState_Complete THEN
+//        ipSubModules[i].StateCommand := ePMLCommand_Reset;
+//    ELSIF ipSubModules[i].CurrentState = ePMLState_Aborted THEN
+//        ipSubModules[i].StateCommand := ePMLCommand_Clear;
+//    ELSIF ipSubModules[i].CurrentState = ePMLState_Clearing OR ipSubModules[i].CurrentState = ePMLState_Stopping OR ipSubModules[i].CurrentState = ePMLState_Resetting OR
+//          ipSubModules[i].CurrentState = ePMLState_Idle THEN
+//        ;
+//    ELSE
+//        ipSubModules[i].StateCommand := ePMLCommand_Abort;
+//    END_IF
+//END_FOR
+
+SubModulesCollection.StateReset();
 
 IF NOT SubModulesCollection.AllInAskedState(ePMLState_Idle) THEN
 	RETURN;
@@ -1937,7 +1940,11 @@ StateComplete();]]></ST>
       <LineId Id="21" Count="1" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Resetting">
-      <LineId Id="71" Count="33" />
+      <LineId Id="71" Count="14" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="86" Count="12" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="99" Count="5" />
       <LineId Id="30" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Starting">

@@ -31,7 +31,7 @@ addInSpareSlot := TRUE;
       </Implementation>
     </Method>
     <Method Name="AddItem" Id="{694024fe-c5ed-4d58-959e-acc65fd5108c}">
-      <Declaration><![CDATA[METHOD PUBLIC AddItem : BOOL
+      <Declaration><![CDATA[METHOD PROTECTED AddItem : BOOL
 VAR_INPUT
   newItem : I_InterfaceBase;
 END_VAR]]></Declaration>
@@ -50,7 +50,7 @@ AddItem := addInSpareSlot( Item := newItem );]]></ST>
       </Implementation>
     </Method>
     <Method Name="ClearGroup" Id="{33765d55-9a26-4942-8a3f-e0d7968dad36}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down
+      <Declaration><![CDATA[METHOD ClearGroup // clears the group down
 VAR
 	i : UDINT;
 END_VAR]]></Declaration>
@@ -134,7 +134,7 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetItem" Id="{4079f152-eedc-41b9-985e-004de6f818fa}">
-      <Declaration><![CDATA[METHOD TryGetItem: BOOL
+      <Declaration><![CDATA[METHOD PROTECTED TryGetItem: BOOL
 VAR_INPUT
 	index : UDINT;
 END_VAR

@@ -360,6 +360,9 @@
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAnyErrorReturnErrorTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionStateResetReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionInitialisedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>

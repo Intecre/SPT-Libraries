@@ -127,12 +127,6 @@ FOR i := 0 TO Count -1 DO
 END_FOR]]></ST>
       </Implementation>
     </Method>
-    <Method Name="ClearGroup" Id="{9c85cafe-036b-0343-3a19-4d28e743b430}">
-      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[SUPER^.ClearGroup();]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="CyclicLogic" Id="{91fecff3-afbd-4edb-b80e-debfd3f550ae}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
@@ -273,9 +267,6 @@ TryGetComponent := component <> 0;]]></ST>
     <LineIds Name="T_ComponentsCollection.BlockHMIControl">
       <LineId Id="14" Count="15" />
       <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="T_ComponentsCollection.ClearGroup">
-      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.CyclicLogic">
       <LineId Id="9" Count="0" />

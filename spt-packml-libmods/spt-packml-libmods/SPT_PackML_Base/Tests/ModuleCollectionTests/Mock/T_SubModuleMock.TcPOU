@@ -11,6 +11,7 @@ VAR_OUTPUT
 	_newState	: Tc3_PackML_V2.E_PMLCommand;
 	_newMode : E_PMLUnitMode;
 	_initComplete, cyclicHasBeenCalled : BOOL;
+	_commandedState : Tc3_PackML_V2.E_PMLCommand;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -243,8 +244,7 @@ END_VAR
       </Set>
     </Property>
     <Property Name="StateCommand" Id="{c883b793-b2a7-4d6e-99da-504e07cd660e}">
-      <Declaration><![CDATA[{warning 'add property implementation'}
-PROPERTY StateCommand : Tc3_PackML_V2.E_PMLCommand
+      <Declaration><![CDATA[PROPERTY StateCommand : Tc3_PackML_V2.E_PMLCommand
 ]]></Declaration>
       <Get Name="Get" Id="{d00358a3-7c1e-47d1-819c-e885e23b9bd1}">
         <Declaration><![CDATA[VAR
@@ -259,7 +259,7 @@ END_VAR
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[]]></ST>
+          <ST><![CDATA[_commandedState := StateCommand;]]></ST>
         </Implementation>
       </Set>
     </Property>
