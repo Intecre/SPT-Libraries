@@ -36,10 +36,32 @@ AddModule := addInSpareSlot( item := item );]]></ST>
       <Declaration><![CDATA[PROPERTY AnyError : BOOL]]></Declaration>
       <Get Name="Get" Id="{5c9aadd3-4bed-46fd-99cb-3ec8209718e2}">
         <Declaration><![CDATA[VAR
-END_VAR
-]]></Declaration>
+  i : UDINT;
+  Module : I_PackML_BaseModule;
+  item : I_InterfaceBase;
+ END_VAR ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[]]></ST>
+          <ST><![CDATA[IF Count = 0 THEN
+  RETURN;
+END_IF
+
+FOR i := 0 TO Count -1 DO
+
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
+	
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
+		
+	IF Module.Error THEN
+		AnyError := TRUE;
+		RETURN;
+	END_IF
+
+END_FOR
+]]></ST>
         </Implementation>
       </Get>
     </Property>
@@ -204,6 +226,7 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AnyError.Get">
+      <LineId Id="5" Count="19" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.ClearGroup">
