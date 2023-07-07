@@ -34,9 +34,9 @@ VAR
     *)
 
     ModeManager 		 			  : T_ModeManager(THIS^);
-    InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, AssignArrays);
+    InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, WaitForInitializeComplete);
 	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
-	SubModuleColelction				  : T_SubModuleCollection(Parameters_PackML_Base.MAX_NO_OF_SUBMODULES);
+	SubModulesCollection			  : T_SubModuleCollection(Parameters_PackML_Base.MAX_NO_OF_SUBMODULES);
 	ExternalControllersCollection	  : T_ExternalControllerCollection(Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS);
 	
     //spt classes    
@@ -207,9 +207,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send abort command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Abort;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Abort);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Abort;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Aborted);
@@ -322,9 +323,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send clear command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Clear;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Clear);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Clear;
+//END_FOR
 
 IF BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
     BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, 0);
@@ -424,9 +426,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send complete command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Complete;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Complete);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Complete;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Complete);
@@ -577,9 +580,10 @@ IF NOT ReachedInitialDefaultStateAndMode AND _CurrentState = E_PMLState.ePMLStat
 END_IF
 
 // Call this module's subunits, if any are defined
+SubModulesCollection.CyclicLogic();
 FOR i := 1 TO NumberOfSubModules DO
     IF ipSubModules[i] <> 0 THEN
-        ipSubModules[i].CyclicLogic();
+        //ipSubModules[i].CyclicLogic();
         PMLSubModuleInfo[i].eState := ipSubModules[i].CurrentState; //Reflect the state of the subunits to the state machine of the module		
     END_IF
 END_FOR
@@ -831,9 +835,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send hold command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Hold;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Hold);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Hold;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Held);
@@ -921,21 +926,15 @@ CASE InitialiseStates OF
     PMLSubModuleInfoRef.ArraySize := SIZEOF(PMLSubModuleInfo);
     PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
     PMLSubModuleInfoRef.pArray := ADR(PMLSubModuleInfo);
-    InitialiseStates := AssignArrays;
-  AssignArrays:
+    InitialiseStates := WaitForInitializeComplete;
+  WaitForInitializeComplete:
     // Initialization for this module is not complete until all subunits/components are finished
 
     // with their own Initialize().  This is called from CyclicLogic() so call from here until they are initialized.
-    FOR i := 1 TO NumberOfSubModules DO
-      IF ipSubModules[i] <> 0 AND_THEN NOT ipSubModules[i].InitComplete THEN
-        AllSubUnitsInitialized := FALSE;
-        ipSubModules[i].CyclicLogic();
-      END_IF
-    END_FOR
-
+	SubModulesCollection.CyclicLogic();
 	componentsCollection.CyclicLogic();
 
-    IF AllSubUnitsInitialized AND componentsCollection.InitialisedAll THEN
+    IF SubModulesCollection.InitialisedAll AND componentsCollection.InitialisedAll THEN
       InitialiseStates := init;
       Initialize := TRUE;
     END_IF
@@ -1286,9 +1285,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send start command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Start;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Start);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Start;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
@@ -1534,9 +1534,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send stop command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Stop;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Stop);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Stop;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Stopped OR ipSubModules[i].CurrentState = ePMLState_Aborted);
@@ -1705,9 +1706,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send suspend command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Suspend;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Suspend);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Suspend;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Suspended);
@@ -1783,9 +1785,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send unhold command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Unhold;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Unhold);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Unhold;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
@@ -1838,9 +1841,10 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send unsuspend command to all sub modules
-FOR i := 1 TO NumberOfSubModules DO
-    ipSubModules[i].StateCommand := ePMLCommand_Unsuspend;
-END_FOR
+SubModulesCollection.NotifyStateChanged(ePMLCommand_Unsuspend);
+//FOR i := 1 TO NumberOfSubModules DO
+//    ipSubModules[i].StateCommand := ePMLCommand_Unsuspend;
+//END_FOR
 
 FOR i := 1 TO NumberOfSubModules DO
     SubModulesReady := SubModulesReady AND (ipSubModules[i].CurrentState = ePMLState_Execute);
@@ -1869,7 +1873,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Aborting">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.AllowHMIControl">
@@ -1894,7 +1900,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Clearing">
-      <LineId Id="3" Count="23" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="16" Count="10" />
       <LineId Id="72" Count="0" />
       <LineId Id="71" Count="0" />
       <LineId Id="35" Count="10" />
@@ -1905,7 +1913,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Completing">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.ComponentMonitor">
@@ -1930,7 +1940,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.CyclicLogic">
-      <LineId Id="66" Count="46" />
+      <LineId Id="66" Count="19" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="86" Count="26" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Execute">
@@ -1956,7 +1968,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Holding">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Idle">
@@ -1967,7 +1981,7 @@ END_IF]]></ST>
       <LineId Id="70" Count="18" />
       <LineId Id="103" Count="1" />
       <LineId Id="152" Count="0" />
-      <LineId Id="105" Count="15" />
+      <LineId Id="105" Count="9" />
       <LineId Id="154" Count="0" />
       <LineId Id="153" Count="0" />
       <LineId Id="127" Count="0" />
@@ -2034,7 +2048,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Starting">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StartUpStateTransition">
@@ -2071,7 +2087,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Stopping">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.SubModuleMonitor">
@@ -2089,7 +2107,9 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Suspending">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Undefined">
@@ -2097,11 +2117,15 @@ END_IF]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Unholding">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Unsuspending">
-      <LineId Id="3" Count="24" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="16" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

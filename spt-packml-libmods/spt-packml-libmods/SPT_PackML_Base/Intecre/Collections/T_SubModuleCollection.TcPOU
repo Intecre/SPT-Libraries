@@ -32,6 +32,17 @@ END_IF
 AddModule := addInSpareSlot( item := item );]]></ST>
       </Implementation>
     </Method>
+    <Property Name="AnyError" Id="{eb31021d-4235-42c3-9509-05306c59aad0}">
+      <Declaration><![CDATA[PROPERTY AnyError : BOOL]]></Declaration>
+      <Get Name="Get" Id="{5c9aadd3-4bed-46fd-99cb-3ec8209718e2}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="ClearGroup" Id="{e59bb94d-6a92-4886-b69b-9d56ef4adf07}">
       <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
       <Implementation>
@@ -190,6 +201,9 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="23" Count="0" />
       <LineId Id="18" Count="1" />
       <LineId Id="7" Count="5" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.AnyError.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.ClearGroup">
