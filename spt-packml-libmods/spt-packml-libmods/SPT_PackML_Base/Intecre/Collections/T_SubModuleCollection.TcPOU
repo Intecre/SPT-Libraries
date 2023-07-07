@@ -128,6 +128,16 @@ InitialisedAll := TRUE;]]></ST>
         </Implementation>
       </Get>
     </Property>
+    <Method Name="IsInAskedState" Id="{c5525ce9-7897-4cf9-8030-5bde5f91a91f}">
+      <Declaration><![CDATA[METHOD PUBLIC IsInAskedState : BOOL
+VAR_INPUT
+	State : Tc3_PackML_V2.E_PMLCommand;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="NotifyModeChanged" Id="{4b757abb-b5fa-4f69-8c19-ba1cf5b656bd}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
 VAR_INPUT
@@ -247,6 +257,9 @@ TryGetModule := Module <> 0;]]></ST>
     <LineIds Name="T_SubModuleCollection.InitialisedAll.Get">
       <LineId Id="5" Count="21" />
       <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.IsInAskedState">
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.NotifyModeChanged">
       <LineId Id="8" Count="15" />
