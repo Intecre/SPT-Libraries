@@ -105,32 +105,35 @@ END_FOR
 VAR_INPUT
 	State : Tc3_PackML_V2.E_PMLState;
 END_VAR
+VAR_OUTPUT
+	Module : I_PackML_BaseModule;	
+END_VAR
 VAR
 	i : UDINT;
-	Module : I_PackML_BaseModule;
+
 	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//IF Count = 0 THEN
-//	RETURN;
-//END_IF
+        <ST><![CDATA[IF Count = 0 THEN
+	RETURN;
+END_IF
 
-//FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count -1 DO
 
-//	IF NOT 	TryGetItem(i, item => item) THEN
-//		RETURN;
-//	END_IF
+	IF NOT 	TryGetItem(i, item => item) THEN
+		RETURN;
+	END_IF
 	
-//	IF NOT __QUERYINTERFACE(item, Module) THEN
-//		RETURN;
-//	END_IF
+	IF NOT __QUERYINTERFACE(item, Module) THEN
+		RETURN;
+	END_IF
 		
-//	IF Module.CurrentState = State THEN
-//		AnyInAskedState := TRUE;
-//		RETURN;
-//	END_IF
+	IF Module.CurrentState = State THEN
+		AnyInAskedState := TRUE;
+		RETURN;
+	END_IF
 		
-//END_FOR]]></ST>
+END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="ClearGroup" Id="{e59bb94d-6a92-4886-b69b-9d56ef4adf07}">
