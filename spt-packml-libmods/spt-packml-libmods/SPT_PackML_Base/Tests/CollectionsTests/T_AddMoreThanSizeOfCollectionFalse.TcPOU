@@ -4,19 +4,20 @@
     <Declaration><![CDATA[FUNCTION_BLOCK T_AddMoreThanSizeOfCollectionFalse EXTENDS T_UnitTestBase
 VAR
   list : T_ComponentsCollection;
-  newComponent : ARRAY [1..5] OF T_ComponentMock;
+  newComponent : ARRAY [1..201] OF T_ComponentMock;
   expected, actual : UDINT;
   result, resultAddOutOfBoundary : BOOL;
+  i : UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[list.AddComponent(newComponent[1]);
-list.AddComponent(newComponent[2]);
-list.AddComponent(newComponent[3]);
+      <ST><![CDATA[FOR i := 1 TO 200 DO
+	list.AddComponent(newComponent[i]);
+END_FOR
 
-resultAddOutOfBoundary := NOT list.AddComponent(newComponent[4]);
+resultAddOutOfBoundary := NOT list.AddComponent(newComponent[201]);
 
-expected := 3;
+expected := 200;
 actual := list.Count;
 
 assertion.AssertEquals_UDINT(expected, actual, 'actual := list.Count');
@@ -25,8 +26,9 @@ TestFinished();
 ]]></ST>
     </Implementation>
     <LineIds Name="T_AddMoreThanSizeOfCollectionFalse">
+      <LineId Id="50" Count="0" />
       <LineId Id="20" Count="0" />
-      <LineId Id="36" Count="1" />
+      <LineId Id="37" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="39" Count="0" />
       <LineId Id="21" Count="1" />

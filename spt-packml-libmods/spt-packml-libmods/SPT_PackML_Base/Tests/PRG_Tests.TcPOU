@@ -21,6 +21,7 @@ VAR
   
     //collections tests
   CollectionsTestSuite : T_TestSuite;
+  AddComponentAddedToList : T_AddComponentAddedToList (CollectionsTestSuite);
   AddComponentCompareResultTrue : T_AddComponentCompareResultTrue(CollectionsTestSuite);
   CountReturnsCorrect : T_CountReturnsCorrect(CollectionsTestSuite);
   GetComponentCompareResultsTrue : T_GetComponentCompareResultsTrue(CollectionsTestSuite);

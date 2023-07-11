@@ -19,7 +19,7 @@ VAR_INPUT
 	Item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count > COLLECTION_MAX_SIZE THEN
+        <ST><![CDATA[IF Count >= COLLECTION_MAX_SIZE THEN
 	LogError('cannot addInSpareSlot : no space.');
 	RETURN;
 END_IF
@@ -84,7 +84,12 @@ VAR
 	i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 0 TO Count DO
+        <ST><![CDATA[IF Count >= COLLECTION_MAX_SIZE THEN
+	LogWarning('Count Exceed Collection Max Size');
+	RETURN;
+END_IF
+
+FOR i := 0 TO Count DO
 	
 	IF _items[i] = 0 THEN
 		EXIT; // exit for loop
@@ -146,6 +151,11 @@ TryGetItem := item <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.HasItem">
+      <LineId Id="23" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="25" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="21" Count="0" />
       <LineId Id="3" Count="11" />
       <LineId Id="2" Count="0" />
     </LineIds>

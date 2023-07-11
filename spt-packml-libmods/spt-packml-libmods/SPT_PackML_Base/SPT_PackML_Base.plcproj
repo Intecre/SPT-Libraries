@@ -114,13 +114,6 @@
       <DefaultResolution>Intecre.Utilities, * (Intecre Ltd)</DefaultResolution>
       <Namespace>Intecre_Utilities</Namespace>
     </PlaceholderReference>
-    <PlaceholderReference Include="mobject-disposable">
-      <DefaultResolution>mobject-disposable, * (mobject)</DefaultResolution>
-      <Namespace>mobject_disposable</Namespace>
-    </PlaceholderReference>
-    <PlaceholderReference Include="mobject-enumerable">
-      <DefaultResolution>mobject-enumerable, * (mobject)</DefaultResolution>
-    </PlaceholderReference>
     <PlaceholderReference Include="SPT Event Logger">
       <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
       <Namespace>SPT_EventLogger</Namespace>
@@ -280,6 +273,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\Mock\T_ComponentMock.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\T_AddComponentAddedToList.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">

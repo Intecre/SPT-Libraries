@@ -21,7 +21,8 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-AddComponent := baseCollection.AddItem( newItem := CastToBase(newComponent) );]]></ST>
+AddComponent := baseCollection.AddItem( newItem := CastToBase(newComponent) );
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="AllowHMIControl" Id="{a3a8d4ad-9d48-4f3f-ba31-3be39f8e4d90}">
@@ -188,7 +189,7 @@ END_IF
 WHILE i < Count 
 		AND_THEN TryGetComponent(i, component => Component) DO
 		
-    IF NOT Component.Error THEN
+    IF Component.Error THEN
 		Component.Reset();
 	END_IF
 	
@@ -224,8 +225,9 @@ TryGetComponent := component <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AddComponent">
       <LineId Id="3" Count="3" />
-      <LineId Id="12" Count="0" />
+      <LineId Id="48" Count="0" />
       <LineId Id="2" Count="0" />
+      <LineId Id="40" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AllowHMIControl">
       <LineId Id="71" Count="4" />
