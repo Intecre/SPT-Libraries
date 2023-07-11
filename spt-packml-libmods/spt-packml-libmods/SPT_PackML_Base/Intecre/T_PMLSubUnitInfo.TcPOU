@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_PMLSubUnitInfo" Id="{f3d6df37-5abe-48ff-8f9b-c12aac828f4c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_PMLSubUnitInfo IMPLEMENTS I_PMLSubUnitInfo
+VAR
+	_info : ST_PMLSubUnitInfo;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="Info" Id="{f63d9b5b-4ac5-416f-8f67-e01104a54ab1}">
+      <Declaration><![CDATA[PROPERTY Info : REFERENCE TO ST_PMLSubUnitInfo]]></Declaration>
+      <Get Name="Get" Id="{dc68f62b-a985-49b1-91f0-fe75bc53699c}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Info REF= _info;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <LineIds Name="T_PMLSubUnitInfo">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_PMLSubUnitInfo.Info.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

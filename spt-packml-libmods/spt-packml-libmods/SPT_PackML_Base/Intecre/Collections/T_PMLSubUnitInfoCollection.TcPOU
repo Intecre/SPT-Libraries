@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_PMLSubUnitInfoCollection" Id="{ccfaf873-a746-4d0e-80b9-d4c09c831a9a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_PMLSubUnitInfoCollection EXTENDS T_NamedBase IMPLEMENTS I_PMLSubUnitInfo
+VAR
+	_info : ST_PMLSubUnitInfo;
+	baseCollection : T_CollectionBase;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Folder Name="Private" Id="{b080cbbd-bebb-4f49-af56-eee791651d6e}" />
+    <Method Name="AddUnit" Id="{edbc1f8a-3500-4b7c-bdb7-60b253486aba}">
+      <Declaration><![CDATA[METHOD AddUnit : BOOL
+VAR_INPUT
+	newUnit : I_PMLSubUnitInfo;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF newUnit = 0 THEN
+	LogError( 'Cannot AddUnit invalid ref' );
+	RETURN;
+END_IF
+
+AddUnit := baseCollection.AddItem( newItem := CastToBase(newUnit) );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CastToBase" Id="{30ce565b-3c82-4a28-94a9-23dcbd458f22}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE CastToBase : I_InterfaceBase
+VAR_INPUT
+	Unit : I_PMLSubUnitInfo;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Unit, CastToBase);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CastToType" Id="{a31f73da-5b42-475a-a9a5-d1ed373431f1}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD CastToType : I_PMLSubUnitInfo
+VAR_INPUT
+	Base : I_InterfaceBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Base, CastToType);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="TryGetUnit" Id="{608b8c09-7058-4b13-8e8e-aa3c05cb56c3}">
+      <Declaration><![CDATA[METHOD TryGetUnit: BOOL
+VAR_INPUT
+	index : UDINT;
+END_VAR
+VAR_OUTPUT
+	Unit : I_PMLSubUnitInfo;
+END_VAR
+VAR
+	baseItem : I_InterfaceBase;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[baseCollection.TryGetItem(index, item => baseItem);
+Unit := CastToType(baseItem);
+
+IF Unit = 0 THEN
+	LogError( 'Cannot TryGetUnit  Unit = 0' );
+	RETURN;
+END_IF 
+
+TryGetUnit := Unit <> 0;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_PMLSubUnitInfoCollection">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_PMLSubUnitInfoCollection.AddUnit">
+      <LineId Id="9" Count="4" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="T_PMLSubUnitInfoCollection.CastToBase">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_PMLSubUnitInfoCollection.CastToType">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_PMLSubUnitInfoCollection.TryGetUnit">
+      <LineId Id="67" Count="7" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

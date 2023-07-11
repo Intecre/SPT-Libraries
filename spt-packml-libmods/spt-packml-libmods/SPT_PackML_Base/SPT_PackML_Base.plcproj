@@ -236,7 +236,13 @@
     <Compile Include="Intecre\Collections\T_ExternalControllerCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Intecre\Collections\T_PMLSubUnitInfoCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intecre\Collections\T_SubModuleCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\I_PMLSubUnitInfo.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -252,6 +258,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\PackModes\T_BaseMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\T_PMLSubUnitInfo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />

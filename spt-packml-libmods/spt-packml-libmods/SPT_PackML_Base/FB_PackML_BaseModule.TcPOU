@@ -39,14 +39,15 @@ VAR
 	SubModulesCollection			  : T_SubModuleCollection;
 	ExternalControllersCollection	  : T_ExternalControllerCollection;
 	
+	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
     PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
     PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
     PrevState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
-    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
-    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
+//    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
+//    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
     PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
     BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
     ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
@@ -1319,7 +1320,6 @@ IF _CurrentState <> PrevState THEN
   ExternalControllersCollection.NotifyStateChanged (_CommandedState);
 
   InitialiseStates := init;
-  NoStateTasksToComplete := TRUE;
 END_IF
 
 IF ReachedInitialDefaultStateAndMode THEN
@@ -1984,7 +1984,8 @@ StateComplete();]]></ST>
     <LineIds Name="FB_PackML_BaseModule.StateControl">
       <LineId Id="165" Count="14" />
       <LineId Id="238" Count="0" />
-      <LineId Id="185" Count="52" />
+      <LineId Id="185" Count="1" />
+      <LineId Id="188" Count="49" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.StopControlled">
