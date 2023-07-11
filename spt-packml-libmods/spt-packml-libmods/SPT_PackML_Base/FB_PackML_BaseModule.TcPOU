@@ -38,7 +38,7 @@ VAR
 	ComponentsCollection 			  : T_ComponentsCollection;
 	SubModulesCollection			  : T_SubModuleCollection;
 	ExternalControllersCollection	  : T_ExternalControllerCollection;
-	
+	PMLSubModuleInfoCollection 		  : T_PMLSubUnitInfoCollection;
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
