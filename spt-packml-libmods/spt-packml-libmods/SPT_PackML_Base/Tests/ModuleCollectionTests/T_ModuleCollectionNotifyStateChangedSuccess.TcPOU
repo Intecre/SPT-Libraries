@@ -3,7 +3,7 @@
   <POU Name="T_ModuleCollectionNotifyStateChangedSuccess" Id="{d29cb869-5caf-4c39-98b9-e59bcec99999}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionNotifyStateChangedSuccess EXTENDS T_UnitTestBase
 VAR
-  list : T_SubModuleCollection(10);
+  list : T_SubModuleCollection;
   newModule, newModule2 : T_SubModuleMock; 
   actual1, actual2 : BOOL;
 END_VAR

@@ -35,9 +35,9 @@ VAR
 
     ModeManager 		 			  : T_ModeManager(THIS^);
     InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, WaitForInitializeComplete);
-	ComponentsCollection 			  : T_ComponentsCollection(Parameters_PackML_Base.MAX_NO_OF_COMPONENTS);
-	SubModulesCollection			  : T_SubModuleCollection(Parameters_PackML_Base.MAX_NO_OF_SUBMODULES);
-	ExternalControllersCollection	  : T_ExternalControllerCollection(Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS);
+	ComponentsCollection 			  : T_ComponentsCollection;
+	SubModulesCollection			  : T_SubModuleCollection;
+	ExternalControllersCollection	  : T_ExternalControllerCollection;
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
@@ -311,10 +311,14 @@ This method is called as required by <c>StateControl()</c>
 //Perform State tasks here
 
 // Send clear command to all sub modules
+
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Clear);
 
+//baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.ComponentError, timeStamp := , resetConfirmation:= );
+//baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.SubModuleError, timeStamp := , resetConfirmation:= );
+
 IF BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
-    BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, 0);
+    BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, FALSE);
 END_IF;
 
 IF BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
@@ -1802,7 +1806,15 @@ StateComplete();]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Clearing">
-      <LineId Id="103" Count="28" />
+      <LineId Id="103" Count="12" />
+      <LineId Id="184" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="188" Count="1" />
+      <LineId Id="187" Count="0" />
+      <LineId Id="173" Count="7" />
+      <LineId Id="125" Count="1" />
+      <LineId Id="183" Count="0" />
+      <LineId Id="128" Count="3" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Complete">

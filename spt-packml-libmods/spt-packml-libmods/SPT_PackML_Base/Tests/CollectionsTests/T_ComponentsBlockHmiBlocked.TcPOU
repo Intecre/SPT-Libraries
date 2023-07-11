@@ -3,7 +3,7 @@
   <POU Name="T_ComponentsBlockHmiBlocked" Id="{b83b4f48-2528-42f3-b8f8-21dd09f25019}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsBlockHmiBlocked EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent, newComponent2 : T_ComponentMock; 
   actual1, actual2 : BOOL;
 END_VAR

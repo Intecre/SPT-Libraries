@@ -3,7 +3,7 @@
   <POU Name="T_ClearGroupCountEqualsZeroCompareEqualsFalse" Id="{a5ac6aae-d815-4031-8abd-dd6bd35c8542}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ClearGroupCountEqualsZeroCompareEqualsFalse EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent : ARRAY [1..5] OF T_ComponentMock;
   afterCountActual, afterCountExpected : UDINT;
   beforeCountActual, beforeCountExpected : UDINT;
@@ -21,7 +21,7 @@ list.AddComponent(newComponent[4]);
 
 // first test before running clear
 beforeExpected := newComponent[1];
-__QUERYINTERFACE(list._items[0], beforeActual);
+list.TryGetComponent(0, component => beforeActual);
 beforeResult := beforeExpected = beforeActual;
 
 Assertion.AssertEquals_BOOL(TRUE, beforeResult, 'item 0 = list.AddComponent()');
@@ -32,7 +32,7 @@ list.ClearGroup();
 
 //Assert 
 afterExpected := newComponent[1];
-__QUERYINTERFACE(list._items[0], afterActual);
+list.TryGetComponent(0, component => afterActual);
 afterResult := afterExpected <> afterActual;
 Assertion.AssertEquals_BOOL(TRUE, beforeResult, 'afterResult := afterExpected <> afterActual;');
 
@@ -48,7 +48,7 @@ TestFinished();]]></ST>
       <LineId Id="29" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="51" Count="1" />
-      <LineId Id="78" Count="0" />
+      <LineId Id="90" Count="0" />
       <LineId Id="54" Count="0" />
       <LineId Id="56" Count="0" />
       <LineId Id="49" Count="0" />
@@ -59,7 +59,7 @@ TestFinished();]]></ST>
       <LineId Id="62" Count="0" />
       <LineId Id="61" Count="0" />
       <LineId Id="65" Count="0" />
-      <LineId Id="79" Count="0" />
+      <LineId Id="91" Count="0" />
       <LineId Id="64" Count="0" />
       <LineId Id="67" Count="0" />
       <LineId Id="63" Count="0" />

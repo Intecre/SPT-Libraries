@@ -3,7 +3,7 @@
   <POU Name="T_ModuleCollectionAnyErrorReturnErrorTrue" Id="{9951032a-54ac-43f8-b233-8a2aa0319dd9}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionAnyErrorReturnErrorTrue EXTENDS T_UnitTestBase
 VAR
-  list : T_SubModuleCollection(10);
+  list : T_SubModuleCollection;
   newModule, newModule2 : T_SubModuleMock; 
   actual1, actual2 : BOOL;
 END_VAR

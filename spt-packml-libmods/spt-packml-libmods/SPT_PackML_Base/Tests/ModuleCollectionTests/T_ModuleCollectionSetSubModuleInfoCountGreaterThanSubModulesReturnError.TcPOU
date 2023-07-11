@@ -3,7 +3,7 @@
   <POU Name="T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError" Id="{51ab96ba-1931-4a81-b02d-30462115a89b}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError EXTENDS T_UnitTestBase
 VAR
-  list : T_SubModuleCollection(10);
+  list : T_SubModuleCollection;
   newModule, newModule2, newModule3 : T_SubModuleMock; 
   result : BOOL;
   

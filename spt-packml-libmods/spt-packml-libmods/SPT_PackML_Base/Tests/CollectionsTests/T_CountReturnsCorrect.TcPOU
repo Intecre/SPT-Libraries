@@ -3,7 +3,7 @@
   <POU Name="T_CountReturnsCorrect" Id="{e60208ed-9066-4494-9717-1e67b98003a8}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_CountReturnsCorrect EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent : ARRAY [1..5] OF T_ComponentMock;
   expected, actual : UDINT;
   result : BOOL;

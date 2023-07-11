@@ -3,7 +3,7 @@
   <POU Name="T_ComponentsInitialisedSuccess" Id="{94c45123-908a-477f-9d80-ff0f93786fcc}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsInitialisedSuccess EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent, newComponent2 : T_ComponentMock; 
   actual1, actual2 : BOOL;
 END_VAR

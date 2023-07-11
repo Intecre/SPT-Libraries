@@ -3,7 +3,7 @@
   <POU Name="T_ExternalControllersCollectionNotifyModeChangedSuccess" Id="{9aaeaa7d-3437-4364-9c4c-29673879c3af}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllersCollectionNotifyModeChangedSuccess EXTENDS T_UnitTestBase
 VAR
-  list : T_ExternalControllerCollection(10);
+  list : T_ExternalControllerCollection;
   newController, newController2 : T_ExternalControllerMock; 
   actual1, actual2 : BOOL;
 END_VAR

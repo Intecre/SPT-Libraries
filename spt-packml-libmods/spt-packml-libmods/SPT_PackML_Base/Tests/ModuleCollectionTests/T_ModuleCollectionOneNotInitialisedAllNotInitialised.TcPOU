@@ -3,7 +3,7 @@
   <POU Name="T_ModuleCollectionOneNotInitialisedAllNotInitialised" Id="{151a2dae-4c8a-40b5-9770-c992893437ff}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionOneNotInitialisedAllNotInitialised EXTENDS T_UnitTestBase
 VAR
-  list : T_SubModuleCollection(10);
+  list : T_SubModuleCollection;
   newModule, newModule2 : T_SubModuleMock; 
   actual1, actual2 : BOOL;
 END_VAR

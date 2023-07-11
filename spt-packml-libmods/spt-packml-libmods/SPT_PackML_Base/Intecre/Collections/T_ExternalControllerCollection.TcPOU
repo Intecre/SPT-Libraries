@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_ExternalControllerCollection" Id="{c5e8f026-4eab-44f0-ace5-27f246664882}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllerCollection EXTENDS T_CollectionBase
+  <POU Name="T_ExternalControllerCollection" Id="{39442927-a77c-4ef8-8f9e-7a6f71eca247}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ExternalControllerCollection EXTENDS T_NamedBase;
+VAR
+	baseCollection : T_CollectionBase;
+END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="AddController" Id="{35a6c324-9983-499e-b12d-516396eb1406}">
+    <Folder Name="Private" Id="{75b20396-b541-40e5-8103-414d77253888}" />
+    <Method Name="AddController" Id="{6dab949d-4cdc-4b26-9315-48f3db04465c}">
       <Declaration><![CDATA[METHOD PUBLIC AddController : BOOL
 VAR_INPUT
   newController : I_PackML_ExternalController;
-END_VAR
-VAR
-	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newController = 0 THEN
@@ -20,20 +21,45 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-IF NOT __QUERYINTERFACE(newController, item) THEN
-	LogError( 'Cannot AddController  NOT __QUERYINTERFACE(newController, item)' );
-	RETURN;
-END_IF
-
-IF HasItem( item := item ) THEN
-	LogWarning( 'Controller already in collection.' );
-	RETURN;
-END_IF
-
-AddController := addInSpareSlot( item := item );]]></ST>
+AddController := baseCollection.AddItem( newItem := CastToBase(newController) );]]></ST>
       </Implementation>
     </Method>
-    <Method Name="NotifyModeChanged" Id="{17f6e3c4-7a01-4c8b-b055-d636340e3bb7}">
+    <Method Name="CastToBase" Id="{9e388fab-bbe8-4f5b-97c2-dc55748dd754}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE CastToBase : I_InterfaceBase
+VAR_INPUT
+	Controller : I_PackML_ExternalController;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Controller, CastToBase);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CastToType" Id="{f3b33b9a-22a3-44b2-ab9a-33713fdd56a9}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD CastToType : I_PackML_ExternalController
+VAR_INPUT
+	Base : I_InterfaceBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Base, CastToType);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClearGroup" Id="{68f30fd1-fef5-4da4-8bc6-1cc924f4e482}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[baseCollection.ClearGroup();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Count" Id="{159f11ea-1e26-41fa-bca4-e8320b76a1f5}">
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
+      <Get Name="Get" Id="{fcc0a790-4c69-4ba9-8be8-f2b4e52d6ad6}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Count := baseCollection.Count;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="NotifyModeChanged" Id="{174efdc1-cccf-4bd6-9eb2-f4f89e40cfa0}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyModeChanged
 VAR_INPUT
     Mode : E_PMLUnitMode;
@@ -41,29 +67,17 @@ END_VAR
 VAR
 	i : UDINT;
 	Controller : I_PackML_ExternalController;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Controller) THEN
-		RETURN;
-	END_IF
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetController(i, Controller => Controller) DO
 		
-	Controller.ModeChanged(Mode);
-		
-END_FOR]]></ST>
+    Controller.ModeChanged(Mode);
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
-    <Method Name="NotifyStateChanged" Id="{eea1ad95-9606-42e7-93a3-3c98612b2ba8}">
+    <Method Name="NotifyStateChanged" Id="{a2058179-9ddb-4b43-9d52-116cde3896be}">
       <Declaration><![CDATA[METHOD PUBLIC NotifyStateChanged
 VAR_INPUT
 	CommandedState : Tc3_PackML_V2.E_PMLCommand;
@@ -71,29 +85,17 @@ END_VAR
 VAR
 	i : UDINT;
 	Controller : I_PackML_ExternalController;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Controller) THEN
-		RETURN;
-	END_IF
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetController(i, Controller => Controller) DO
 		
-	Controller.StateChanged(CommandedState);
-		
-END_FOR]]></ST>
+    Controller.StateChanged(CommandedState);
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
-    <Method Name="TryGetController" Id="{799866d3-5fcb-43cf-b544-809f9053e66f}">
+    <Method Name="TryGetController" Id="{63dcfb0b-4398-4ee4-b384-a0bacfba82fe}">
       <Declaration><![CDATA[METHOD TryGetController: BOOL
 VAR_INPUT
 	index : UDINT;
@@ -102,18 +104,16 @@ VAR_OUTPUT
 	Controller : I_PackML_ExternalController;
 END_VAR
 VAR
-	item : I_InterfaceBase;
+	baseItem : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
-	LogError( 'Cannot TryGetController NOT SUPER^.TryGetItem(index := index, item => item) ' );
-	RETURN;
-END_IF
+        <ST><![CDATA[baseCollection.TryGetItem(index, item => baseItem);
+Controller := CastToType(baseItem);
 
-IF NOT __QUERYINTERFACE(item, Controller) THEN
-	LogError( 'Cannot TryGetController   NOT __QUERYINTERFACE(item, Controller) ' );
+IF Controller = 0 THEN
+	LogError( 'Cannot TryGetController  Controller = 0' );
 	RETURN;
-END_IF
+END_IF 
 
 TryGetController := Controller <> 0;]]></ST>
       </Implementation>
@@ -123,27 +123,31 @@ TryGetController := Controller <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.AddController">
       <LineId Id="3" Count="3" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="7" Count="5" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.CastToBase">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.CastToType">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.ClearGroup">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExternalControllerCollection.Count.Get">
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyModeChanged">
-      <LineId Id="8" Count="15" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="34" Count="4" />
+      <LineId Id="31" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.NotifyStateChanged">
-      <LineId Id="7" Count="15" />
+      <LineId Id="51" Count="4" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_ExternalControllerCollection.TryGetController">
-      <LineId Id="30" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="32" Count="1" />
-      <LineId Id="25" Count="4" />
-      <LineId Id="23" Count="0" />
+      <LineId Id="67" Count="7" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

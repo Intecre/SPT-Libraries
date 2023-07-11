@@ -3,7 +3,7 @@
   <POU Name="T_ModuleCollectionStateResetReturnsCorrectResponse" Id="{eeb2dcfc-be4a-46a4-84b8-6a0527f03625}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ModuleCollectionStateResetReturnsCorrectResponse EXTENDS T_UnitTestBase
 VAR
-  list : T_SubModuleCollection(10);
+  list : T_SubModuleCollection;
   newModule, newModule2 : T_SubModuleMock; 
   actual1, actual2 : BOOL;
 END_VAR

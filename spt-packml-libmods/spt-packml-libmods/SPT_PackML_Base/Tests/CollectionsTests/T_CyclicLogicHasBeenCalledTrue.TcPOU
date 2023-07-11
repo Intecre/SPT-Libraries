@@ -3,7 +3,7 @@
   <POU Name="T_CyclicLogicHasBeenCalledTrue" Id="{8d4fac65-8965-408a-b985-1027762b7472}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_CyclicLogicHasBeenCalledTrue EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent, newComponent2 : T_ComponentMock; 
   actual1, actual2 : BOOL;
 END_VAR

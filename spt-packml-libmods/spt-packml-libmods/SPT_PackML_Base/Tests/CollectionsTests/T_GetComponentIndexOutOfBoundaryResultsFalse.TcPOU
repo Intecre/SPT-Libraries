@@ -3,7 +3,7 @@
   <POU Name="T_GetComponentIndexOutOfBoundaryResultsFalse" Id="{f7c8f7ba-ae31-41e2-85cc-10eb490f1c48}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_GetComponentIndexOutOfBoundaryResultsFalse EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent : T_ComponentMock;
   actual : I_ComponentBase;
   expected : I_ComponentBase;

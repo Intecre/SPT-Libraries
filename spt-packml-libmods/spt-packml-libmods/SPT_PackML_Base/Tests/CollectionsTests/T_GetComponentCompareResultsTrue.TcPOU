@@ -3,7 +3,7 @@
   <POU Name="T_GetComponentCompareResultsTrue" Id="{e9a4bf6b-918e-4c6c-8f6a-5af5f3d4eba8}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_GetComponentCompareResultsTrue EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent : T_ComponentMock;
   actual : I_ComponentBase;
   expected : I_ComponentBase;

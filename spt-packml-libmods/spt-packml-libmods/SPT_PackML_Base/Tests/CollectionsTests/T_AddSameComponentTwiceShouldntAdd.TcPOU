@@ -3,7 +3,7 @@
   <POU Name="T_AddSameComponentTwiceShouldntAdd" Id="{a93610e7-93f0-4e2f-8a19-8e4b314649ef}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_AddSameComponentTwiceShouldntAdd  EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent : T_ComponentMock;
   actual : I_ComponentBase;
   expected : I_ComponentBase;

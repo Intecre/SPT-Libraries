@@ -112,6 +112,14 @@
   <ItemGroup>
     <PlaceholderReference Include="Intecre.Utilities">
       <DefaultResolution>Intecre.Utilities, * (Intecre Ltd)</DefaultResolution>
+      <Namespace>Intecre_Utilities</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="mobject-disposable">
+      <DefaultResolution>mobject-disposable, * (mobject)</DefaultResolution>
+      <Namespace>mobject_disposable</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="mobject-enumerable">
+      <DefaultResolution>mobject-enumerable, * (mobject)</DefaultResolution>
     </PlaceholderReference>
     <PlaceholderReference Include="SPT Event Logger">
       <DefaultResolution>SPT Event Logger, * (Beckhoff Automation LLC)</DefaultResolution>
@@ -166,6 +174,10 @@
     <PlaceholderReference Include="Tc2_Standard">
       <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Standard</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
     </PlaceholderReference>
     <PlaceholderReference Include="Tc3_EventLogger">
       <DefaultResolution>Tc3_EventLogger, * (Beckhoff Automation GmbH)</DefaultResolution>
@@ -222,10 +234,10 @@
     <Compile Include="Intecre\Collections\I_ComponentsCollection.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\Collections\T_ComponentsCollection.TcPOU">
+    <Compile Include="Intecre\Collections\T_CollectionBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\Collections\T_CollectionBase.TcPOU">
+    <Compile Include="Intecre\Collections\T_ComponentsCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\T_ExternalControllerCollection.TcPOU">

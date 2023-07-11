@@ -3,7 +3,7 @@
   <POU Name="T_ComponentsIfAnyErrorReturnsErrorTrue" Id="{da088fea-86d3-43fc-b325-f56f229f2fde}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsIfAnyErrorReturnsErrorTrue EXTENDS T_UnitTestBase
 VAR
-  list : T_ComponentsCollection(10);
+  list : T_ComponentsCollection;
   newComponent, newComponent2 : T_ComponentMock; 
   actual1, actual2 : BOOL;
 END_VAR

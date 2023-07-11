@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_ComponentsCollection" Id="{d0fd4ea2-8a96-0365-36ba-9fa85df78835}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection EXTENDS T_CollectionBase IMPLEMENTS I_ComponentsCollection
-
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ComponentsCollection EXTENDS T_NamedBase IMPLEMENTS I_ComponentsCollection
+VAR
+	baseCollection : T_CollectionBase;
+END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Folder Name="Private" Id="{6a576bd7-cc87-4cd5-a297-b5a6f0d46bb0}" />
     <Method Name="AddComponent" Id="{fb6c4003-1a4c-0530-3ee6-4677519bc680}">
       <Declaration><![CDATA[METHOD PUBLIC AddComponent : BOOL
 VAR_INPUT
   newComponent : I_ComponentBase;
-END_VAR
-VAR
-	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newComponent = 0 THEN
@@ -21,47 +21,26 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-IF NOT __QUERYINTERFACE(newComponent, item) THEN
-	LogError( 'Cannot AddComponent  NOT __QUERYINTERFACE(newComponent, item)' );
-	RETURN;
-END_IF
-
-IF HasItem( item := item ) THEN
-	LogWarning( 'Component already in collection.' );
-	RETURN;
-END_IF
-
-AddComponent := addInSpareSlot( item := item );]]></ST>
+AddComponent := baseCollection.AddItem( newItem := CastToBase(newComponent) );]]></ST>
       </Implementation>
     </Method>
     <Method Name="AllowHMIControl" Id="{a3a8d4ad-9d48-4f3f-ba31-3be39f8e4d90}">
-      <Declaration><![CDATA[//! @summary Sets permissive bit to allow HMI control of component functions
-METHOD PUBLIC AllowHMIControl
-//! @description This method is called as required by the parent module of this component
+      <Declaration><![CDATA[METHOD PUBLIC AllowHMIControl
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, component) THEN
-		RETURN;
-	END_IF
+WHILE i < Count 
+		AND_THEN TryGetComponent(i, component => Component) DO
 		
-	Component.AllowHMIControl();
-		
-END_FOR
-]]></ST>
+    Component.AllowHMIControl();
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Property Name="AnyError" Id="{9034e9d6-c017-4e85-8fb5-b86ce3eee340}">
@@ -70,22 +49,17 @@ END_FOR
         <Declaration><![CDATA[VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_InterfaceBase;
 END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count - 1 DO
 
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, component) THEN
-		RETURN;
-	END_IF
+    IF NOT TryGetComponent(i, component => Component) THEN
+        RETURN;
+    END_IF
 		
 	IF Component.Error THEN
 		AnyError := TRUE;
@@ -99,53 +73,76 @@ END_FOR
       </Get>
     </Property>
     <Method Name="BlockHMIControl" Id="{6f9e39dd-3470-4035-afab-a0932af02961}">
-      <Declaration><![CDATA[//! @summary Clears permissive bit to allow HMI control of component functions
-METHOD PUBLIC BlockHMIControl
-//! @description This method is called as required by the parent module of this component
+      <Declaration><![CDATA[METHOD PUBLIC BlockHMIControl
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, component) THEN
-		RETURN;
-	END_IF
+WHILE i < Count 
+		AND_THEN TryGetComponent(i, component => Component) DO
 		
-	Component.BlockHMIControl();
-		
-END_FOR]]></ST>
+    Component.BlockHMIControl();
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
+    <Method Name="CastToBase" Id="{fdf9b86d-2ae0-4412-bc42-f47409a0afb7}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE CastToBase : I_InterfaceBase
+VAR_INPUT
+	Component : I_ComponentBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Component, CastToBase);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CastToType" Id="{21c8e27d-e215-478b-9618-cf7e0879b0e7}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD CastToType : I_ComponentBase
+VAR_INPUT
+	Base : I_InterfaceBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Base, CastToType);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClearGroup" Id="{54513e59-d3c1-4394-a8ab-b873a4521d91}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[baseCollection.ClearGroup();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Count" Id="{aae46721-b4b7-457c-ad8b-d2096729c1ff}">
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
+      <Get Name="Get" Id="{c703425a-761f-4f6d-ba1f-91d19464cde6}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Count := baseCollection.Count;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="CyclicLogic" Id="{91fecff3-afbd-4edb-b80e-debfd3f550ae}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-	TryGetItem(i, item => item);
-	__QUERYINTERFACE(item, component);
-	IF component <> 0 THEN
-  		Component.CyclicLogic();
-	END_IF	
-END_FOR]]></ST>
+WHILE i < Count 
+		AND_THEN TryGetComponent(i, component => Component) DO
+		
+    Component.CyclicLogic();
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Property Name="InitialisedAll" Id="{c45efdcd-ff68-4ada-b178-9f283cfc29ff}">
@@ -155,30 +152,22 @@ END_FOR]]></ST>
         <Declaration><![CDATA[VAR
   i : UDINT;
   Component : I_ComponentBase;
-  item : I_InterfaceBase;
  END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
-	InitialisedAll := TRUE;
-  RETURN;
+    InitialisedAll := TRUE;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
+WHILE i < Count 
+		AND_THEN TryGetComponent(i, component => Component) DO
+		
+    IF NOT Component.InitComplete THEN
 		RETURN;
 	END_IF
 	
-	IF NOT __QUERYINTERFACE(item, component) THEN
-		RETURN;
-	END_IF
-		
-	IF NOT Component.InitComplete THEN
-		RETURN;
-	END_IF
-		
-
-END_FOR
+    i := i + 1;
+END_WHILE
 
 InitialisedAll := TRUE;]]></ST>
         </Implementation>
@@ -189,27 +178,22 @@ InitialisedAll := TRUE;]]></ST>
 VAR
 	i : UDINT;
 	Component : I_ComponentBase;
-	item : I_InterfaceBase;
 END_VAR 
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
+WHILE i < Count 
+		AND_THEN TryGetComponent(i, component => Component) DO
+		
+    IF NOT Component.Error THEN
+		Component.Reset();
 	END_IF
 	
-	IF NOT __QUERYINTERFACE(item, component) THEN
-		RETURN;
-	END_IF
-		
-	Component.Reset();
-		
-END_FOR]]></ST>
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetComponent" Id="{2d1e8721-47b6-026d-04e2-daccf35cf2e5}">
@@ -221,18 +205,16 @@ VAR_OUTPUT
 	component : I_ComponentBase;
 END_VAR
 VAR
-	item : I_InterfaceBase;
+	baseItem : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
-	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
-	RETURN;
-END_IF
+        <ST><![CDATA[baseCollection.TryGetItem(index, item => baseItem);
+component := CastToType(baseItem);
 
-IF NOT __QUERYINTERFACE(item, component) THEN
-	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, component) ' );
+IF component = 0 THEN
+	LogError( 'Cannot TryGetComponent  component = 0' );
 	RETURN;
-END_IF
+END_IF 
 
 TryGetComponent := component <> 0;]]></ST>
       </Implementation>
@@ -242,58 +224,67 @@ TryGetComponent := component <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AddComponent">
       <LineId Id="3" Count="3" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="7" Count="5" />
+      <LineId Id="12" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AllowHMIControl">
-      <LineId Id="15" Count="0" />
-      <LineId Id="17" Count="13" />
-      <LineId Id="33" Count="0" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="14" Count="0" />
+      <LineId Id="71" Count="4" />
+      <LineId Id="86" Count="1" />
+      <LineId Id="76" Count="2" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.AnyError.Get">
-      <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="13" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="38" Count="3" />
+      <LineId Id="22" Count="2" />
       <LineId Id="31" Count="0" />
       <LineId Id="25" Count="1" />
       <LineId Id="28" Count="2" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.BlockHMIControl">
-      <LineId Id="14" Count="15" />
+      <LineId Id="49" Count="2" />
+      <LineId Id="72" Count="5" />
+      <LineId Id="68" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.CastToBase">
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="T_ComponentsCollection.CastToType">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.ClearGroup">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ComponentsCollection.Count.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
     <LineIds Name="T_ComponentsCollection.CyclicLogic">
-      <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="1" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="4" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="8" Count="0" />
+      <LineId Id="45" Count="2" />
+      <LineId Id="64" Count="5" />
+      <LineId Id="62" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.InitialisedAll.Get">
-      <LineId Id="5" Count="21" />
+      <LineId Id="49" Count="3" />
+      <LineId Id="75" Count="4" />
+      <LineId Id="81" Count="2" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="65" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.Reset">
-      <LineId Id="6" Count="15" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="28" Count="2" />
+      <LineId Id="50" Count="4" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="56" Count="2" />
+      <LineId Id="47" Count="0" />
     </LineIds>
     <LineIds Name="T_ComponentsCollection.TryGetComponent">
-      <LineId Id="30" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="32" Count="1" />
-      <LineId Id="25" Count="4" />
-      <LineId Id="23" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="62" Count="5" />
+      <LineId Id="47" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
   </POU>

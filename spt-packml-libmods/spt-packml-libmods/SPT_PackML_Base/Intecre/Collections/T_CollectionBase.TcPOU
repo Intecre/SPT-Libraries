@@ -3,23 +3,23 @@
   <POU Name="T_CollectionBase" Id="{91f145eb-820d-4f7a-9926-40255bcc85a0}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK T_CollectionBase EXTENDS T_NamedBase
 VAR
-	_backingStore : POINTER TO PVOID;
-	_items : POINTER TO I_InterfaceBase := ADR(_backingStore);
-	_cnt : UDINT;
-	collectionMaxSize : UDINT;
+    _items : ARRAY[0..(COLLECTION_MAX_SIZE-1)] OF I_InterfaceBase;
+    _cnt : UDINT;
 END_VAR
-]]></Declaration>
+VAR CONSTANT
+    COLLECTION_MAX_SIZE : UDINT := 200;
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Folder Name="Private" Id="{b567f85d-3012-43a8-97ff-301076c39f5d}" />
     <Method Name="addInSpareSlot" Id="{8c3d3185-0175-4738-9c73-0037742ace98}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PROTECTED addInSpareSlot : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE addInSpareSlot : BOOL
 VAR_INPUT
 	Item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count >= collectionMaxSize THEN
+        <ST><![CDATA[IF Count > COLLECTION_MAX_SIZE THEN
 	LogError('cannot addInSpareSlot : no space.');
 	RETURN;
 END_IF
@@ -31,7 +31,7 @@ addInSpareSlot := TRUE;
       </Implementation>
     </Method>
     <Method Name="AddItem" Id="{694024fe-c5ed-4d58-959e-acc65fd5108c}">
-      <Declaration><![CDATA[METHOD PROTECTED AddItem : BOOL
+      <Declaration><![CDATA[METHOD INTERNAL AddItem : BOOL
 VAR_INPUT
   newItem : I_InterfaceBase;
 END_VAR]]></Declaration>
@@ -50,17 +50,9 @@ AddItem := addInSpareSlot( Item := newItem );]]></ST>
       </Implementation>
     </Method>
     <Method Name="ClearGroup" Id="{33765d55-9a26-4942-8a3f-e0d7968dad36}">
-      <Declaration><![CDATA[METHOD ClearGroup // clears the group down
-VAR
-	i : UDINT;
-END_VAR]]></Declaration>
+      <Declaration><![CDATA[METHOD ClearGroup // clears the group down]]></Declaration>
       <Implementation>
-        <ST><![CDATA[//MEMSET(ADR(_components), 0 , SIZEOF(_components));
-
-FOR i := 0 TO collectionMaxSize - 1 DO
-	_items[i] := 0;
-END_FOR
-
+        <ST><![CDATA[MEMSET(ADR(_items), 0 , SIZEOF(_items));
 _cnt := 0;
 LogDebug('ClearGroup() called.');]]></ST>
       </Implementation>
@@ -83,42 +75,16 @@ END_VAR
         </Implementation>
       </Set>
     </Property>
-    <Method Name="FB_exit" Id="{555f9795-4e2e-47ab-9e7e-e321b0b0e910}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD FB_exit : BOOL
-VAR_INPUT
-	bInCopyCode : BOOL; // if TRUE, the exit method is called for exiting an instance that is copied afterwards (online change).
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[__DELETE(_backingStore);
-collectionMaxSize := 0;
-Count := 0;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="FB_init" Id="{fa313b6e-b1f8-4856-8c36-bfd95aaafad5}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
-VAR_INPUT
-	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
-	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
-	NumberOfItemsInCollection : UDINT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[collectionMaxSize := NumberOfItemsInCollection;
-_backingStore := __NEW(PVOID, collectionMaxSize);
-_items := _backingStore;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="HasItem" Id="{3ce85fba-0a5e-4fa1-9c6a-844b57d80979}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD PROTECTED HasItem : BOOL
+      <Declaration><![CDATA[METHOD PRIVATE HasItem : BOOL
 VAR_INPUT
-	Item : I_InterfaceBase;;
+	Item : I_InterfaceBase;
 END_VAR
 VAR 
 	i : UDINT;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 0 TO Count - 1 DO
+        <ST><![CDATA[FOR i := 0 TO Count DO
 	
 	IF _items[i] = 0 THEN
 		EXIT; // exit for loop
@@ -134,7 +100,7 @@ END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="TryGetItem" Id="{4079f152-eedc-41b9-985e-004de6f818fa}">
-      <Declaration><![CDATA[METHOD PROTECTED TryGetItem: BOOL
+      <Declaration><![CDATA[METHOD INTERNAL TryGetItem: BOOL
 VAR_INPUT
 	index : UDINT;
 END_VAR
@@ -143,12 +109,12 @@ VAR_OUTPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF index > collectionMaxSize THEN
+        <ST><![CDATA[IF index > (COLLECTION_MAX_SIZE-1) THEN
 	LogError( 'cannot GetDrive, index out of bounds' );
 	RETURN;
 END_IF
 
-IF index > (Count - 1) THEN
+IF index > Count THEN
 	LogError( 'cannot GetDrive, index > (Count - 1) ' );
 	RETURN;
 END_IF
@@ -158,7 +124,7 @@ TryGetItem := item <> 0;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="T_CollectionBase">
-      <LineId Id="2" Count="0" />
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.addInSpareSlot">
       <LineId Id="3" Count="8" />
@@ -168,8 +134,8 @@ TryGetItem := item <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.ClearGroup">
-      <LineId Id="11" Count="1" />
-      <LineId Id="3" Count="4" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="7" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.Count.Get">
@@ -177,14 +143,6 @@ TryGetItem := item <> 0;]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.Count.Set">
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_CollectionBase.FB_exit">
-      <LineId Id="3" Count="1" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="T_CollectionBase.FB_init">
-      <LineId Id="3" Count="1" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_CollectionBase.HasItem">

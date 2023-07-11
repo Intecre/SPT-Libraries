@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_SubModuleCollection" Id="{e452d146-811c-4c16-9bd5-d9b031d0f126}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleCollection EXTENDS T_CollectionBase]]></Declaration>
+    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleCollection EXTENDS T_NamedBase
+VAR
+	baseCollection : T_CollectionBase;
+END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
+    <Folder Name="Private" Id="{d106ef2b-c9fc-4851-bf38-29babcd29720}" />
     <Method Name="AddModule" Id="{53fec14b-7f0d-4c8d-b489-4f8a2e7a91db}">
       <Declaration><![CDATA[METHOD PUBLIC AddModule : BOOL
 VAR_INPUT
   newModule : I_PackML_BaseModule;
-END_VAR
-VAR
-	item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF newModule = 0 THEN
@@ -19,17 +20,7 @@ END_VAR]]></Declaration>
 	RETURN;
 END_IF
 
-IF NOT __QUERYINTERFACE(newModule, item) THEN
-	LogError( 'Cannot AddModule  NOT __QUERYINTERFACE(newComponent, item)' );
-	RETURN;
-END_IF
-
-IF HasItem( item := item ) THEN
-	LogWarning( 'Module already in collection.' );
-	RETURN;
-END_IF
-
-AddModule := addInSpareSlot( item := item );]]></ST>
+AddModule := baseCollection.AddItem( newItem := CastToBase(newModule) );]]></ST>
       </Implementation>
     </Method>
     <Method Name="AllInAskedState" Id="{c5525ce9-7897-4cf9-8030-5bde5f91a91f}">
@@ -40,7 +31,6 @@ END_VAR
 VAR
 	i : UDINT;
 	Module : I_PackML_BaseModule;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
@@ -48,21 +38,15 @@ END_VAR ]]></Declaration>
 	RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
+WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
+		
+    IF Module.CurrentState <> State THEN
 		RETURN;
 	END_IF
 	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
-		
-	IF Module.CurrentState <> State THEN
-		RETURN;
-	END_IF
-		
-END_FOR
+    i := i + 1;
+END_WHILE
 
 AllInAskedState := TRUE;]]></ST>
       </Implementation>
@@ -73,22 +57,17 @@ AllInAskedState := TRUE;]]></ST>
         <Declaration><![CDATA[VAR
   i : UDINT;
   Module : I_PackML_BaseModule;
-  item : I_InterfaceBase;
  END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+    RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
+FOR i := 0 TO Count - 1 DO
 
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+    IF NOT TryGetModule(i, Module => Module) THEN
+        RETURN;
+    END_IF
 		
 	IF Module.Error THEN
 		AnyError := TRUE;
@@ -110,51 +89,68 @@ VAR_OUTPUT
 END_VAR
 VAR
 	i : UDINT;
-
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-	RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
 		
-	IF Module.CurrentState = State THEN
+    IF Module.CurrentState = State THEN
 		AnyInAskedState := TRUE;
 		RETURN;
 	END_IF
-		
-END_FOR]]></ST>
+	
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
+    <Method Name="CastToBase" Id="{e6ccd76b-eaf5-4d64-a44c-51d4496fb87b}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD PRIVATE CastToBase : I_InterfaceBase
+VAR_INPUT
+	Module : I_PackML_BaseModule;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Module, CastToBase);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CastToType" Id="{717d3acf-d995-45d1-8abb-14e4afe5466d}" FolderPath="Private\">
+      <Declaration><![CDATA[METHOD CastToType : I_PackML_BaseModule
+VAR_INPUT
+	Base : I_InterfaceBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[__QUERYINTERFACE(Base, CastToType);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="ClearGroup" Id="{cb9d1629-e01b-4707-930b-6f8590c32fe3}">
+      <Declaration><![CDATA[METHOD PUBLIC ClearGroup // clears the group down]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[baseCollection.ClearGroup();]]></ST>
+      </Implementation>
+    </Method>
+    <Property Name="Count" Id="{131a2ff4-da96-47d5-bf78-152c7d900b2a}">
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
+      <Get Name="Get" Id="{0e4e52a9-02de-4758-990e-85fbb1dce94b}">
+        <Declaration><![CDATA[]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Count := baseCollection.Count;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="CyclicLogic" Id="{14da67f3-5fa4-4574-9988-115d51302eb8}">
       <Declaration><![CDATA[METHOD CyclicLogic
 VAR
   i : UDINT;
   Module : I_PackML_BaseModule;
-  item : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-	TryGetItem(i, item => item);
-	__QUERYINTERFACE(item, Module);
-	IF Module <> 0 THEN
-  		Module.CyclicLogic();
-	END_IF	
-END_FOR]]></ST>
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
+		
+    Module.CyclicLogic();
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Property Name="InitialisedAll" Id="{cb8be73b-6402-458a-bffd-aa60da85ce4b}">
@@ -164,7 +160,6 @@ END_FOR]]></ST>
         <Declaration><![CDATA[VAR
   i : UDINT;
   Module : I_PackML_BaseModule;
-  item : I_InterfaceBase;
  END_VAR ]]></Declaration>
         <Implementation>
           <ST><![CDATA[IF Count = 0 THEN
@@ -172,22 +167,14 @@ END_FOR]]></ST>
   RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
 		
 	IF NOT Module.InitComplete THEN
 		RETURN;
 	END_IF
-		
-
-END_FOR
+    i := i + 1;
+END_WHILE
 
 InitialisedAll := TRUE;]]></ST>
         </Implementation>
@@ -201,26 +188,14 @@ END_VAR
 VAR
 	i : UDINT;
 	Module : I_PackML_BaseModule;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
 		
 	Module.ChangeMode(Mode);
-		
-END_FOR]]></ST>
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Method Name="NotifyStateChanged" Id="{4a22e1ac-0e21-4315-95e2-0fceb8c44e5e}">
@@ -231,26 +206,14 @@ END_VAR
 VAR
 	i : UDINT;
 	Module : I_PackML_BaseModule;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
-END_IF
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+        <ST><![CDATA[WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
 		
 	Module.ChangeState(CommandedState);
-		
-END_FOR]]></ST>
+    i := i + 1;
+END_WHILE]]></ST>
       </Implementation>
     </Method>
     <Method Name="SetPMLSubModuleInfoActive" Id="{d86cc83d-fd36-40fc-bc91-98090402b698}">
@@ -302,17 +265,11 @@ IF Count > upperBound THEN
 	RETURN;
 END_IF 
 
+FOR i := 0 TO Count - 1 DO
 
-
-FOR i := 0 TO Count -1 DO
-
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
-	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
+    IF NOT TryGetModule(i, Module => Module) THEN
+        RETURN;
+    END_IF
 		
 	 SubModuleInfoArray[i+1].eState :=  Module.CurrentState;
 		
@@ -324,23 +281,16 @@ END_FOR]]></ST>
 VAR
 	i : UDINT;
 	Module : I_PackML_BaseModule;
-	item : I_InterfaceBase;
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-  RETURN;
+	RETURN;
 END_IF
 
-FOR i := 0 TO Count -1 DO
 
-	IF NOT 	TryGetItem(i, item => item) THEN
-		RETURN;
-	END_IF
+WHILE i < Count 
+		AND_THEN TryGetModule(i, Module => Module) DO
 	
-	IF NOT __QUERYINTERFACE(item, Module) THEN
-		RETURN;
-	END_IF
-		
 	IF Module.CurrentState = ePMLState_Stopped OR Module.CurrentState = ePMLState_Complete THEN
 		Module.ChangeState (ePMLCommand_Reset);
 	ELSIF Module.CurrentState = ePMLState_Aborted THEN
@@ -352,7 +302,10 @@ FOR i := 0 TO Count -1 DO
 		Module.ChangeState(ePMLCommand_Abort);
 	END_IF
 		
-END_FOR
+	
+    i := i + 1;
+	
+END_WHILE
 
 ]]></ST>
       </Implementation>
@@ -366,18 +319,16 @@ VAR_OUTPUT
 	Module : I_PackML_BaseModule;
 END_VAR
 VAR
-	item : I_InterfaceBase;
+	baseItem : I_InterfaceBase;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT SUPER^.TryGetItem(index := index, item => item) THEN
-	LogError( 'Cannot TryGetComponent NOT SUPER^.TryGetItem(index := index, item => item) ' );
-	RETURN;
-END_IF
+        <ST><![CDATA[baseCollection.TryGetItem(index, item => baseItem);
+Module := CastToType(baseItem);
 
-IF NOT __QUERYINTERFACE(item, Module) THEN
-	LogError( 'Cannot TryGetComponent   NOT __QUERYINTERFACE(item, Module) ' );
+IF Module = 0 THEN
+	LogError( 'Cannot TryGetModule  Module = 0' );
 	RETURN;
-END_IF
+END_IF 
 
 TryGetModule := Module <> 0;]]></ST>
       </Implementation>
@@ -387,50 +338,67 @@ TryGetModule := Module <> 0;]]></ST>
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AddModule">
       <LineId Id="3" Count="3" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="7" Count="5" />
+      <LineId Id="12" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AllInAskedState">
-      <LineId Id="44" Count="20" />
+      <LineId Id="44" Count="3" />
+      <LineId Id="84" Count="0" />
+      <LineId Id="88" Count="3" />
+      <LineId Id="93" Count="2" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="85" Count="0" />
+      <LineId Id="64" Count="0" />
       <LineId Id="33" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AnyError.Get">
-      <LineId Id="5" Count="19" />
+      <LineId Id="29" Count="1" />
+      <LineId Id="7" Count="1" />
+      <LineId Id="31" Count="3" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="18" Count="6" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AnyInAskedState">
-      <LineId Id="44" Count="0" />
-      <LineId Id="46" Count="13" />
-      <LineId Id="65" Count="0" />
-      <LineId Id="60" Count="3" />
+      <LineId Id="92" Count="3" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="96" Count="3" />
+      <LineId Id="88" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.CastToBase">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.CastToType">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.ClearGroup">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_SubModuleCollection.Count.Get">
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.CyclicLogic">
-      <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="1" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="4" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="8" Count="0" />
+      <LineId Id="42" Count="3" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="40" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.InitialisedAll.Get">
-      <LineId Id="5" Count="21" />
+      <LineId Id="5" Count="3" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="39" Count="2" />
+      <LineId Id="44" Count="1" />
+      <LineId Id="42" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="26" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.NotifyModeChanged">
-      <LineId Id="8" Count="15" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="49" Count="4" />
+      <LineId Id="48" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.NotifyStateChanged">
-      <LineId Id="7" Count="15" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="46" Count="4" />
+      <LineId Id="34" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.SetPMLSubModuleInfoActive">
       <LineId Id="12" Count="1" />
@@ -449,32 +417,30 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="44" Count="0" />
       <LineId Id="43" Count="0" />
       <LineId Id="45" Count="1" />
-      <LineId Id="14" Count="5" />
+      <LineId Id="14" Count="4" />
       <LineId Id="22" Count="0" />
-      <LineId Id="24" Count="0" />
-      <LineId Id="28" Count="11" />
+      <LineId Id="56" Count="3" />
+      <LineId Id="36" Count="3" />
       <LineId Id="25" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.StateReset">
-      <LineId Id="21" Count="1" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="24" Count="10" />
+      <LineId Id="53" Count="2" />
+      <LineId Id="65" Count="0" />
+      <LineId Id="67" Count="2" />
+      <LineId Id="73" Count="0" />
       <LineId Id="37" Count="2" />
       <LineId Id="46" Count="0" />
       <LineId Id="41" Count="3" />
       <LineId Id="47" Count="0" />
       <LineId Id="35" Count="1" />
+      <LineId Id="74" Count="2" />
       <LineId Id="23" Count="0" />
       <LineId Id="16" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.TryGetModule">
-      <LineId Id="30" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="32" Count="1" />
-      <LineId Id="25" Count="4" />
-      <LineId Id="23" Count="0" />
-      <LineId Id="2" Count="0" />
+      <LineId Id="46" Count="7" />
+      <LineId Id="44" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
