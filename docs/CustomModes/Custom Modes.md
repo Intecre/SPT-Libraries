@@ -8,6 +8,6 @@ sName: Name of the new PML UnitMode.
 
 Parameters of Unit Mode Config must be set and that will reference to Global Variables stPMLUnitModeConfigurationArray.
 
-![Unit mode Global Variables](Custom Modes/GlobalVariables.jpg)
+![Unit mode Global Variables](CustomModes/GlobalVariables.jpg)
 
-![Unit mode Structures](Custom Modes/Structures.jpg)
+![Unit mode Structures](CustomModes/Structures.jpg)
