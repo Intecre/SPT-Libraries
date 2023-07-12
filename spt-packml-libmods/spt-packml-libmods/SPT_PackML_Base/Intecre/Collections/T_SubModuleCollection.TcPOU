@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="T_SubModuleCollection" Id="{e452d146-811c-4c16-9bd5-d9b031d0f126}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleCollection EXTENDS T_NamedBase
+    <Declaration><![CDATA[FUNCTION_BLOCK T_SubModuleCollection EXTENDS T_NamedBase IMPLEMENTS I_SubModuleCollection
 VAR
 	baseCollection : T_CollectionBase;
 END_VAR]]></Declaration>
@@ -114,7 +114,7 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="CastToType" Id="{717d3acf-d995-45d1-8abb-14e4afe5466d}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD CastToType : I_PackML_BaseModule
+      <Declaration><![CDATA[METHOD PRIVATE CastToType : I_PackML_BaseModule
 VAR_INPUT
 	Base : I_InterfaceBase;
 END_VAR
@@ -214,66 +214,6 @@ END_VAR ]]></Declaration>
 	Module.ChangeState(CommandedState);
     i := i + 1;
 END_WHILE]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="SetPMLSubModuleInfoActive" Id="{d86cc83d-fd36-40fc-bc91-98090402b698}">
-      <Declaration><![CDATA[METHOD PUBLIC SetPMLSubModuleInfoActive : BOOL
-VAR_IN_OUT
-	SubModuleInfoArray : ARRAY[*] OF ST_PMLSubUnitInfo;
-END_VAR
-VAR
-	i : DINT;
-	lowerBound, upperBound : DINT;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
-upperBound := UPPER_BOUND(SubModuleInfoArray,1);
-
-IF Count > upperBound THEN
-	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
-	RETURN;
-END_IF 
-
-FOR i := lowerBound TO Count DO
-    SubModuleInfoArray[i].Active := TRUE;
-END_FOR;
-
-SetPMLSubModuleInfoActive := TRUE;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="SetSubModuleInfoState" Id="{b0c8fd84-e58b-4bb0-93a5-199ec32b4722}">
-      <Declaration><![CDATA[METHOD PUBLIC SetSubModuleInfoState
-VAR_IN_OUT
-	SubModuleInfoArray : ARRAY[*] OF ST_PMLSubUnitInfo;
-END_VAR
-VAR
-	i : DINT;
-	lowerBound, upperBound : DINT;
-	Module : I_PackML_BaseModule;
-	item : I_InterfaceBase;
-END_VAR]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[lowerBound := LOWER_BOUND(SubModuleInfoArray,1);
-upperBound := UPPER_BOUND(SubModuleInfoArray,1);
-
-IF lowerBound <> 1 THEN
-	RETURN;
-END_IF
-
-IF Count > upperBound THEN
-	LogError('Can not SetPMLSubModuleInfoActive as  Count > upperBound');
-	RETURN;
-END_IF 
-
-FOR i := 0 TO Count - 1 DO
-
-    IF NOT TryGetModule(i, Module => Module) THEN
-        RETURN;
-    END_IF
-		
-	 SubModuleInfoArray[i+1].eState :=  Module.CurrentState;
-		
-END_FOR]]></ST>
       </Implementation>
     </Method>
     <Method Name="StateReset" Id="{f3e56b8e-4e67-469f-b002-8fff282ece26}">
@@ -399,29 +339,6 @@ TryGetModule := Module <> 0;]]></ST>
     <LineIds Name="T_SubModuleCollection.NotifyStateChanged">
       <LineId Id="46" Count="4" />
       <LineId Id="34" Count="0" />
-    </LineIds>
-    <LineIds Name="T_SubModuleCollection.SetPMLSubModuleInfoActive">
-      <LineId Id="12" Count="1" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="7" Count="1" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="20" Count="0" />
-    </LineIds>
-    <LineIds Name="T_SubModuleCollection.SetSubModuleInfoState">
-      <LineId Id="12" Count="1" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="45" Count="1" />
-      <LineId Id="14" Count="4" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="56" Count="3" />
-      <LineId Id="36" Count="3" />
-      <LineId Id="25" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.StateReset">
       <LineId Id="53" Count="2" />

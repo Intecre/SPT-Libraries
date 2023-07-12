@@ -8,6 +8,7 @@ VAR_GLOBAL CONSTANT
     MAX_NO_OF_EXTERNAL_CONTROLLERS : UDINT                       := 10;
     UNIT_MODE_DEFAULT              : E_PMLUnitMode := E_PMLUnitMode.ePMLUnitMode_Production;
     UNIT_STATE_DEFAULT             : Tc3_PackML_V2.E_PMLCommand  := E_PMLCommand.ePMLCommand_Abort;
+	COLLECTION_MAX_SIZE : UDINT := 200;
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

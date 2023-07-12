@@ -103,7 +103,7 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="CastToType" Id="{21c8e27d-e215-478b-9618-cf7e0879b0e7}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD CastToType : I_ComponentBase
+      <Declaration><![CDATA[METHOD PRIVATE CastToType : I_ComponentBase
 VAR_INPUT
 	Base : I_InterfaceBase;
 END_VAR

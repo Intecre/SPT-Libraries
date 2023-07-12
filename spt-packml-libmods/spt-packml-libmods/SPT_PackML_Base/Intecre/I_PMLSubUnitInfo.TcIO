@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <Itf Name="I_PMLSubUnitInfo" Id="{b4b37584-2e9c-4c24-ba11-c9388eeb6837}">
-    <Declaration><![CDATA[INTERFACE I_PMLSubUnitInfo EXTENDS I_InterfaceBase
-]]></Declaration>
-  </Itf>
-</TcPlcObject>

@@ -199,15 +199,16 @@
     <Folder Include="Intecre" />
     <Folder Include="Tests" />
     <Folder Include="Project Information" />
-    <Folder Include="Tests\CollectionsTests\Mock" />
-    <Folder Include="Tests\ExternalCoontrollerCollectionTests\Mock" />
+    <Folder Include="Tests\CollectionsTests\Components\Mock" />
+    <Folder Include="Tests\CollectionsTests\Components" />
+    <Folder Include="Tests\CollectionsTests\ExternalController" />
+    <Folder Include="Tests\CollectionsTests\ExternalController\Mock" />
+    <Folder Include="Tests\CollectionsTests\Module" />
+    <Folder Include="Tests\CollectionsTests\Module\Mock" />
     <Folder Include="Tests\ModeAndStateTests" />
     <Folder Include="Tests\ModeManagerTests" />
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
     <Folder Include="Tests\CollectionsTests" />
-    <Folder Include="Tests\ExternalCoontrollerCollectionTests" />
-    <Folder Include="Tests\ModuleCollectionTests" />
-    <Folder Include="Tests\ModuleCollectionTests\Mock" />
     <Folder Include="Version" />
     <Folder Include="VISUs" />
   </ItemGroup>
@@ -227,6 +228,9 @@
     <Compile Include="Intecre\Collections\I_ComponentsCollection.TcIO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Intecre\Collections\I_SubModuleCollection.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intecre\Collections\T_CollectionBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -236,13 +240,7 @@
     <Compile Include="Intecre\Collections\T_ExternalControllerCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\Collections\T_PMLSubUnitInfoCollection.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Intecre\Collections\T_SubModuleCollection.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Intecre\I_PMLSubUnitInfo.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -258,9 +256,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\PackModes\T_BaseMode.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Intecre\T_PMLSubUnitInfo.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />
@@ -281,58 +276,88 @@
     <Compile Include="Task_3.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\Mock\T_ComponentMock.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\Mock\T_ComponentMock.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_AddComponentAddedToList.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_AddComponentAddedToList.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_AddComponentCompareResultTrue.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_AddComponentCompareResultTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_AddSameComponentTwiceShouldntAdd.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_AddMoreThanSizeOfCollectionFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ComponentsBlockHmiBlocked.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_AddSameComponentTwiceShouldntAdd.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ComponentsIfAnyErrorReturnsErrorTrue.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ClearGroupCountEqualsZeroCompareEqualsFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ComponentsAllowHmiAllowed.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ComponentsAllowHmiAllowed.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ComponentsResetClearsErrors.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ComponentsBlockHmiBlocked.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_CountReturnsCorrect.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ComponentsIfAnyErrorReturnsErrorTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_AddMoreThanSizeOfCollectionFalse.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ComponentsInitialisedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_CyclicLogicHasBeenCalledTrue.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_ComponentsResetClearsErrors.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ComponentsInitialisedSuccess.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_CountReturnsCorrect.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_GetComponentCompareResultsTrue.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_CyclicLogicHasBeenCalledTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_ClearGroupCountEqualsZeroCompareEqualsFalse.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_GetComponentCompareResultsTrue.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\CollectionsTests\T_GetComponentIndexOutOfBoundaryResultsFalse.TcPOU">
+    <Compile Include="Tests\CollectionsTests\Components\T_GetComponentIndexOutOfBoundaryResultsFalse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\ExternalCoontrollerCollectionTests\Mock\T_ExternalControllerMock.TcPOU">
+    <Compile Include="Tests\CollectionsTests\ExternalController\Mock\T_ExternalControllerMock.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\ExternalCoontrollerCollectionTests\T_ExternalControllersCollectionNotifyStateChangedSuccess.TcPOU">
+    <Compile Include="Tests\CollectionsTests\ExternalController\T_ExternalControllersCollectionNotifyModeChangedSuccess.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Tests\ExternalCoontrollerCollectionTests\T_ExternalControllersCollectionNotifyModeChangedSuccess.TcPOU">
+    <Compile Include="Tests\CollectionsTests\ExternalController\T_ExternalControllersCollectionNotifyStateChangedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\Mock\T_SubModuleMock.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionAllInAskedStateReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionAnyErrorReturnErrorTrue.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionInitialisedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionNotifyModeChangedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionNotifyStateChangedSuccess.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionOneNotInitialisedAllNotInitialised.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\CollectionsTests\Module\T_ModuleCollectionStateResetReturnsCorrectResponse.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeAndStateTests\EquipmentModule.TcPOU">
@@ -366,45 +391,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\ModeManagerTests\T_ModeInitialisedFromInvalidToProduction.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\Mock\T_SubModuleMock.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAnyInAskedStateReturnsCorrectResponse.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAnyErrorReturnErrorTrue.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionStateResetReturnsCorrectResponse.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionInitialisedSuccess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionAllInAskedStateReturnsCorrectResponse.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneIsNotInAskedStateReturnsCorrectResponse.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionOneNotInitialisedAllNotInitialised.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyModeChangedSuccess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionNotifyStateChangedSuccess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoActiveSuccess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoStateSuccess.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Tests\ModuleCollectionTests\T_ModuleCollectionSetSubModuleInfoCountGreaterThanSubModulesReturnError.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\PRG_Tests.TcPOU">

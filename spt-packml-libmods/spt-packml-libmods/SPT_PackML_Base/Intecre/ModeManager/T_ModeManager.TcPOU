@@ -78,7 +78,7 @@ END_IF
       </Implementation>
     </Method>
     <Property Name="CommandedMode" Id="{e92ac6e2-3b07-41c3-9cac-aa4e0b94fdb1}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLUnitMode]]></Declaration>
       <Get Name="Get" Id="{c3433c3b-dcb6-45e1-b15a-0ce485f7e416}">
         <Declaration><![CDATA[VAR
 END_VAR
@@ -89,7 +89,7 @@ END_VAR
       </Get>
     </Property>
     <Property Name="CurrentMode" Id="{bb96f9bc-1fcf-4ca4-92d4-7395e019defd}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLUnitMode]]></Declaration>
       <Get Name="Get" Id="{91c66e1f-6a18-49bb-b03e-42a8637455f2}">
         <Declaration><![CDATA[VAR
 END_VAR

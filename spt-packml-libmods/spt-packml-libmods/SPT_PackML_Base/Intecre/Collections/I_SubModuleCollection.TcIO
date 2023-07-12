@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_SubModuleCollection" Id="{c41f1912-1b18-4af4-95b4-789074d6dc64}">
+    <Declaration><![CDATA[INTERFACE I_SubModuleCollection
+]]></Declaration>
+    <Property Name="Count" Id="{c47a0ebb-dc0b-401b-814c-fac1521c9cfa}">
+      <Declaration><![CDATA[PROPERTY Count : UDINT]]></Declaration>
+      <Get Name="Get" Id="{888b243f-5b25-4a32-8495-1a7b00c78961}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+    <Method Name="TryGetModule" Id="{eb76e488-d8e5-4188-bb45-b6ca6b63f5fb}">
+      <Declaration><![CDATA[METHOD TryGetModule: BOOL
+VAR_INPUT
+	index : UDINT;
+END_VAR
+VAR_OUTPUT
+	Module : I_PackML_BaseModule;
+END_VAR]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

@@ -35,7 +35,7 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="CastToType" Id="{f3b33b9a-22a3-44b2-ab9a-33713fdd56a9}" FolderPath="Private\">
-      <Declaration><![CDATA[METHOD CastToType : I_PackML_ExternalController
+      <Declaration><![CDATA[METHOD PRIVATE CastToType : I_PackML_ExternalController
 VAR_INPUT
 	Base : I_InterfaceBase;
 END_VAR

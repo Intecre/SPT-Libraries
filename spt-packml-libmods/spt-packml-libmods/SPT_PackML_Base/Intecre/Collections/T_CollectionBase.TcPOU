@@ -7,7 +7,7 @@ VAR
     _cnt : UDINT;
 END_VAR
 VAR CONSTANT
-    COLLECTION_MAX_SIZE : UDINT := 200;
+    COLLECTION_MAX_SIZE : UDINT := Parameters_PackML_Base.COLLECTION_MAX_SIZE;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>

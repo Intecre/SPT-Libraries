@@ -37,13 +37,13 @@ END_VAR
 ]]></Declaration>
     </Method>
     <Property Name="CommandedMode" Id="{533c7242-61a5-4641-9c71-744c83e164ae}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Declaration><![CDATA[PROPERTY PUBLIC CommandedMode : E_PMLUnitMode]]></Declaration>
       <Get Name="Get" Id="{c94a2607-4f3d-4750-9311-512034603189}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>
     </Property>
     <Property Name="CurrentMode" Id="{a9806cdd-9a75-41f3-8d95-823cb649c948}" FolderPath="Properties\">
-      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLProtectedUnitMode]]></Declaration>
+      <Declaration><![CDATA[PROPERTY CurrentMode : E_PMLUnitMode]]></Declaration>
       <Get Name="Get" Id="{07bfa944-506d-4241-973c-68128961a3d2}">
         <Declaration><![CDATA[]]></Declaration>
       </Get>

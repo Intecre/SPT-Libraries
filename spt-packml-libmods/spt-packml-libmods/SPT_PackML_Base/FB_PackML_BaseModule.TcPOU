@@ -38,20 +38,19 @@ VAR
 	ComponentsCollection 			  : T_ComponentsCollection;
 	SubModulesCollection			  : T_SubModuleCollection;
 	ExternalControllersCollection	  : T_ExternalControllerCollection;
-	PMLSubModuleInfoCollection 		  : T_PMLSubUnitInfoCollection;
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
     PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
     PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
-    PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
+    //PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
     PrevState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
 //    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
 //    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
     PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
     BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
     ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
-    PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
+    //PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
     //ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
     //NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
@@ -554,7 +553,7 @@ END_IF
 
 // Call this module's subunits, if any are defined
 SubModulesCollection.CyclicLogic();
-SubModulesCollection.SetSubModuleInfoState(PMLSubModuleInfo);
+//SubModulesCollection.SetSubModuleInfoState(PMLSubModuleInfo);
 
 componentsCollection.CyclicLogic();
 
@@ -865,14 +864,14 @@ CASE InitialiseStates OF
   CountSubModules:
     // Figure out how many Submodules were instantiated - they should be from 1 to X and not skip any indices.
     NumberOfSubModules := SubModulesCollection.Count;
-	SubModulesCollection.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
+	//SubModulesCollection.SetPMLSubModuleInfoActive(PMLSubModuleInfo);
     InitialiseStates := SetSizeOfArrays;
 	
   SetSizeOfArrays:
     // Initialize subunit overview used by state machine
-    PMLSubModuleInfoRef.ArraySize := SIZEOF(PMLSubModuleInfo);
-    PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
-    PMLSubModuleInfoRef.pArray := ADR(PMLSubModuleInfo);
+//    PMLSubModuleInfoRef.ArraySize := SIZEOF(PMLSubModuleInfo);
+//    PMLSubModuleInfoRef.NoOfSubUnits := NumberOfSubModules;
+//    PMLSubModuleInfoRef.pArray := ADR(PMLSubModuleInfo);
     InitialiseStates := WaitForInitializeComplete;
 	
   WaitForInitializeComplete:
