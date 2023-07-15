@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ManualMode" Id="{eb90698e-8345-4db3-9da5-eb1783d425dd}">
+    <Declaration><![CDATA[INTERFACE I_ManualMode EXTENDS I_PackMLMode
+]]></Declaration>
+  </Itf>
+</TcPlcObject>

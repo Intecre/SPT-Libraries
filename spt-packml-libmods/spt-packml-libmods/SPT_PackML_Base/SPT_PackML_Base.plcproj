@@ -192,8 +192,10 @@
   <ItemGroup>
     <Folder Include="DUT" />
     <Folder Include="DUT\HMI" />
+    <Folder Include="Intecre\ModeDesignMark\Interfaces" />
     <Folder Include="Intecre\ModeManager" />
     <Folder Include="Intecre\Collections" />
+    <Folder Include="Intecre\ModeDesignMark" />
     <Folder Include="Intecre\PackModes" />
     <Folder Include="Interfaces" />
     <Folder Include="Intecre" />
@@ -245,6 +247,30 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\T_SubModuleCollection.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_MaintenanceMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_CustomMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_PackMLMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_ManualMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_ProductionMode.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\T_MaintenanceMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\T_ProductionMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\ModeDesignMark\T_ManualMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
