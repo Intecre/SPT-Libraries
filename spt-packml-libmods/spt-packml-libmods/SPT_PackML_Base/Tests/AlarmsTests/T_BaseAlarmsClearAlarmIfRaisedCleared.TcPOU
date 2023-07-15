@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_BaseAlarmsClearAlarmIfRaisedCleared" Id="{720ccca1-1231-4aaa-bd2b-90b344432fcc}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_BaseAlarmsClearAlarmIfRaisedCleared EXTENDS T_UnitTestBase
+VAR
+	baseAlarms : T_BaseAlarms;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[//Arrange
+baseAlarms.RaiseAlarmWithStringParameters(E_BaseAlarms.ComponentError, '','','');
+
+//Act
+baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.ComponentError, resetConfirmation := FALSE);
+
+//Assert
+Assertion.AssertEquals_BOOL(Expected:= FALSE, Actual := TRUE, 
+						VariableName:= 'baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.ComponentError, resetConfirmation := FALSE);' );
+TestFinished();]]></ST>
+    </Implementation>
+    <LineIds Name="T_BaseAlarmsClearAlarmIfRaisedCleared">
+      <LineId Id="13" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

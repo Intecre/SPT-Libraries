@@ -209,6 +209,7 @@
     <Folder Include="Tests\ModeManagerTests" />
     <Folder Include="Tests\ModeManagerTests\Mock Objects" />
     <Folder Include="Tests\CollectionsTests" />
+    <Folder Include="Tests\AlarmsTests" />
     <Folder Include="Version" />
     <Folder Include="VISUs" />
   </ItemGroup>
@@ -229,6 +230,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\I_SubModuleCollection.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Collections\T_BaseAlarms.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\Collections\T_CollectionBase.TcPOU">
@@ -274,6 +278,9 @@
       <SystemCall>true</SystemCall>
     </Compile>
     <Compile Include="Task_3.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tests\AlarmsTests\T_BaseAlarmsClearAlarmIfRaisedCleared.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tests\CollectionsTests\Components\Mock\T_ComponentMock.TcPOU">

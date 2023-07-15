@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_BaseAlarms" Id="{72ce3e27-50a6-4915-a06e-f6359f7eaba7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_BaseAlarms EXTENDS T_NamedBase
+VAR
+	alarms : ARRAY[E_BaseAlarms.InitReferenceEvent..E_BaseAlarms.InvalidInterface] OF FB_TcAlarm;
+END_VAR
+VAR CONSTANT
+	USE_DEFAULT_TIMESTAMP : ULINT := 0; // 
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Property Name="AlarmsArray" Id="{cf72b990-38ce-4505-806f-9a0ca9dbd4f6}">
+      <Declaration><![CDATA[PROPERTY AlarmsArray : REFERENCE TO ARRAY[E_BaseAlarms.InitReferenceEvent..E_BaseAlarms.InvalidInterface] OF FB_TcAlarm]]></Declaration>
+      <Get Name="Get" Id="{ae170d6e-5f63-4195-83b1-2bd963ae3754}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[AlarmsArray REF= alarms; ]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
+    <Method Name="ClearAlarmIfRaised" Id="{cdcba135-bb29-4c73-a463-8ac949a9728a}">
+      <Declaration><![CDATA[METHOD ClearAlarmIfRaised
+VAR_INPUT
+	alarm : E_BaseAlarms;
+	resetConfirmation : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT alarms[alarm].bRaised THEN
+	RETURN;
+END_IF
+
+alarms[alarm].Clear(USE_DEFAULT_TIMESTAMP,resetConfirmation);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="RaiseAlarmWithStringParameters" Id="{0f4d0e4c-859c-44b0-99f0-051c92c550d7}">
+      <Declaration><![CDATA[METHOD RaiseAlarmWithStringParameters
+VAR_INPUT
+	alarm : E_BaseAlarms;
+
+	String_1 : STRING; //! First string parameter
+	String_2 : STRING; //! Second string parameter
+	String_3 : STRING; //! Third string parameter
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF alarms[alarm].bRaised THEN
+	RETURN;
+END_IF
+
+alarms[alarm].ipArguments.Clear();
+IF String_1 <> '' THEN
+	alarms[alarm].ipArguments.AddString(String_1);
+END_IF
+
+IF String_2 <> '' THEN
+	alarms[alarm].ipArguments.AddString(String_2);
+END_IF
+
+IF String_3 <> '' THEN
+	alarms[alarm].ipArguments.AddString(String_3);
+END_IF
+
+alarms[alarm].Raise(USE_DEFAULT_TIMESTAMP);
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_BaseAlarms">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseAlarms.AlarmsArray.Get">
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseAlarms.ClearAlarmIfRaised">
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="T_BaseAlarms.RaiseAlarmWithStringParameters">
+      <LineId Id="16" Count="3" />
+      <LineId Id="22" Count="12" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

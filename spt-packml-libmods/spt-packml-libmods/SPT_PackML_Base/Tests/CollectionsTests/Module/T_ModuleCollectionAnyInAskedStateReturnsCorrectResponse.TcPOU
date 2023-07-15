@@ -18,7 +18,7 @@ newModule._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Completing;
 newModule2._Currentstate := Tc3_PackML_V2.E_PMLState.ePMLState_Holding;
 
 //Assert
-actual1 := list.AnyInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
+actual1 := list.AnyInRequestedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);
 
 assertion.AssertEquals_BOOL(TRUE, actual1, 'actual1 := list.AnyInAskedState(Tc3_PackML_V2.E_PMLState.ePMLState_Completing);');
 TestFinished();]]></ST>

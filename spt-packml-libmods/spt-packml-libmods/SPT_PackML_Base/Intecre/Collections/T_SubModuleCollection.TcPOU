@@ -23,8 +23,8 @@ END_IF
 AddModule := baseCollection.AddItem( newItem := CastToBase(newModule) );]]></ST>
       </Implementation>
     </Method>
-    <Method Name="AllInAskedState" Id="{c5525ce9-7897-4cf9-8030-5bde5f91a91f}">
-      <Declaration><![CDATA[METHOD PUBLIC AllInAskedState : BOOL
+    <Method Name="AllInRequestedState" Id="{c5525ce9-7897-4cf9-8030-5bde5f91a91f}">
+      <Declaration><![CDATA[METHOD PUBLIC AllInRequestedState : BOOL
 VAR_INPUT
 	State : Tc3_PackML_V2.E_PMLState;
 END_VAR
@@ -34,7 +34,7 @@ VAR
 END_VAR ]]></Declaration>
       <Implementation>
         <ST><![CDATA[IF Count = 0 THEN
-	AllInAskedState := TRUE;
+	AllInRequestedState := TRUE;
 	RETURN;
 END_IF
 
@@ -48,7 +48,7 @@ WHILE i < Count
     i := i + 1;
 END_WHILE
 
-AllInAskedState := TRUE;]]></ST>
+AllInRequestedState := TRUE;]]></ST>
       </Implementation>
     </Method>
     <Property Name="AnyError" Id="{eb31021d-4235-42c3-9509-05306c59aad0}">
@@ -79,8 +79,8 @@ END_FOR
         </Implementation>
       </Get>
     </Property>
-    <Method Name="AnyInAskedState" Id="{fd7aede1-97d0-4952-ae9a-bdb82589f7f4}">
-      <Declaration><![CDATA[METHOD PUBLIC AnyInAskedState : BOOL
+    <Method Name="AnyInRequestedState" Id="{fd7aede1-97d0-4952-ae9a-bdb82589f7f4}">
+      <Declaration><![CDATA[METHOD PUBLIC AnyInRequestedState : BOOL
 VAR_INPUT
 	State : Tc3_PackML_V2.E_PMLState;
 END_VAR
@@ -95,7 +95,7 @@ END_VAR ]]></Declaration>
 		AND_THEN TryGetModule(i, Module => Module) DO
 		
     IF Module.CurrentState = State THEN
-		AnyInAskedState := TRUE;
+		AnyInRequestedState := TRUE;
 		RETURN;
 	END_IF
 	
@@ -281,14 +281,8 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="12" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_SubModuleCollection.AllInAskedState">
-      <LineId Id="44" Count="3" />
-      <LineId Id="84" Count="0" />
-      <LineId Id="88" Count="3" />
-      <LineId Id="93" Count="2" />
-      <LineId Id="92" Count="0" />
-      <LineId Id="85" Count="0" />
-      <LineId Id="64" Count="0" />
+    <LineIds Name="T_SubModuleCollection.AllInRequestedState">
+      <LineId Id="110" Count="14" />
       <LineId Id="33" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.AnyError.Get">
@@ -299,10 +293,8 @@ TryGetModule := Module <> 0;]]></ST>
       <LineId Id="18" Count="6" />
       <LineId Id="2" Count="0" />
     </LineIds>
-    <LineIds Name="T_SubModuleCollection.AnyInAskedState">
-      <LineId Id="92" Count="3" />
-      <LineId Id="100" Count="0" />
-      <LineId Id="96" Count="3" />
+    <LineIds Name="T_SubModuleCollection.AnyInRequestedState">
+      <LineId Id="119" Count="8" />
       <LineId Id="88" Count="0" />
     </LineIds>
     <LineIds Name="T_SubModuleCollection.CastToBase">

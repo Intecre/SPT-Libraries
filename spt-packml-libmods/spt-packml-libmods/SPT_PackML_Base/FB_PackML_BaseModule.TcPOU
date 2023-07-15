@@ -38,6 +38,7 @@ VAR
 	ComponentsCollection 			  : T_ComponentsCollection;
 	SubModulesCollection			  : T_SubModuleCollection;
 	ExternalControllersCollection	  : T_ExternalControllerCollection;
+	BaseAlarms						  : T_BaseAlarms;
 	
     //spt classes    
     StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
@@ -48,7 +49,7 @@ VAR
 //    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
 //    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
     PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
-    BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
+    //BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
     ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
     //PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
     NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
@@ -145,20 +146,26 @@ END_VAR
 
 //! @description This method is called by <c>ComponentMonitor()</c> or <c>SubModuleMonitor()</c> as required]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF IsModule THEN
-    IF NOT BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
-        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.SubModuleError],
-                                         _Name,
-                                         '',
-                                         '');
-    END_IF
+        <ST><![CDATA[//IF IsModule THEN
+//    IF NOT BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
+//        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.SubModuleError],
+//                                         _Name,
+//                                         '',
+//                                         '');
+//    END_IF
+//ELSE
+//    IF NOT BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
+//        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.ComponentError],
+//                                         _Name,
+//                                         '',
+//                                         '');
+//    END_IF
+//END_IF
+
+IF IsModule THEN
+	BaseAlarms.RaiseAlarmWithStringParameters(E_BaseAlarms.SubModuleError, _name, '','');
 ELSE
-    IF NOT BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
-        F_RaiseAlarmWithStringParameters(BaseAlarms[E_BaseAlarms.ComponentError],
-                                         _Name,
-                                         '',
-                                         '');
-    END_IF
+	BaseAlarms.RaiseAlarmWithStringParameters(E_BaseAlarms.ComponentError, _name, '','');
 END_IF
 
 THIS^.ChangeState(E_PMLCommand.ePMLCommand_Abort);]]></ST>
@@ -204,7 +211,7 @@ This method is called as required by <c>StateControl()</c>
 // Send abort command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Abort);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Aborted) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Aborted) THEN
 	RETURN;
 END_IF
 
@@ -314,19 +321,19 @@ This method is called as required by <c>StateControl()</c>
 
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Clear);
 
-//baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.ComponentError, timeStamp := , resetConfirmation:= );
-//baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.SubModuleError, timeStamp := , resetConfirmation:= );
+baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.ComponentError, resetConfirmation:= FALSE);
+baseAlarms.ClearAlarmIfRaised(E_BaseAlarms.SubModuleError, resetConfirmation:= FALSE);
 
-IF BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
-    BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, FALSE);
-END_IF;
+//IF BaseAlarms[E_BaseAlarms.ComponentError].bRaised THEN
+//    BaseAlarms[E_BaseAlarms.ComponentError].Clear(0, FALSE);
+//END_IF;
 
-IF BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
-    BaseAlarms[E_BaseAlarms.SubModuleError].Clear(0, 0);
-END_IF;
+//IF BaseAlarms[E_BaseAlarms.SubModuleError].bRaised THEN
+//    BaseAlarms[E_BaseAlarms.SubModuleError].Clear(0, 0);
+//END_IF;
 
 componentsCollection.Reset();
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Stopped) OR componentsCollection.AnyError THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Stopped) OR componentsCollection.AnyError THEN
  	RETURN;
 END_IF
 
@@ -407,7 +414,7 @@ This method is called as required by <c>StateControl()</c>
 // Send complete command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Complete);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Complete) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Complete) THEN
 	RETURN;
 END_IF
 
@@ -486,7 +493,7 @@ METHOD PROTECTED CreateEvents
                          pInitEvent := ADR(TC_EVENTS.PackMLBase_Alarms.InitReferenceEvent),
                          Prefix     := _Name);
 
-F_CreateAllEventsInClass(Alarms     := BaseAlarms,
+F_CreateAllEventsInClass(Alarms     := BaseAlarms.AlarmsArray,
                          ClassSize  := SIZEOF(TC_EVENTS.BaseAlarms),
                          pInitEvent := ADR(TC_EVENTS.BaseAlarms.InitReferenceEvent),
                          Prefix     := _Name);]]></ST>
@@ -575,7 +582,7 @@ ComponentMonitor();
 HMIPermissions();
 _CurrentAlarmSeverity := TcEventSeverity.Verbose;
 _CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := PackMLAlarms, CurrentSeverity := _CurrentAlarmSeverity);
-_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := BaseAlarms, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
+_CurrentAlarmSeverity := F_GetMaxSeverityRaised(Alarms := BaseAlarms.AlarmsArray, CurrentSeverity := _CurrentAlarmSeverity);]]></ST>
       </Implementation>
     </Method>
     <Method Name="Execute" Id="{26a49972-0a12-441d-92db-f9f223493eea}" FolderPath="Methods\Primary States\">
@@ -804,7 +811,7 @@ This method is called as required by <c>StateControl()</c>
 // Send hold command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Hold);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Held) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Held) THEN
 	RETURN;
 END_IF
 
@@ -1183,7 +1190,7 @@ This method is called as required by <c>StateControl()</c>
 
 SubModulesCollection.StateReset();
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Idle) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Idle) THEN
 	RETURN;
 END_IF
 
@@ -1232,7 +1239,7 @@ This method is called as required by <c>StateControl()</c>
 // Send start command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Start);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Execute) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Execute) THEN
 	RETURN;
 END_IF
 
@@ -1473,7 +1480,9 @@ This method is called as required by <c>StateControl()</c>
 // Send stop command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Stop);
 
-IF SubModulesCollection.AllInAskedState(ePMLState_Stopped) OR SubModulesCollection.AllInAskedState(ePMLState_Aborted) THEN
+IF SubModulesCollection.AllInRequestedState(ePMLState_Stopped) 
+	OR SubModulesCollection.AllInRequestedState(ePMLState_Aborted) THEN
+	
 	StateComplete();
 END_IF]]></ST>
       </Implementation>
@@ -1636,7 +1645,7 @@ This method is called as required by <c>StateControl()</c>
 // Send suspend command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Suspend);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Suspended) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Suspended) THEN
 	RETURN;
 END_IF
 
@@ -1708,7 +1717,7 @@ This method is called as required by <c>StateControl()</c>
 // Send unhold command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Unhold);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Execute) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Execute) THEN
 	RETURN;
 END_IF
 
@@ -1757,7 +1766,7 @@ This method is called as required by <c>StateControl()</c>
 // Send unsuspend command to all sub modules
 SubModulesCollection.NotifyStateChanged(ePMLCommand_Unsuspend);
 
-IF NOT SubModulesCollection.AllInAskedState(ePMLState_Execute) THEN
+IF NOT SubModulesCollection.AllInRequestedState(ePMLState_Execute) THEN
 	RETURN;
 END_IF
 
@@ -1776,11 +1785,15 @@ StateComplete();]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.AbortImmediateError">
-      <LineId Id="3" Count="15" />
+      <LineId Id="3" Count="14" />
+      <LineId Id="28" Count="2" />
+      <LineId Id="32" Count="1" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="18" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Aborting">
-      <LineId Id="58" Count="18" />
+      <LineId Id="99" Count="18" />
       <LineId Id="56" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.AllowHMIControl">
@@ -1805,15 +1818,7 @@ StateComplete();]]></ST>
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Clearing">
-      <LineId Id="103" Count="12" />
-      <LineId Id="184" Count="0" />
-      <LineId Id="116" Count="0" />
-      <LineId Id="188" Count="1" />
-      <LineId Id="187" Count="0" />
-      <LineId Id="173" Count="7" />
-      <LineId Id="125" Count="1" />
-      <LineId Id="183" Count="0" />
-      <LineId Id="128" Count="3" />
+      <LineId Id="215" Count="32" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Complete">
@@ -2000,6 +2005,7 @@ StateComplete();]]></ST>
     <LineIds Name="FB_PackML_BaseModule.Stopping">
       <LineId Id="3" Count="12" />
       <LineId Id="52" Count="2" />
+      <LineId Id="83" Count="1" />
       <LineId Id="58" Count="0" />
       <LineId Id="56" Count="0" />
     </LineIds>
