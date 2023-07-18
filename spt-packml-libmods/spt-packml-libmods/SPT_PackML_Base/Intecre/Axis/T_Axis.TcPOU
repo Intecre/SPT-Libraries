@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_MaintenanceMode" Id="{1b9b4d90-2c46-4764-9e9a-b59cfa023b3b}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_MaintenanceMode IMPLEMENTS I_PackMLMode
+  <POU Name="T_Axis" Id="{738671f0-e5f5-41d5-a646-52cb8f1590cf}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_Axis EXTENDS T_NamedBase IMPLEMENTS I_Axis
 VAR
-	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <LineIds Name="T_MaintenanceMode">
+    <LineIds Name="T_Axis">
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>

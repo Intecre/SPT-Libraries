@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_CartesianRobot" Id="{2f13929b-38b0-4c49-93c6-1008e6f60238}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_CartesianRobot EXTENDS T_NamedBase
+VAR
+	_xAxis, _yAxis, _zAxis : I_Axis;
+	_gripper : I_Gripper;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="GenericInitialise" Id="{7c60b10c-ac22-43b1-bb25-35dbf1d96bf3}">
+      <Declaration><![CDATA[METHOD GenericInitialise : BOOL;
+VAR_INPUT
+	xAxis, yAxis, zAxis : I_Axis;
+	gripper : I_Gripper;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF xAxis = 0 OR yAxis = 0 OR yAxis = 0 OR gripper = 0 THEN
+    RETURN;
+END_IF
+
+_xAxis := xAxis;
+_yAxis := yAxis;
+_zAxis := zAxis;
+_gripper := gripper;
+
+GenericInitialise := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_CartesianRobot">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_CartesianRobot.GenericInitialise">
+      <LineId Id="21" Count="0" />
+      <LineId Id="23" Count="7" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

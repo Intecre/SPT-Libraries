@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_AxisComponent" Id="{0fe96c03-9172-44c6-9878-730cd9cf8c50}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_AxisComponent EXTENDS FB_ComponentBase IMPLEMENTS I_AxisComponent
+VAR
+	_axis: I_Axis;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="GenericInitialise" Id="{4c8e05c1-d10b-4975-ac2b-01709bb89536}">
+      <Declaration><![CDATA[METHOD GenericInitialise
+VAR_INPUT
+	Axis : I_Axis;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_axis := Axis;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_AxisComponent">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_AxisComponent.GenericInitialise">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

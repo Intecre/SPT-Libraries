@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_GripperModule" Id="{42e42228-1cf4-406c-b140-481db51bee8e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_GripperModule EXTENDS FB_PackML_BaseModule IMPLEMENTS I_GripperModule
+VAR
+	_gripper : I_Gripper;
+	_cylinder : I_Cylinder;
+	
+	cylinderComponent : T_CylinderComponent;
+	
+	productionMode : T_GripperProductionMode;
+	maintenanceMode : T_GripperMaintenanceMode;
+	manualMode : T_GripperManualMode;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="GenericInitialise" Id="{4d9f01f6-a7ef-4e32-88ae-a6cca647633f}">
+      <Declaration><![CDATA[METHOD GenericInitialise
+VAR_INPUT
+	Gripper : I_Gripper;
+	Cylinder : I_Cylinder;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_gripper := Gripper;
+_cylinder := Cylinder;
+cylinderComponent.GenericInitialise(_cylinder);
+
+ComponentsCollection.AddComponent(cylinderComponent);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_GripperModule">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_GripperModule.GenericInitialise">
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

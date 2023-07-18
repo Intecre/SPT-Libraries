@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_CartesianRobot" Id="{5bc7eded-25ea-49cb-a175-6ac837522cc7}">
+    <Declaration><![CDATA[INTERFACE I_CartesianRobot
+]]></Declaration>
+    <Method Name="GenericInitialise" Id="{8fcf51b5-ed97-4906-b2e8-7986f2643398}">
+      <Declaration><![CDATA[METHOD GenericInitialise : BOOL;
+VAR_INPUT
+	xAxis, yAxis, zAxis : I_Axis;
+	gripper : I_Gripper;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

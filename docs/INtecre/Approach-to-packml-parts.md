@@ -30,3 +30,67 @@ code about init
 ```
 
 
+------------------
+
+Another Approach:
+
+```pascal
+
+DECLARATION
+
+FUNCTION_BLOCK T_CartesianRobotModule EXTENDS FB_PackML_BaseModule
+VAR
+	_xAxis, _yAxis, _zAxis : I_Axis;
+	_gripper : I_Gripper;
+	_cartesianRobot : I_CartesianRobot;
+	
+	xAxisComponent : T_AxisComponent;
+	yAxisComponent : T_AxisComponent;
+	zAxisComponent : T_AxisComponent;
+	gripperModule : T_GripperModule;
+	
+	productionMode : T_CartesianRobotProductionMode;
+	maintenanceMode : T_CartesianRobotMaintenanceMode;
+	manualMode : T_CartesianRobotManualMode;
+END_VAR
+
+-----------------
+
+
+Initialise Method
+
+// down side of this method, we need to pass submodule components details to cartesian robot module 
+//i.e. Cartesian robot doesn't needs to know about cylinder, but module in module cases force this.
+//Therefore, any object use within cartesian robot (all sensors, everything) needs to be passed in initialise method 
+
+DECLARATION
+METHOD GenericInitialise
+VAR
+	CartesianRobot : I_CartesianRobot;
+	xAxis, yAxis, zAxis : I_Axis; 
+	Gripper : I_Gripper;
+	Cylinder : I_Cylinder; // cylinder belongs to Gripper, so needs to be passed into gripper module
+END_VAR
+
+_xAxis := xAxis;
+_yAxis := yAxis;
+_zAxis := zAxis;
+_gripper := Gripper;
+_cartesianRobot := CartesianRobot;
+
+xAxisComponent.GenericInitialise(_xAxis);
+yAxisComponent.GenericInitialise(_yAxis);
+zAxisComponent.GenericInitialise(_zAxis);
+gripperModule.GenericInitialise(gripper, Cylinder);
+
+_cartesianRobot.GenericInitialise(xAxis, yAxis, zAxis, gripper);
+productionMode.Initialise(THIS^);
+maintenanceMode.Initialise(THIS^);
+manualMode.Initialise(THIS^);
+
+ComponentsCollection.AddComponent(xAxisComponent);
+ComponentsCollection.AddComponent(yAxisComponent);
+ComponentsCollection.AddComponent(zAxisComponent);
+SubModulesCollection.AddModule(gripperModule);
+
+```

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_GripperProductionMode" Id="{512c3ca2-eafa-4ddf-99c9-0c6b8a984674}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_GripperProductionMode EXTENDS T_NamedBase IMPLEMENTS I_PackMode
+VAR
+	_gripper : I_GripperModule;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Initialise" Id="{0985137a-cccb-40be-b232-c3d89fe0c35b}">
+      <Declaration><![CDATA[METHOD Initialise
+VAR_INPUT
+	Gripper : I_GripperModule;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_gripper := Gripper;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_GripperProductionMode">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_GripperProductionMode.Initialise">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

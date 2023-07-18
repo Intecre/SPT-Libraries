@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_GripperModule" Id="{2bd9185b-99f8-4c7f-ab45-2bb87f682e46}">
+    <Declaration><![CDATA[INTERFACE I_GripperModule
+]]></Declaration>
+  </Itf>
+</TcPlcObject>

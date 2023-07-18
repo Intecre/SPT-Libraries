@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_CartesianRobotModule" Id="{7dc470ce-6b17-4384-bc6b-26e8ed9f37bb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_CartesianRobotModule EXTENDS FB_PackML_BaseModule
+VAR
+	_xAxis, _yAxis, _zAxis : I_Axis;
+	_gripper : I_Gripper;
+	_cartesianRobot : I_CartesianRobot;
+	
+	xAxisComponent : T_AxisComponent;
+	yAxisComponent : T_AxisComponent;
+	zAxisComponent : T_AxisComponent;
+	gripperModule : T_GripperModule;
+	
+	productionMode : T_CartesianRobotProductionMode;
+	maintenanceMode : T_CartesianRobotMaintenanceMode;
+	manualMode : T_CartesianRobotManualMode;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="GenericInitialise" Id="{9ab1df33-01ad-48c7-98d6-eb483ef184bd}">
+      <Declaration><![CDATA[METHOD GenericInitialise
+VAR
+	CartesianRobot : I_CartesianRobot;
+	xAxis, yAxis, zAxis : I_Axis; 
+	Gripper : I_Gripper;
+	Cylinder : I_Cylinder;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_xAxis := xAxis;
+_yAxis := yAxis;
+_zAxis := zAxis;
+_gripper := Gripper;
+_cartesianRobot := CartesianRobot;
+
+xAxisComponent.GenericInitialise(_xAxis);
+yAxisComponent.GenericInitialise(_yAxis);
+zAxisComponent.GenericInitialise(_zAxis);
+gripperModule.GenericInitialise(gripper, Cylinder);
+
+_cartesianRobot.GenericInitialise(xAxis, yAxis, zAxis, gripper);
+productionMode.Initialise(THIS^);
+maintenanceMode.Initialise(THIS^);
+manualMode.Initialise(THIS^);
+
+ComponentsCollection.AddComponent(xAxisComponent);
+ComponentsCollection.AddComponent(yAxisComponent);
+ComponentsCollection.AddComponent(zAxisComponent);
+SubModulesCollection.AddModule(gripperModule);]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_CartesianRobotModule">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_CartesianRobotModule.GenericInitialise">
+      <LineId Id="29" Count="3" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="17" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="3" />
+      <LineId Id="21" Count="3" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

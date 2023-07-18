@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_CartesianRobotMaintenanceMode" Id="{a5cf9b46-6efa-499c-9966-a6016ab9e675}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_CartesianRobotMaintenanceMode EXTENDS T_NamedBase IMPLEMENTS I_PackMode
+VAR
+	_cartesianRobot : I_CartesianRobotModule;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Initialise" Id="{6ad3a09a-62bf-4811-84ad-e488e16d2c59}">
+      <Declaration><![CDATA[METHOD Initialise
+VAR_INPUT
+	CartesianRobotModule : I_CartesianRobotModule; 
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[_cartesianRobot := CartesianRobotModule;]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_CartesianRobotMaintenanceMode">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="T_CartesianRobotMaintenanceMode.Initialise">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

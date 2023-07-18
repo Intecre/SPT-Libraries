@@ -192,10 +192,14 @@
   <ItemGroup>
     <Folder Include="DUT" />
     <Folder Include="DUT\HMI" />
-    <Folder Include="Intecre\ModeDesignMark\Interfaces" />
+    <Folder Include="Intecre\CartesianRobot\Modes" />
+    <Folder Include="Intecre\Gripper\Modes" />
     <Folder Include="Intecre\ModeManager" />
     <Folder Include="Intecre\Collections" />
-    <Folder Include="Intecre\ModeDesignMark" />
+    <Folder Include="Intecre\CartesianRobot" />
+    <Folder Include="Intecre\Axis" />
+    <Folder Include="Intecre\Gripper" />
+    <Folder Include="Intecre\Cylinder" />
     <Folder Include="Intecre\PackModes" />
     <Folder Include="Interfaces" />
     <Folder Include="Intecre" />
@@ -238,6 +242,39 @@
     <Compile Include="GlobalTextList.TcGTLO">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Intecre\Axis\I_Axis.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Axis\I_AxisComponent.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Axis\T_Axis.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Axis\T_AxisComponent.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\I_CartesianRobot.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\I_CartesianRobotModule.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\Modes\T_CartesianRobotMaintenanceMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\Modes\T_CartesianRobotManualMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\Modes\T_CartesianRobotProductionMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\T_CartesianRobotModule.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\CartesianRobot\T_CartesianRobot.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Intecre\Collections\I_ComponentsCollection.TcIO">
       <SubType>Code</SubType>
     </Compile>
@@ -259,28 +296,25 @@
     <Compile Include="Intecre\Collections\T_SubModuleCollection.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_MaintenanceMode.TcIO">
+    <Compile Include="Intecre\Gripper\I_Gripper.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_CustomMode.TcIO">
+    <Compile Include="Intecre\Gripper\I_GripperModule.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_PackMLMode.TcIO">
+    <Compile Include="Intecre\Gripper\Modes\T_GripperMaintenanceMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_ManualMode.TcIO">
+    <Compile Include="Intecre\Gripper\Modes\T_GripperManualMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\Interfaces\I_ProductionMode.TcIO">
+    <Compile Include="Intecre\Gripper\Modes\T_GripperProductionMode.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\T_MaintenanceMode.TcPOU">
+    <Compile Include="Intecre\Gripper\T_Gripper.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Intecre\ModeDesignMark\T_ProductionMode.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Intecre\ModeDesignMark\T_ManualMode.TcPOU">
+    <Compile Include="Intecre\Gripper\T_GripperModule.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\ModeManager\I_ModeManager.TcIO">
@@ -296,6 +330,18 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Intecre\PackModes\T_BaseMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Cylinder\I_Cylinder.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Cylinder\I_CylinderComponent.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Cylinder\T_Cylinder.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Intecre\Cylinder\T_CylinderComponent.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Interfaces\I_PackML_BaseModule.TcIO" />

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_CylinderComponent" Id="{def5f0fb-19d7-4486-9317-9ad0e969cf3f}">
+    <Declaration><![CDATA[INTERFACE I_CylinderComponent
+]]></Declaration>
+  </Itf>
+</TcPlcObject>

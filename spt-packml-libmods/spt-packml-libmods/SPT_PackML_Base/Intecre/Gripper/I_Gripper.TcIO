@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <Itf Name="I_CustomMode" Id="{54875696-6434-4991-bcbd-4134edd74cd8}">
-    <Declaration><![CDATA[INTERFACE I_CustomMode EXTENDS I_PackMLMode
+  <Itf Name="I_Gripper" Id="{e1d98384-a7fe-4388-bdfe-d750f3fbb218}">
+    <Declaration><![CDATA[INTERFACE I_Gripper
 ]]></Declaration>
   </Itf>
 </TcPlcObject>

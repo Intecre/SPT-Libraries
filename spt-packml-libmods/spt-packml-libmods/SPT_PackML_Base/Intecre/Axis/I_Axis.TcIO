@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_Axis" Id="{d6375579-dabd-45c1-b30f-cdc924ac59c7}">
+    <Declaration><![CDATA[INTERFACE I_Axis
+]]></Declaration>
+  </Itf>
+</TcPlcObject>

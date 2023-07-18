@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <Itf Name="I_MaintenanceMode" Id="{3db8b67a-88f5-4699-963d-be2fe99617ef}">
-    <Declaration><![CDATA[INTERFACE I_MaintenanceMode EXTENDS I_PackMLMode
-]]></Declaration>
-  </Itf>
-</TcPlcObject>

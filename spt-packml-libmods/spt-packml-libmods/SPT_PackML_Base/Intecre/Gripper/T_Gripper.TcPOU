@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
-  <POU Name="T_ManualMode" Id="{339991d4-876f-4668-acda-cc2d207d93a2}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK T_ManualMode IMPLEMENTS I_PackMLMode
+  <POU Name="T_Gripper" Id="{f66baa9a-c4d1-4cbd-b572-4fc9913db1d8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_Gripper EXTENDS T_NamedBase IMPLEMENTS I_Gripper
 VAR
-	
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <LineIds Name="T_ManualMode">
+    <LineIds Name="T_Gripper">
       <LineId Id="9" Count="0" />
     </LineIds>
   </POU>
