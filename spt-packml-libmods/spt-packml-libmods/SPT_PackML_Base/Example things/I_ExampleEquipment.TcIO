@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <Itf Name="I_ExampleEquipment" Id="{1e59db62-dd03-4efe-8704-8a3f350eee64}">
+    <Declaration><![CDATA[INTERFACE I_ExampleEquipment EXTENDS I_PackML_BaseModule
+]]></Declaration>
+    <Method Name="PickFromStagingArea" Id="{0358595f-8c5b-4115-a938-7885fca2a7ea}">
+      <Declaration><![CDATA[METHOD PUBLIC PickFromStagingArea : BOOL
+VAR_INPUT
+  orientationOfPick : ST_Orientation;
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>

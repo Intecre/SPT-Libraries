@@ -199,6 +199,7 @@
     <Folder Include="Intecre\PackModes" />
     <Folder Include="Interfaces" />
     <Folder Include="Intecre" />
+    <Folder Include="Example things" />
     <Folder Include="Tests" />
     <Folder Include="Project Information" />
     <Folder Include="Tests\CollectionsTests\Components\Mock" />
@@ -222,6 +223,15 @@
     <Compile Include="DUT\HMI\ST_PackMLBaseModule_HMI.TcDUT" />
     <Compile Include="DUT\HMI\ST_PackMLBaseModule_Status.TcDUT" />
     <Compile Include="DUT\ST_PackML_SubUnitInfoExt.TcDUT" />
+    <Compile Include="Example things\I_ExampleEquipment.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Example things\T_ExampleModule.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Example things\T_ExampleMOduleProductionMode.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="FB_PackML_BaseModule.TcPOU" />
     <Compile Include="FB_PackML_ModeLogger.TcPOU" />
     <Compile Include="FB_PackML_StateLogger.TcPOU" />

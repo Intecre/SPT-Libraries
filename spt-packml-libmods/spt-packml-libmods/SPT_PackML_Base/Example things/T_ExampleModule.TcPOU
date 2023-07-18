@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="T_ExampleModule" Id="{b130e223-490b-4e61-95cf-3adea27f0c02}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK T_ExampleModule EXTENDS FB_PackML_BaseModule IMPLEMENTS I_ExampleEquipment
+
+VAR
+  
+  cartesianRobot : T_ExampleEquipment;
+
+  myProdMode : T_ExampleMOduleProductionMode;
+  maintMode : T_ExampleMOduleProductionMode;
+  manualMode : T_ExampleMOduleProductionMode;
+ 
+  xAxis : yAxis, zAxis : T_Axis;
+  grabber : T_Grabber;
+  paramStruct : ST_ExampleParmas;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[ComponentsCollection.AddComponent(xAxis);
+ComponentsCollection.AddComponent(yAxis);
+ComponentsCollection.AddComponent(zAxis);
+
+SubModulesCollection.AddModule(grabber);
+cartesianRobot.AddBits(
+  xAxis := xAxis.GetRawAxis(),
+  yAxis := yAxis,
+  zAxis := zAxis,
+  grabber := grabber);
+  
+
+paramsStruct.xAxis := xAxis;
+paramStruct.yAxis := yAxis;
+paramStruct.zAxis := zAxis;
+paramStruct.grabber := grabber;
+
+
+myProdMode.init(THIS^);
+
+ModeManager.AddPackModes(myProdMode,maintMode,manualMode);
+ModeManager.ChangeMode(E_PMLUnitMode.ePMLUnitMode_Production);]]></ST>
+    </Implementation>
+    <Method Name="PickFromStagingArea" Id="{6209f71c-553e-4875-a5ac-3337e1fa137e}">
+      <Declaration><![CDATA[METHOD PUBLIC PickFromStagingArea : BOOL
+VAR_INPUT
+  orientationOfPick : ST_Orientation;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="T_ExampleModule">
+      <LineId Id="23" Count="0" />
+      <LineId Id="30" Count="1" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="57" Count="2" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="46" Count="2" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="32" Count="0" />
+    </LineIds>
+    <LineIds Name="T_ExampleModule.PickFromStagingArea">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

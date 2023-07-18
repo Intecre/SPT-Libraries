@@ -600,7 +600,8 @@ This method is called as required by <c>StateControl()</c>
 //If the functionality of this base module is to be retained, but more functionality is desired, the extended method can contain a SUPER^.ThisMethodName(); call, which will call this code
 
 //*************************************************************************************************************************************************************************
-]]></ST>
+
+ModeManager.CurrentStrategy.Execute();]]></ST>
       </Implementation>
     </Method>
     <Method Name="Held" Id="{70dc6f04-1202-4345-ae9f-cc19428dcb1a}" FolderPath="Methods\Primary States\">
@@ -1479,10 +1480,13 @@ END_VAR
 
 //! @description This method is called cyclically by <c>CyclicLogic()</c>]]></Declaration>
       <Implementation>
-        <ST><![CDATA[FOR i := 1 TO NumberOfSubModules DO
+        <ST><![CDATA[//SubModulesCollection.GetAlarmResponse(_CurrentState);
+
+FOR i := 1 TO NumberOfSubModules DO
     IF _CurrentState <> E_PMLState.ePMLState_Aborted AND _CurrentState <> E_PMLState.ePMLState_Aborting AND _CurrentState <> E_PMLState.ePMLState_Clearing AND
        _CurrentState <> E_PMLState.ePMLState_Stopped AND _CurrentState <> E_PMLState.ePMLState_Stopping THEN
         AlarmResponses := ipSubModules[i].ParentResponseDefinitions;
+        
         CASE AlarmResponses[ipSubModules[i].CurrentAlarmSeverity] OF
             E_AlarmResponse.Abort_ImmediateError:
                 AbortImmediateError(ipSubModules[i].Name, TRUE);
@@ -1840,7 +1844,8 @@ StateComplete();]]></ST>
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Execute">
       <LineId Id="3" Count="8" />
-      <LineId Id="2" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="38" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.Held">
       <LineId Id="3" Count="8" />
@@ -1992,7 +1997,11 @@ StateComplete();]]></ST>
       <LineId Id="56" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.SubModuleMonitor">
-      <LineId Id="45" Count="41" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="96" Count="0" />
+      <LineId Id="45" Count="3" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="49" Count="37" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_PackML_BaseModule.SuspendControlled">
