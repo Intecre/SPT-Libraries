@@ -2,66 +2,48 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_PackML_BaseModule" Id="{b51128fe-fac6-441f-bd13-bfcb90049779}" SpecialFunc="None">
     <Declaration><![CDATA[FUNCTION_BLOCK ABSTRACT FB_PackML_BaseModule EXTENDS FB_CyclicFB IMPLEMENTS I_PackML_BaseModule, I_PackML_Control, I_StateModule
-    //I_PMLControl
+  //I_PMLControl
 VAR
-    
-    _CurrentState   : Tc3_PackML_V2.E_PMLState;
-    _CommandedState : Tc3_PackML_V2.E_PMLCommand;
-END_VAR
 
-//I_PMLModuleBase
-VAR
-    _CurrentAlarmSeverity           : TcEventSeverity;   
-    _LogStateChanges                : BOOL := FALSE; //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
-    _Name                           : STRING;        //Human-readable module name for user-side messaging
-    _ParentFaultResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse
-        := [E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.Abort_ImmediateError, E_AlarmResponse.Abort_ImmediateError];
+  _CurrentState : Tc3_PackML_V2.E_PMLState;
+  _CommandedState : Tc3_PackML_V2.E_PMLCommand;
 END_VAR
 
 VAR
-    //cs classes
-    (* These have been put inside T_ModeManager
-    ModeManager                       : PML_UnitModeManager;        //Manages operating mode transitions and rules
-    CustomModes                       : PML_UnitModeConfig;         //Used to define custom machine modes if desired
-    PMLModeLogger                     : FB_PackML_ModeLogger;       //Logs PackML Mode changes	
-    LastModeCommand                   : E_PMLUnitMode;              //Previous received PackML mode command
-    LastMode                          : DINT;                       //Last PackML mode 	
-    _CurrentMode                      : E_PMLUnitMode; //Current UnitMode of the module	
-    _CommandedMode                    : E_PMLUnitMode; //Current Commanded UnitMode of the module
-    _LogModeChanges                   : BOOL := TRUE;  //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
-    ModeChangeRequested               : BOOL;
-    ModeNames                         : ARRAY[0..31] OF STRING;
-    *)
+  _CurrentAlarmSeverity : TcEventSeverity;
+  _LogStateChanges : BOOL := FALSE; //Toggle to permit or suppress state change logging (Should be tied to HMI setting to optionally reduce event logger clutter)
+  _Name : STRING; //Human-readable module name for user-side messaging
+  _ParentFaultResponseDefinitions : ARRAY[0..4] OF E_AlarmResponse
+    := [E_AlarmResponse.NoResponse,
+    E_AlarmResponse.NoResponse, E_AlarmResponse.NoResponse, E_AlarmResponse.Abort_ImmediateError, E_AlarmResponse.Abort_ImmediateError];
+END_VAR
 
-    ModeManager 		 			  : T_ModeManager(THIS^);
-    InitialiseStates     			  : (init, CountSubModules, SetSizeOfArrays, WaitForInitializeComplete);
-	ComponentsCollection 			  : T_ComponentsCollection;
-	SubModulesCollection			  : T_SubModuleCollection;
-	ExternalControllersCollection	  : T_ExternalControllerCollection;
-	BaseAlarms						  : T_BaseAlarms;
-	
-    //spt classes    
-    StateMachine                      : PML_StateMachine;           //Manages PackML state transitions    
-    PMLStateLogger                    : FB_PackML_StateLogger;      //Logs PackML state changes
-    PackMLBaseModule_HMI              : ST_PackMLBaseModule_HMI;    //Handles status and control communications with the HMI
-    //PMLSubModuleInfoRef               : ST_PMLSubUnitInfoRef;       // Reference to the subunit information, used by the state machine    
-    PrevState                         : Tc3_PackML_V2.E_PMLState;   //Last cycle PackML state
-//    StateTasksComplete                : BOOL := FALSE;              //All tasks to be performed at this program level are complete
-//    NoStateTasksToComplete            : BOOL := TRUE;               //Indicates whether this stateneeds to perform tasks other than commanding its children
-    PackMLAlarms                      : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
-    //BaseAlarms                        : ARRAY[1..32] OF FB_TcAlarm; //Array of alarms for general module Alarms				
-    ipSubModules                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
-    //PMLSubModuleInfo                  : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF ST_PMLSubUnitInfo;
-    NumberOfSubModules                : UDINT := 0; //calculated number of instantiated sub modules
-    //ipComponents                      : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_COMPONENTS] OF I_ComponentBase;
-    //NumberOfComponents                : UDINT := 0; //calculated number of instantiated components
-    //ipExternalControllers             : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_EXTERNAL_CONTROLLERS] OF I_PackML_ExternalController;
-    ReachedInitialDefaultStateAndMode : BOOL;
+VAR
 
+  ModeManager : T_ModeManager(THIS^);
+  InitialiseStates : (init,
+    CountSubModules,
+    SetSizeOfArrays,
+    WaitForInitializeComplete);
+  ComponentsCollection : T_ComponentsCollection;
+  SubModulesCollection : T_SubModuleCollection;
+  ExternalControllersCollection : T_ExternalControllerCollection;
+  BaseAlarms : T_BaseAlarms;
 
-    HMICommand_RT                     : R_TRIG;
-    HMICommandActive_Base             : BOOL;
-    HMICommandActive_Descendant       : BOOL;
+  //spt classes    
+  StateMachine : PML_StateMachine; //Manages PackML state transitions   
+  PrevState : Tc3_PackML_V2.E_PMLState; //Last cycle PackML state 
+  PMLStateLogger : FB_PackML_StateLogger; //Logs PackML state changes
+
+  PackMLAlarms : ARRAY[1..48] OF FB_TcAlarm; //Array of alarms for PackML state and mode changes that exist in any PackML enabled module
+  ipSubModules : ARRAY[1..Parameters_PackML_Base.MAX_NO_OF_SUBMODULES] OF I_PackML_BaseModule;
+  NumberOfSubModules : UDINT := 0; //calculated number of instantiated sub modules
+  ReachedInitialDefaultStateAndMode : BOOL;
+
+  HMICommand_RT : R_TRIG;
+  HMICommandActive_Base : BOOL;
+  HMICommandActive_Descendant : BOOL;
+  PackMLBaseModule_HMI : ST_PackMLBaseModule_HMI; //Handles status and control communications with the HMI
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[//*********************************************************

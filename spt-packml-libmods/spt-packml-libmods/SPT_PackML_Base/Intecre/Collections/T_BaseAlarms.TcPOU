@@ -6,7 +6,8 @@ VAR
 	alarms : ARRAY[E_BaseAlarms.InitReferenceEvent..E_BaseAlarms.InvalidInterface] OF FB_TcAlarm;
 END_VAR
 VAR CONSTANT
-	USE_DEFAULT_TIMESTAMP : ULINT := 0; // 
+	USE_DEFAULT_TIMESTAMP : ULINT := 0; // If default then it will use system time, else it will use timestamp 
+  //https://infosys.beckhoff.com/english.php?content=../content/1033/tc3_eventlogger/5050505739.html&id=8432917619912920197
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
